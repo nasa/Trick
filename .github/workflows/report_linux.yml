@@ -12,19 +12,18 @@ jobs:
       matrix:
         cfg:
 #-------- Operating Systems ----------------
-          - { os: ubuntu,      tag: 18.04,    arch: debian, arch_ver: 10 }
-          - { os: ubuntu,      tag: 20.04,    arch: debian, arch_ver: 11 }
-          - { os: ubuntu,      tag: 22.04,    arch: debian, arch_ver: 12 }
-          - { os: debian,      tag: 10,       arch: debian, arch_ver: 10 }
-          - { os: debian,      tag: 11,       arch: debian, arch_ver: 11 }
-          - { os: debian,      tag: bookworm, arch: debian, arch_ver: 12 }
-          - { os: centos,      tag: 7,        arch: rhel,   arch_ver: 7  }
-          - { os: rockylinux,  tag: 8,        arch: rhel,   arch_ver: 8  }
-          - { os: oraclelinux, tag: 8,        arch: rhel,   arch_ver: 8  }
-          - { os: oraclelinux, tag: 8,        arch: rhel,   arch_ver: 8, erinteg: noerinteg }
-          - { os: almalinux,   tag: 8,        arch: rhel,   arch_ver: 8  }
+          - { os: ubuntu,      tag: 18.04,    arch: debian, arch_ver: 10, erinteg: erinteg   }
+          - { os: ubuntu,      tag: 20.04,    arch: debian, arch_ver: 11, erinteg: erinteg   }
+          - { os: ubuntu,      tag: 22.04,    arch: debian, arch_ver: 12, erinteg: erinteg   }
+          - { os: debian,      tag: 10,       arch: debian, arch_ver: 10, erinteg: erinteg   }
+          - { os: debian,      tag: 11,       arch: debian, arch_ver: 11, erinteg: erinteg   }
+          - { os: debian,      tag: bookworm, arch: debian, arch_ver: 12, erinteg: erinteg   }
+          - { os: centos,      tag: 7,        arch: rhel,   arch_ver: 7,  erinteg: erinteg   }
+          - { os: rockylinux,  tag: 8,        arch: rhel,   arch_ver: 8,  erinteg: erinteg   }
+          - { os: oraclelinux, tag: 8,        arch: rhel,   arch_ver: 8,  erinteg: erinteg   }
+          - { os: oraclelinux, tag: 8,        arch: rhel,   arch_ver: 8,  erinteg: noerinteg }
+          - { os: almalinux,   tag: 8,        arch: rhel,   arch_ver: 8,  erinteg: erinteg   }
         python: [2, 3]
-        erinteg: [erinteg]
 
     runs-on: ubuntu-latest
     steps:
