@@ -1,0 +1,11 @@
+Entity
+	:Objects
+		-Parts
+	:Organism
+		-BodyParts
+
+Shapes
+	:Circle, Triangle, Rectangle
+		:Parts
+		:BodyParts
+			:Various Specific BodyParts
