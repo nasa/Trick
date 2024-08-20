@@ -82,7 +82,6 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 import org.jdesktop.application.Application;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXLabel;
@@ -90,6 +89,8 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
 import org.xml.sax.InputSource;
 
+import trick.common.framework.BaseApplication;
+import trick.common.framework.View;
 import trick.common.RunTimeTrickApplication;
 import trick.common.TrickApplication;
 import trick.common.utils.UnitType;
@@ -2303,7 +2304,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
      * @param args arguments
      */
     public static void main(String[] args) {
-        Application.launch(TVApplication.class, args);
+        BaseApplication.launch(TVApplication.class, args);
     }
 
 }

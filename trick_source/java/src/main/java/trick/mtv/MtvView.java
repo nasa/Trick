@@ -49,18 +49,18 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.jdesktop.application.Action;
-import org.jdesktop.application.Application.ExitListener;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.ResourceMap;
-import org.jdesktop.application.TaskMonitor;
-
+import trick.common.framework.BaseApplication.ExitListener;
+import trick.common.framework.BaseApplication;
+import trick.common.framework.task.TaskMonitor;
+import trick.common.framework.View;
 import trick.common.TrickApplication;
+import trick.common.utils.SwingAction;
+import trick.common.utils.TrickResources;
 
 /**
  * The application's main frame.
  */
-public class MtvView extends FrameView {
+public class MtvView extends View {
 
     public MtvView(TrickApplication app) {
         super(app);
@@ -74,13 +74,19 @@ public class MtvView extends FrameView {
                 MtvApp.getApplication().exit();
             }
         });
+        
+        try { 
+        	resourceMap = parseResources(app.resourceMap); 
+        } catch(IOException ioe) {
+	        resourceMap = new TrickResources();
+        	System.err.println(ioe.getMessage());
+        }
 
         initComponents();
         
         edit_new_event();
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
-        ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
             @Override
@@ -138,11 +144,31 @@ public class MtvView extends FrameView {
         });
 
     } // end MtvView constructor
+    
+    private TrickResources parseResources(TrickResources base) throws IOException, FileNotFoundException {
+		TrickResources prop = new TrickResources(base);
+		File resource;
+		String path;
+    		
+    	path = TrickApplication.getResourcePath(this.getClass());
+    	System.out.println("PATH: " + path);
+    	resource = new File(path);
+    	prop.loadProperties(resource);
+    	
+    	int filePos = path.lastIndexOf("/") + 1;
+    	path = path.substring(0, filePos);
+    	if(prop.getProperty("PATH") != null)
+	    	path += ";" + prop.getProperty("PATH");
+    	
+    	prop.setProperty("PATH", path);
+    	
+    	return prop;
+    }
 
     // ================================== General Functions =======================================
 
     // user clicked Show Exit Confirmation Prompt from file menu
-    @Action
+    @SwingAction
     public void show_exit_prompt() {
         MtvApp.confirmExit = confirmExitMenuItem.isSelected();
         if (MtvApp.confirmExit) {
@@ -154,14 +180,14 @@ public class MtvView extends FrameView {
         }
     }    
     // user clicked Exit from file menu
-    @Action
+    @SwingAction
     public void quit() {
         //System.out.println("Quit action.");
         MtvApp.getApplication().exit();
     }
 
     // user clicked Connect button, or hit return in host field or port field
-    @Action
+    @SwingAction
     public void connect() {
         if (!connect_button.isEnabled()) {
             JOptionPane.showMessageDialog(viewPanel, "Already connected.",
@@ -177,7 +203,7 @@ public class MtvView extends FrameView {
     // ================================== View Tab Functions =======================================
 
     // DANNY: NO LONGER USED user clicked Hide Unnamed Events toggle in edit menu
-    //@Action
+    //@SwingAction
     //public void hide_nonames() {
     //    MtvApp.getApplication().hide_nonames = hideNonamesMenuItem.getState();
     //    if (MtvApp.vscom != null) {
@@ -192,7 +218,7 @@ public class MtvView extends FrameView {
    // }
 
     // user clicked Customize Event Display... in edit menu
-    @Action
+    @SwingAction
     public void customize_event_display() {
 
         if (connect_button.isEnabled()) {
@@ -403,7 +429,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked a Cycle from cycle menu
-    @Action
+    @SwingAction
     public void set_cycle() {
         MtvApp.getApplication().var_cycle = Double.parseDouble(cycle_group.getSelection().getActionCommand());
         if (MtvApp.vscom != null) {
@@ -430,7 +456,7 @@ public class MtvView extends FrameView {
 
 
     // user clicked Load Event from file menu
-    @Action
+    @SwingAction
     public void load_event() {
         FileReader fr = null;
         BufferedReader br = null;
@@ -489,7 +515,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked Delete Event from edit menu
-    @Action
+    @SwingAction
     public void delete_event() {
         Object[] options = { "Yes, DELETE it!", "Cancel" };
         String results[] = null;
@@ -629,7 +655,7 @@ public class MtvView extends FrameView {
     // ================================== Edit Tab Functions =======================================
 
     // Starting up MTV, or user clicked Create New Event from edit menu
-    @Action
+    @SwingAction
     public void edit_new_event() {
 
         if (edit_not_saved) {
@@ -676,7 +702,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked Save in file menu
-    @Action
+    @SwingAction
     public void save_event() {
         FileWriter fw = null;
         BufferedWriter bw = null;
@@ -752,7 +778,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked Send To Sim button
-    @Action
+    @SwingAction
     public void send_to_sim() {
         String line, stmt, col;
         String parse_string = "";
@@ -845,7 +871,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked Add Line or Add Statement from edit menu
-    @Action
+    @SwingAction
     public void add_line(ActionEvent e) {
         String stmt, command, starting, data, ending;
         int num;
@@ -995,7 +1021,7 @@ public class MtvView extends FrameView {
     }
 
     // user clicked Delete Line from edit menu
-    @Action
+    @SwingAction
     public void delete_line() {
         String stmt, starting, ending;
         int count, num, num_to_delete;
@@ -1225,11 +1251,10 @@ public class MtvView extends FrameView {
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(MtvView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance().getContext().getActionMap(MtvView.class, this);
+        javax.swing.ActionMap actionMap = BaseApplication.getInstance().getContext().getActionMap(MtvView.class, this);
         loadMenuItem.setAction(actionMap.get("load_event")); // NOI18N
         loadMenuItem.setIcon(resourceMap.getIcon("loadMenuItem.icon")); // NOI18N
         loadMenuItem.setText(resourceMap.getString("loadMenuItem.text")); // NOI18N
@@ -2001,7 +2026,8 @@ public class MtvView extends FrameView {
     public boolean active[];      // is this row (event/condition/action) Active/Enabled
     public Mode mode[];           // is this row (event/condition/action) mode Normal, or Manual On/Off
     public boolean canEditRow[];  // whole row is not editable when user does not specify event name
-    public boolean canEdit[][];   // if canEditRow, is this particular cell editable (Active/Enable/Hold/Mode)
+    public boolean canEdit[][];   // if canEditRow, is this particular cell editable (Active/Enable/Hold/Mode)    
+    public TrickResources resourceMap;
 
     private final Timer messageTimer;
     private final Timer busyIconTimer;

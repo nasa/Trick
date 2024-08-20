@@ -8,23 +8,24 @@ package trick.dre;
 //	Imports
 //========================================
 
-import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXLabel;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import trick.common.TrickApplication;
-import trick.common.ui.UIUtils;
-import trick.common.ui.components.NumberTextField;
-import trick.common.ui.panels.ListPanel;
-import trick.sie.utils.*;
-import javax.swing.*;
-import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTextField;
-import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import trick.common.framework.BaseApplication;
+import trick.common.framework.View;
+import trick.common.ui.UIUtils;
+import trick.common.ui.components.NumberTextField;
+import trick.common.ui.panels.ListPanel;
+import trick.common.utils.SwingAction;
+import trick.common.utils.vs.Variable;
+import trick.common.TrickApplication;
+import trick.sie.utils.*;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
@@ -42,13 +43,17 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import trick.common.utils.vs.Variable;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Dre - data recording editor application.
  *
  * @author Hong Chen
  * @author Scott Fennell
+ * @intern Marcus Rockwell
  * @since Trick 10
  * @since Trick 17
  */
@@ -154,7 +159,7 @@ public class DreApplication extends TrickApplication {
     //========================================
     //    Actions
     //========================================
-    @Action
+    @SwingAction
     public void openDR() {
         File file = UIUtils.chooseOpenFile(null, null, "dr", getMainFrame());
         if (file != null) {
@@ -162,7 +167,7 @@ public class DreApplication extends TrickApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void saveDR() {
         if (nameField.getText().trim().compareTo("") == 0) {
             JOptionPane.showMessageDialog(getMainFrame(), "A group name must be entered!",
@@ -179,7 +184,7 @@ public class DreApplication extends TrickApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void selectDRBinary() {
         format = "DRBinary";
         DRAscii_item.setSelected(false);
@@ -187,7 +192,7 @@ public class DreApplication extends TrickApplication {
         DRHDF5_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRAscii() {
         format = "DRAscii";
         DRAscii_item.setSelected(true);
@@ -195,7 +200,7 @@ public class DreApplication extends TrickApplication {
         DRHDF5_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRHDF5() {
         format = "DRHDF5";
         DRAscii_item.setSelected(false);
@@ -203,7 +208,7 @@ public class DreApplication extends TrickApplication {
         DRHDF5_item.setSelected(true);
     }
 
-    @Action
+    @SwingAction
     public void selectDRAlways() {
         frequency = "DR_Always";
         DRAlways_item.setSelected(true);
@@ -211,7 +216,7 @@ public class DreApplication extends TrickApplication {
         DRStepChanges_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRChanges() {
         frequency = "DR_Changes";
         DRAlways_item.setSelected(false);
@@ -219,7 +224,7 @@ public class DreApplication extends TrickApplication {
         DRStepChanges_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRStepChanges() {
         frequency = "DR_Step_Changes";
         DRAlways_item.setSelected(false);
@@ -227,7 +232,7 @@ public class DreApplication extends TrickApplication {
         DRStepChanges_item.setSelected(true);
     }
 
-    @Action
+    @SwingAction
     public void toggleSinglePrecision() {
         isSinglePrecision = singlePrecisionCheckBox.getState();
         if (isSinglePrecision) {
@@ -237,7 +242,7 @@ public class DreApplication extends TrickApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void selectDRBuffer() {
         buffering = "DR_Buffer";
         DRBuffer_item.setSelected(true);
@@ -245,7 +250,7 @@ public class DreApplication extends TrickApplication {
         DRRingBuffer_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRNoBuffer() {
         buffering = "DR_No_Buffer";
         DRBuffer_item.setSelected(false);
@@ -253,7 +258,7 @@ public class DreApplication extends TrickApplication {
         DRRingBuffer_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void selectDRRingBuffer() {
         buffering = "DR_Ring_Buffer";
         DRBuffer_item.setSelected(false);
@@ -261,7 +266,7 @@ public class DreApplication extends TrickApplication {
         DRRingBuffer_item.setSelected(true);
     }
 
-    @Action
+    @SwingAction
     public void selectDRThreadBuffer() {
         buffering = "DR_Thread_Buffer";
         DRBuffer_item.setSelected(false);
@@ -269,7 +274,7 @@ public class DreApplication extends TrickApplication {
         DRRingBuffer_item.setSelected(false);
     }
 
-    @Action
+    @SwingAction
     public void removeSelected() {
         Object[] values = selectedVarList.getSelectedData();
         for (int i = 0; i < values.length; i++) {
@@ -278,13 +283,13 @@ public class DreApplication extends TrickApplication {
         selectedVarList.removeSelectedData();
     }
 
-    @Action
+    @SwingAction
     public void removeAll() {
         selectedVarList.removeAllData();
         variables.clear();
     }
 
-    @Action
+    @SwingAction
     public void addVariables() {
         for (SieTemplate thisValue : searchPanel.getSelectedValues()) {
             addVariable(thisValue.toString());
@@ -307,7 +312,7 @@ public class DreApplication extends TrickApplication {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Application.launch(DreApplication.class, args);
+        BaseApplication.launch(DreApplication.class, args);
     }
 
     /**

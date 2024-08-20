@@ -45,6 +45,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -70,10 +71,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledEditorKit;
 
-import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
-import org.jdesktop.application.Task;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -81,12 +79,16 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.JXTitledSeparator;
 
+import trick.common.framework.BaseApplication;
+import trick.common.framework.task.Task;
+import trick.common.framework.View;
 import trick.common.TrickApplication;
 import trick.common.ui.UIUtils;
 import trick.common.ui.components.FontChooser;
 import trick.common.ui.panels.AnimationPlayer;
 import trick.common.ui.panels.FindBar;
 import trick.common.utils.VariableServerConnection;
+import trick.common.utils.SwingAction;
 import trick.simcontrol.utils.SimControlActionController;
 import trick.simcontrol.utils.SimState;
 
@@ -192,15 +194,16 @@ public class SimControlApplication extends TrickApplication implements PropertyC
     //========================================
     //    Actions
     //========================================
-    @Action
+	
+	@SwingAction
     public void showStatusFont() {
         Font font = FontChooser.showDialog(statusMsgPane, "Choose Font", statusMsgPane.getFont());
         if (font != null) {
             statusMsgPane.setFont(font);
         }
     }
-    
-    @Action
+
+	@SwingAction
     public void saveStatusMsgs() {
         String initialName = "sim_msg_";
         File file = UIUtils.chooseSaveFile(simState.getRunPath(), initialName, null, getMainFrame());
@@ -216,7 +219,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
         }
     }
 
-    @Action
+	@SwingAction
     public void clearStatusMsgs() {
         if (statusMsgPane != null) {
             Document doc = statusMsgPane.getDocument();
@@ -230,67 +233,67 @@ public class SimControlApplication extends TrickApplication implements PropertyC
         }
     }
 
-    @Action
+	@SwingAction
     public void startTV() {
         launchTrickApplication("tv",  "--host " + host + " --port " + port);
     }
 
-    @Action
+	@SwingAction
     public void startMTV() {
         launchTrickApplication("mtv",  host + " " + port);
     }
 
-    @Action
+	@SwingAction
     public void freezeAt() {
         actionController.handleFreezeAt(simState.getExecOutTime(), getMainFrame());
     }
 
-    @Action
+	@SwingAction
     public void freezeIn() {
         actionController.handleFreezeIn(simState.getExecOutTime(), getMainFrame());
     }
 
-    @Action
+	@SwingAction
     public void checkpointObjects() {
         customizedCheckpointObjects = actionController.handleCheckpointObjects(getMainFrame(), customizedCheckpointObjects);
     }
 
-    @Action
+	@SwingAction
     public void throttle() {
         actionController.handleThrottle(getMainFrame());
     }
 
-    @Action
+	@SwingAction
     public void stepSim() {
         actionController.handleStep(debug_flag);
     }
 
-    @Action
+	@SwingAction
     public void recordingSim() {
         actionController.handleRecOnOff(dataRecButton.isSelected());
     }
 
-    @Action
+	@SwingAction
     public void startSim() {
         actionController.handleStartSim();
     }
 
-    @Action
+	@SwingAction
     public void realtime() {
         actionController.handleRealtime(realtimeButton.isSelected());
     }
 
-    @Action
+	@SwingAction
     public void freezeSim() {
         actionController.handleFreeze(debug_flag);
     }
 
-    @Action
+	@SwingAction
     public void shutdownSim() {
         actionController.handleShutdown();
     }
 
-    @Action
+	@SwingAction
     public void dumpChkpntASCII() {
  
         String fileName = "chkpnt_" + simState.getTwoFractionFormatted(simState.getExecOutTime());
@@ -312,14 +315,14 @@ public class SimControlApplication extends TrickApplication implements PropertyC
         currentSimStatusDesc = "PreCheckpoint";
     }
 
-    @Action
+	@SwingAction
     public void loadChkpnt() {
         actionController.handleLoadChkpnt(simState.getRunPath(), getMainFrame());
         runtimeStatePanel.setTitle("Loading Checkpoint");
         currentSimStatusDesc = "PreCheckpoint";
     }
 
-    @Action
+	@SwingAction
     public void lite() {
     	if (liteButton.isSelected()) {
     		getMainFrame().setSize(LITE_SIZE);
@@ -332,7 +335,8 @@ public class SimControlApplication extends TrickApplication implements PropertyC
      * Connects to the variable server if {@link VariableServerConnection} is able to be created successfully and
      * starts the communication server for sim health status messages.
      */
-    @Action
+
+	@SwingAction
     public void connect() {
         // get host and port for selected sim  	
         if (runningSimList != null && runningSimList.getSelectedItem() != null) {
@@ -644,6 +648,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
         scheduleGetSimState();
 
         startStatusMonitors();
+
     }
 
     /**
@@ -710,7 +715,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Application.launch(SimControlApplication.class, args);
+        BaseApplication.launch(SimControlApplication.class, args);
         
         // Arrays.toString(args) converts such as localhost 7000 -r to [localhost, 7000, -r],
         // so need to remove [, ] and all white spaces.
@@ -1474,7 +1479,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
      * Inner class for the task of monitoring health status.
      */
     private class MonitorHealthStatusTask extends Task<Void, Void> {
-        public MonitorHealthStatusTask(Application app) {
+        public MonitorHealthStatusTask(BaseApplication app) {
             super(app);
         }
         
@@ -1640,7 +1645,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
          *
          * @param app    The specified {@link Application} that needs Sim status monitoring.
          */
-        public MonitorSimStatusTask(Application app) {
+        public MonitorSimStatusTask(BaseApplication app) {
             super(app);
         }
 

@@ -37,14 +37,15 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import trick.common.framework.BaseApplication;
 import trick.common.TrickApplication;
 import trick.common.ui.TrickFileFilter;
 import trick.common.ui.UIUtils;
 import trick.common.ui.panels.DataPanel;
 import trick.common.ui.panels.ListPanel;
+import trick.common.utils.SwingAction;
 import trick.dataproducts.DataProductsApplication;
 import trick.dataproducts.trickdp.utils.DPRemoteCallInterface;
 import trick.dataproducts.trickdp.utils.DPRemoteCallInterfaceImpl;
@@ -110,62 +111,62 @@ public class TrickDPApplication extends DataProductsApplication {
     //========================================
     //    Actions
     //========================================
-    @Action
+    @SwingAction
     public void newSession() {
         actionController.handleNewSession();
     }
 
-    @Action
+    @SwingAction
     public void openSession() {
         actionController.handleOpenSession();
     }
 
-    @Action
+    @SwingAction
     public void saveSession() {
         actionController.handleSaveSession();
     }
 
-    @Action
+    @SwingAction
     public void refreshSession() {
         actionController.handleRefreshSession();
     }
 
-    @Action
+    @SwingAction
     public void singlePlot() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.SIMPLE_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
         actionController.handleSinglePlot();
     }
 
-    @Action
+    @SwingAction
     public void comparisonPlot() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.COMPARISON_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
         actionController.handleComparisonPlot();
     }
 
-    @Action
+    @SwingAction
     public void errorPlot() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.DELTA_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
         actionController.handleErrorPlot();
     }
 
-    @Action
+    @SwingAction
     public void contrastPlot() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.CONTRAST_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
         actionController.handleContrastPlot();
     }
 
-    @Action
+    @SwingAction
     public void tabularData() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.SIMPLE_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.TABLE_MODE]);
         actionController.handleTabularData();
     }
 
-    @Action
+    @SwingAction
     public void tabularErrorData() {
         setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.DELTA_PRESENTATION]);
         setDisplayMode(Session.MODE_OPTIONS[Session.TABLE_MODE]);
@@ -173,44 +174,44 @@ public class TrickDPApplication extends DataProductsApplication {
     }
 
     // user selected Import Sim Dir from Sims/Runs menu
-    @Action
+    @SwingAction
     public void importSimDir() {
         actionController.handleImportSimDir();
     }
 
     // user selected Add Run Dir from Sims/Runs menu
-    @Action
+    @SwingAction
     public void addRunDir() {
         actionController.handleAddRunDir();
     }
 
-    @Action
+    @SwingAction
     public void gnuSinglePlot() {
         JOptionPane.showMessageDialog(getMainFrame(), "UNIMPLEMENTED FEATURE !\n" +
             "Gnu plot is not implemented yet.",
             "Error", JOptionPane.WARNING_MESSAGE);
     }
 
-    @Action
+    @SwingAction
     public void gnuComparisonPlot() {
         JOptionPane.showMessageDialog(getMainFrame(), "UNIMPLEMENTED FEATURE !\n" +
             "Gnu plot is not implemented yet.",
             "Error", JOptionPane.WARNING_MESSAGE);
     }
 
-    @Action
+    @SwingAction
     public void gnuErrorPlot() {
         JOptionPane.showMessageDialog(getMainFrame(), "UNIMPLEMENTED FEATURE !\n" +
             "Gnu plot is not implemented yet.",
             "Error", JOptionPane.WARNING_MESSAGE);
     }
 
-    @Action
+    @SwingAction
     public void quickPlot() {
         actionController.launchQP(getSelectedRunPaths());
     }
 
-    @Action
+    @SwingAction
     public void createPDF() {
         if (fileDevice == null) {
             fileDevice = new File(UIUtils.getTrickUserHome());
@@ -218,7 +219,7 @@ public class TrickDPApplication extends DataProductsApplication {
         PDFBooklet.showDialog(getMainFrame(), "Create PDF", fileDevice);
     }
 
-    @Action
+    @SwingAction
     public void addRuns() {
         actionController.handleAddRuns();
 
@@ -261,22 +262,22 @@ public class TrickDPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void readDPList() {
         actionController.handleReadDPList();
     }
 
-    @Action
+    @SwingAction
     public void openSelected() {
         simRunTree.expandSelectedNodes();
     }
 
-    @Action
+    @SwingAction
     public void closeSelected() {
         simRunTree.collapseSelectedNodes();
     }
 
-    @Action
+    @SwingAction
     public void removeSelectedNodes() {
         if (TrickApplication.getPopupInvoker() == DataPanel.SIM_RUN_TREE) {
             simRunTree.removeSelectedData();
@@ -285,7 +286,7 @@ public class TrickDPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void removeSelectedItems() {
         if (TrickApplication.getPopupInvoker() == DataPanel.RUN_LIST) {
             runList.removeSelectedData();
@@ -294,7 +295,7 @@ public class TrickDPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void removeAllItems() {
         if (TrickApplication.getPopupInvoker() == DataPanel.RUN_LIST) {
             runList.removeAllData();
@@ -303,19 +304,19 @@ public class TrickDPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void addDPs() {
         dpList.addData(simDPTree.getSelectedItems().toArray());
     }
 
     // Add DP from Data Product menu
-    @Action
+    @SwingAction
     public void addDP() {
         actionController.handleAddDP();
     }
 
     // Edit DP from Data Product menu
-    @Action
+    @SwingAction
     public void editSelectedDP() {
         int selectedLen = dpList.getSelectedData().length;
         if (selectedLen < 1) {
@@ -334,19 +335,19 @@ public class TrickDPApplication extends DataProductsApplication {
     }
 
     // Edit DP... from the popup menu after right-clicking on a DP_ file
-    @Action
+    @SwingAction
     public void editRightClickedDP() {
         actionController.handleEditDP(rightClickedDP);
     }
 
 
     // Filter from Data Product menu
-    @Action
+    @SwingAction
     public void filterDP() {
         actionController.handleFilterDP();
     }
 
-    @Action
+    @SwingAction
     public void runSim() {
         String simExe = "./S_main_" + UIUtils.getTrickHostCPU() + ".exe";
         for (String eachItem : simRunTree.getSelectedItems()) {
@@ -373,17 +374,17 @@ public class TrickDPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void refreshSelected() {
          actionController.handleRefreshSelected();
     }
 
-    @Action
+    @SwingAction
     public void plotDestination() {
 
     }
 
-    @Action
+    @SwingAction
     public void selectFileDevice() {
         fileDevice = UIUtils.chooseSaveFile(UIUtils.getTrickUserHome(), "dp_out", null, getMainFrame());
         if (fileDevice != null) {
@@ -408,7 +409,7 @@ public class TrickDPApplication extends DataProductsApplication {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Application.launch(TrickDPApplication.class, args);
+        BaseApplication.launch(TrickDPApplication.class, args);
     }
 
     /**

@@ -20,8 +20,9 @@ import javax.swing.JRadioButton;
 import javax.swing.event.TableModelEvent;
 
 import org.jdesktop.application.Application;
-import org.jdesktop.application.Task;
 
+import trick.common.framework.BaseApplication;
+import trick.common.framework.task.Task;
 import trick.common.TrickApplication;
 import trick.common.utils.VariableServerConnection;
 import trick.mtv.MtvView.Mode;
@@ -317,7 +318,7 @@ public class MtvApp extends TrickApplication {
         // the super's exit dialog always pops up in middle of screen, so add our own exit listener
         // remove any current exit listener first
         removeExitListener(exitListener) ;
-        exitListener = new Application.ExitListener() {
+        exitListener = new BaseApplication.ExitListener() {
             public boolean canExit(EventObject e) {
                 return JOptionPane.showConfirmDialog(mtv_view.viewPanel,
                         "Do you really want to exit?", "Confirm Exit", 0) == 0;
@@ -581,7 +582,7 @@ public class MtvApp extends TrickApplication {
      * @return the instance of MtvApp
      */
     public static MtvApp getApplication() {
-        return Application.getInstance(MtvApp.class);
+        return BaseApplication.getInstance(MtvApp.class);
     }
 
     // MonitorEventsTask =======================================================
@@ -595,7 +596,7 @@ public class MtvApp extends TrickApplication {
         *
         * @param app	The specified {@link Application} that needs Sim status monitoring.
         */
-        public MonitorEventsTask(Application app) {
+        public MonitorEventsTask(BaseApplication app) {
             super(app);
         }
 

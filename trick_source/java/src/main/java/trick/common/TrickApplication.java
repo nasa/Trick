@@ -10,12 +10,16 @@ import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Desktop.Action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,13 +51,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import org.jdesktop.application.Action;
-import org.jdesktop.application.ResourceMap;
-import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.View;
-import org.jdesktop.application.session.PropertySupport;
-
+import trick.common.framework.BaseApplication;
+import trick.common.framework.PropertySupport;
+import trick.common.framework.View;
 import trick.common.ui.UIUtils;
+import trick.common.utils.TrickAction;
+import trick.common.utils.TrickResources;
+import trick.common.utils.SwingAction;
 
 /**
  * The parent class which all other Trick Java GUI applications extend.
@@ -64,16 +68,18 @@ import trick.common.ui.UIUtils;
  * @author Hong Chen
  * @since Trick 10
  */
-public abstract class TrickApplication extends SingleFrameApplication implements PropertySupport {
+public abstract class TrickApplication extends BaseApplication implements PropertySupport {
 
     //========================================
     //    Public data
     //========================================
     /** User settable properties, such as default directories, etc. */
     public Properties trickProperties;
+    //public Properties appProperties;
+    //public TrickResources appProperties;
 
     /** The resource map for the application. */
-    public ResourceMap resourceMap;
+    public TrickResources resourceMap;
 
     /** The action map for the application. */
     public ActionMap actionMap;
@@ -100,12 +106,16 @@ public abstract class TrickApplication extends SingleFrameApplication implements
 
     /** The look and feel short name list */
     protected static String[] lafShortNames;
+    
+    protected static String SOURCE_PATH;
+    protected static String RESOURCE_PATH;
 
 
     //========================================
     //    Private Data
-    //========================================
+    //========================================    
     private static int popupInvokerType;
+    private static TrickApplication the_trick_app;
 
     // if we want to put the properties into a different location, change here.
     static {
@@ -137,18 +147,28 @@ public abstract class TrickApplication extends SingleFrameApplication implements
     }
 
     private JDialog aboutBox = null;
-
+//stop in trick.common.framework.BaseApplication$GUIDisplayRunner.run()
     //========================================
     //    Constructors
     //========================================
-
+	protected TrickApplication() {
+		String trick_home = System.getenv("TRICK_HOME");
+		if (trick_home == null || trick_home.isEmpty()) {
+			trick_home = System.getProperty("user.home") + java.io.File.separator + "trick";
+		}
+		
+		SOURCE_PATH = trick_home + "/trick_source/java/src/main/java";
+		RESOURCE_PATH = trick_home + "/trick_source/java/src/main/resources";
+		the_trick_app = this;
+	}
+	
     //========================================
     //    Actions
     //========================================
     /**
      * closes the application. Called when the "Exit" menu item is clicked.
      */
-    @Action
+    @SwingAction
     public void exitConfirmation() {
         if (confirmExitSelection.isSelected()) {
             addExitListener(exitListener);
@@ -157,8 +177,8 @@ public abstract class TrickApplication extends SingleFrameApplication implements
             removeExitListener(exitListener);
         }
     }
-
-    @Action
+    
+    @SwingAction
     public void helpContents() {
 
     }
@@ -166,7 +186,7 @@ public abstract class TrickApplication extends SingleFrameApplication implements
     /**
      * Show the about box dialog.
      */
-    @Action
+	@SwingAction
     public void showAboutBox() {
         if (aboutBox == null) {
             aboutBox = createAboutBox();
@@ -179,7 +199,7 @@ public abstract class TrickApplication extends SingleFrameApplication implements
     /**
      * Close the about box dialog.
      */
-    @Action
+	@SwingAction
     public void closeAboutBox() {
         if (aboutBox != null) {
             aboutBox.setVisible(false);
@@ -187,7 +207,7 @@ public abstract class TrickApplication extends SingleFrameApplication implements
         }
     }
 
-    @Action
+	@SwingAction
     public void lookAndFeel() {
         if (lafMap == null) {
             JOptionPane.showMessageDialog(getMainFrame(),
@@ -233,6 +253,15 @@ public abstract class TrickApplication extends SingleFrameApplication implements
         }
     }
 
+	@SwingAction
+	public void quit(ActionEvent e) {
+		super.exit(e);
+	}
+
+	@SwingAction
+    public void quit() {
+        quit(null);
+    }
 
     //========================================
     //    Set/Get methods
@@ -244,6 +273,8 @@ public abstract class TrickApplication extends SingleFrameApplication implements
     public static int getPopupInvoker() {
         return popupInvokerType;
     }
+    
+    public static TrickApplication getInstance() { return the_trick_app; }
 
     //========================================
     //    Methods
@@ -306,6 +337,20 @@ public abstract class TrickApplication extends SingleFrameApplication implements
         }
         return result.toString();
     }
+    
+    public static String getResourcePath(Class app) {
+    	String canon = app.getCanonicalName();
+    	canon = "/" + canon.replace(".", "/") + ".properties";
+    	
+    	int filePos = canon.lastIndexOf("/");
+    	if (filePos >= 0 && filePos < canon.length()) {
+    		String tail = canon.substring(0, filePos) + "/resources";
+    		tail += canon.substring(filePos);
+    		return RESOURCE_PATH + tail;
+    	} else {
+	    	return "";
+    	}
+    }
 
 
     /**
@@ -323,9 +368,9 @@ public abstract class TrickApplication extends SingleFrameApplication implements
 
         // register property for JToggleButton class so that its state can be saved
         getContext().getSessionStorage().putProperty(JToggleButton.class, this);
-
-        actionMap = getContext().getActionMap();
-        resourceMap = getContext().getResourceMap(getClass());
+		
+        resourceMap = getContext().getResourceMap();
+		actionMap = getContext().getActionMap(this.getClass(), this);
 
         // Load any saved user settable properties from properties file
         trickProperties = new Properties();
@@ -449,7 +494,7 @@ public abstract class TrickApplication extends SingleFrameApplication implements
      * @return    A {@link javax.swing.Action} of the specified action name.
      */
     protected javax.swing.Action getAction(String actionName) {
-        return getContext().getActionMap().get(actionName);
+        return actionMap.get(actionName);
     }
 
     /**

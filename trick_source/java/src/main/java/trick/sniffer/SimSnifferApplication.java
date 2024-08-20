@@ -20,12 +20,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.application.Application;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.EnabledHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 
+import trick.common.framework.BaseApplication;
+import trick.common.framework.View;
 import trick.common.TrickApplication;
 
 /**
@@ -324,7 +325,7 @@ public class SimSnifferApplication extends TrickApplication {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Application.launch(SimSnifferApplication.class, args);
+        BaseApplication.launch(SimSnifferApplication.class, args);
     }
 
 }

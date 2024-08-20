@@ -38,15 +38,16 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import trick.common.framework.BaseApplication;
 import trick.common.ui.UIUtils;
 import trick.common.ui.components.CommonTreeNode;
 import trick.common.ui.panels.DataPanel;
 import trick.common.ui.panels.ListPanel;
 import trick.common.utils.LogVar;
 import trick.common.utils.LogVar.DisplayType;
+import trick.common.utils.SwingAction;
 import trick.common.utils.XMLCreator;
 import trick.dataproducts.DataProductsApplication;
 import trick.dataproducts.trickdp.utils.DPRemoteCallInterface;
@@ -145,7 +146,7 @@ public class TrickQPApplication extends DataProductsApplication {
     //    Actions
     //========================================
 
-    @Action
+    @SwingAction
     public void singlePlot() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.SIMPLE_PRESENTATION]);
@@ -154,7 +155,7 @@ public class TrickQPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void comparisonPlot() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.COMPARISON_PRESENTATION]);
@@ -163,7 +164,7 @@ public class TrickQPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void errorPlot() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.DELTA_PRESENTATION]);
@@ -172,7 +173,7 @@ public class TrickQPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void contrastPlot() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.PLOT_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.CONTRAST_PRESENTATION]);
@@ -181,7 +182,7 @@ public class TrickQPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void tabularData() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.TABLE_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.SIMPLE_PRESENTATION]);
@@ -190,7 +191,7 @@ public class TrickQPApplication extends DataProductsApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void tabularErrorData() {
     	setDisplayMode(Session.MODE_OPTIONS[Session.TABLE_MODE]);
     	setPreferredPresentation(Session.PRESENTATION_OPTIONS[Session.DELTA_PRESENTATION]);
@@ -209,129 +210,129 @@ public class TrickQPApplication extends DataProductsApplication {
         launchPlotProgram(sessionFile);
     }
 
-    @Action
+    @SwingAction
     public void newDP() {
         actionController.handleNewDP();
     }
 
-    @Action
+    @SwingAction
     public void openDP() {
         actionController.handleOpenDP();
     }
 
-    //@Action
+    //@SwingAction
     //public void convertDP() {
         //TODO
     //}
 
-    @Action
+    @SwingAction
     public void refreshDP() {
     	actionController.handleRefreshDP();
     }
 
     // Return true if file is actually saved, false otherwise such as cancel selection.
-    @Action
+    @SwingAction
     public boolean saveDP() {
         return actionController.handleSaveDP();
     }
 
     // Return true if file is actually saved, false otherwise such as cancel selection.
-    @Action
+    @SwingAction
     public boolean saveAsDP() {
         return actionController.handleSaveAsDP();
     }
 
-    //@Action
+    //@SwingAction
     //public void propertiesDP() {
 
     //}
     
-    @Action
+    @SwingAction
     public void searchVar() {
     	actionController.handleSearchVar();
     }
     
-    @Action
+    @SwingAction
     public void addVar() {
         actionController.handleAddVar();
     }
 
 
-    @Action
+    @SwingAction
     public void expandVar() {
         actionController.expandVar();
     }
 
-    @Action
+    @SwingAction
     public void contractVar() {
         actionController.contractVar();
     }
 
-    @Action
+    @SwingAction
     public void changeUnits() {
         actionController.changeUnits();
     }
 
-    @Action
+    @SwingAction
     public void addRun() {
         actionController.handleAddRun();
     }
 
-    @Action
+    @SwingAction
     public void removeRun() {
         actionController.handleRemoveRun();
     }
 
-    @Action
+    @SwingAction
     public void newPage() {
         actionController.handleNewPage();
     }
 
-    @Action
+    @SwingAction
     public void removeAllPages() {
         plotsNode.removeAllChildren();
         productTree.getDefaultModel().nodeStructureChanged(plotsNode);
     }
 
-    @Action
+    @SwingAction
     public void newPlot() {
         actionController.handleNewPlot();
     }
 
-    @Action
+    @SwingAction
     public void newCurve() {
         actionController.handleNewCurve();
     }
 
-    @Action
+    @SwingAction
     public void newVarcase() {
         actionController.handleNewVarcase();
     }
 
-    @Action
+    @SwingAction
     public void removeSelectedNode() {
         if (productTree != null) {
             productTree.removeClickedNode();
         }
     }
 
-    @Action
+    @SwingAction
     public void newTable() {
         actionController.handleNewTable();
     }
 
-    @Action
+    @SwingAction
     public void removeTable() {
         tablesNode.removeAllChildren();
         productTree.getDefaultModel().nodeStructureChanged(tablesNode);
     }
 
-    @Action
+    @SwingAction
     public void newColumn() {
         actionController.handleNewColumn();
     }
     
-    @Action
+    @SwingAction
     public void newProgram() {
     	if (programsNode.getChildCount() >= 1) {
     		JOptionPane.showMessageDialog(getMainFrame(), 
@@ -343,13 +344,13 @@ public class TrickQPApplication extends DataProductsApplication {
     	}
     }
     
-    @Action
+    @SwingAction
     public void removeAllPrograms() {
     	programsNode.removeAllChildren();
         productTree.getDefaultModel().nodeStructureChanged(programsNode);
     }
     
-    @Action
+    @SwingAction
     public void newProgramOutput() {
     	if (programsNode.getChildCount() < 1) {
     		JOptionPane.showMessageDialog(getMainFrame(), 
@@ -367,13 +368,13 @@ public class TrickQPApplication extends DataProductsApplication {
     	}
     }
     
-    @Action
+    @SwingAction
     public void selectFunction() {
     	// handled in LocalListMouseListener#MouseClicked
     	// this empty action method is for gui display
     }
     
-    @Action
+    @SwingAction
     public void subtractFunction() {
     	if (varList == null || varList.getSelectedData() == null || varList.getSelectedData().length != 2) {
     		JOptionPane.showMessageDialog(getMainFrame(), 
@@ -385,7 +386,7 @@ public class TrickQPApplication extends DataProductsApplication {
     	}
     }
     
-    @Action
+    @SwingAction
     public void reverseSubtractFunction() {
     	if (varList == null || varList.getSelectedData() == null || varList.getSelectedData().length != 2) {
     		JOptionPane.showMessageDialog(getMainFrame(), 
@@ -397,13 +398,13 @@ public class TrickQPApplication extends DataProductsApplication {
     	}
     }
     
-    @Action
+    @SwingAction
     public void cancelFunction() {
     	// do nothing as if it is selected, the related popup will be closed and this is what is desired.
     }
 
     @Override
-	@Action
+	@SwingAction
     public void quit(ActionEvent e) {
     	if ((productTree.getAllChildren(plotsNode) != null && productTree.getAllChildren(plotsNode).size() > 0) ||
             (productTree.getAllChildren(tablesNode) != null && productTree.getAllChildren(tablesNode).size() > 0)) {
@@ -578,7 +579,7 @@ public class TrickQPApplication extends DataProductsApplication {
      * @throws MalformedURLException MalformedURLException
      */
     public static void main(String[] args) throws RemoteException, MalformedURLException {
-        Application.launch(TrickQPApplication.class, args);
+        BaseApplication.launch(TrickQPApplication.class, args);
 
         // save the arguments which will be used for launching the application
         if (args != null && args.length > 0) {

@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import org.jdesktop.application.ResourceMap;
 import org.jdesktop.swingx.JXList;
 
 import trick.common.TrickApplication;
@@ -25,6 +24,7 @@ import trick.common.ui.panels.ListPanel;
 import trick.common.utils.LogVar;
 import trick.common.utils.LogVar.DisplayType;
 import trick.common.utils.SortedListModel;
+import trick.common.utils.TrickResources;
 
 
 /**
@@ -169,7 +169,10 @@ public class VarListPanel extends ListPanel {
                 if (varObj.getCount() < runcnt.getCount()) {
                     fg = red;
                 }
-                ResourceMap resourceMap = TrickApplication.getInstance().getContext().getResourceMap(TrickApplication.class);
+                
+                TrickApplication app = TrickApplication.getInstance();
+                TrickResources resourceMap = app.getContext().getResourceMap();
+                
                 if (varObj.getDisplay()==DisplayType.HIDDEN) {
                     // Hide these using a blank filler component:
                     // 1st line of varlist is the RUN dir count (it's name is "@@@"); and contracted array components

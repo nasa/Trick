@@ -31,7 +31,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.application.Application;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTable;
@@ -41,6 +40,8 @@ import org.jdesktop.swingx.renderer.CellContext;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.LabelProvider;
 
+import trick.common.framework.BaseApplication;
+import trick.common.framework.View;
 import trick.common.RunTimeTrickApplication;
 
 /**
@@ -473,7 +474,7 @@ public class MonteMonitorApplication extends RunTimeTrickApplication {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Application.launch(MonteMonitorApplication.class, args);
+        BaseApplication.launch(MonteMonitorApplication.class, args);
     }
 
     /** monitors incoming messages from the Variable Server and updates the display table with new information  */

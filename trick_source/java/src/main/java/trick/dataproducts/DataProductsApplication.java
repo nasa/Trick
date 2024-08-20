@@ -30,14 +30,14 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingWorker;
 
-import org.jdesktop.application.Action;
-import org.jdesktop.application.View;
 import org.jdesktop.swingx.JXMultiSplitPane;
 import org.jdesktop.swingx.MultiSplitLayout;
 
+import trick.common.framework.View;
 import trick.common.TrickApplication;
 import trick.common.ui.UIUtils;
 import trick.common.ui.components.NumberTextField;
+import trick.common.utils.SwingAction;
 import trick.dataproducts.trickqp.TrickQPApplication;
 import trick.dataproducts.utils.Session;
 import trick.dataproducts.utils.SessionRun;
@@ -210,7 +210,7 @@ public abstract class DataProductsApplication extends TrickApplication {
     //========================================
     //    Methods
     //========================================
-    @Action
+    @SwingAction
     public void configureRunTimename() {
         String msgStr1 = "Please specify the time name for the selected run\n";
         String msgStr2 = "\n\n";
@@ -232,7 +232,7 @@ public abstract class DataProductsApplication extends TrickApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void toggleGnuplot() {
         if (gnuplotButton.isSelected()) {
             gnuplotButton.setIcon(resourceMap.getIcon("gnuplot.on.icon"));
@@ -251,68 +251,68 @@ public abstract class DataProductsApplication extends TrickApplication {
         }
     }
 
-    @Action
+    @SwingAction
     public void selectFermi() {
         gnuplotButton.setSelected(false);
         getAction("selectGnuplotTerminal").setEnabled(false);
         toggleGnuplot();
     }
 
-    @Action
+    @SwingAction
     public void selectGnuplot() {
         gnuplotButton.setSelected(true);
         getAction("selectGnuplotTerminal").setEnabled(true);
         toggleGnuplot();
     }
 
-    @Action
+    @SwingAction
     public void selectJavaPlot() {
         gnuplotButton.setSelected(false);
         getAction("selectGnuplotTerminal").setEnabled(false);
         toggleGnuplot();
     }
 
-    @Action
+    @SwingAction
     public void selectTerminalDevice() {
         setDevice(Session.TERMINAL_DEVICE);
     }
 
-    @Action
+    @SwingAction
     public void selectPrinterDevice() {
         setDevice(Session.PRINTER_DEVICE);
     }
 
-    @Action
+    @SwingAction
     public void selectGnuplotTerminal() {
         // do nothing
     }
 
-    @Action
+    @SwingAction
     public void selectX11() {
         setGnuplotTerminal(Session.X11_GNUPLOT_TERMINAL);
     }
 
-    @Action
+    @SwingAction
     public void selectPSColor() {
         setGnuplotTerminal(Session.PS_COLOR_GNUPLOT_TERMINAL);
     }
 
-    @Action
+    @SwingAction
     public void selectPSBW() {
         setGnuplotTerminal(Session.PS_BW_GNUPLOT_TERMINAL);
     }
 
-    @Action
+    @SwingAction
     public void selectPNG() {
         setGnuplotTerminal(Session.PNG_GNUPLOT_TERMINAL);
     }
 
-    @Action
+    @SwingAction
     public void selectEPS() {
         setGnuplotTerminal(Session.EPS_GNUPLOT_TERMINAL);
     }
 
-    @Action
+    @SwingAction
     public void selectAQUA() {
         setGnuplotTerminal(Session.AQUA_GNUPLOT_TERMINAL);
     }
