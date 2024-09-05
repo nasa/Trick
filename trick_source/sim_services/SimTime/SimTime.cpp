@@ -1,89 +1,89 @@
 
-#include "trick/exec_proto.h"
-#include "trick/SimTime.hh"
+#include	"trick/exec_proto.h"
+#include	"trick/SimTime.hh"
 
-#define GET_TIME( GMT , offset ) \
- { \
-  double temp ; \
- \
-  /* Convert the met to a gmt format */ \
-  temp = ( exec_get_sim_time() + offset ) / 86400.0 ; \
-  GMT.day  = (int)temp ; \
-  temp = (temp - (double)(GMT.day)) * 24.0 ; \
-  GMT.hour = (int)temp ; \
-  temp = (temp - (double)(GMT.hour)) * 60.0 ; \
-  GMT.min  = (int)temp ; \
-  GMT.sec = (temp - (double)(GMT.min)) * 60.0 ; \
+#define	GET_TIME(	GMT	,	offset	)	\
+	{	\
+		double	temp	;	\
+	\
+		/*	Convert	the	met	to	a	gmt	format	*/	\
+		temp	=	(	exec_get_sim_time()	+	offset	)	/	86400.0	;	\
+		GMT.day		=	(int)temp	;	\
+		temp	=	(temp	-	(double)(GMT.day))	*	24.0	;	\
+		GMT.hour	=	(int)temp	;	\
+		temp	=	(temp	-	(double)(GMT.hour))	*	60.0	;	\
+		GMT.min		=	(int)temp	;	\
+		GMT.sec	=	(temp	-	(double)(GMT.min))	*	60.0	;	\
 }
 
-Trick::SimTime * the_simtime ;
+Trick::SimTime	*	the_simtime	;
 
-Trick::SimTime::SimTime() {
+Trick::SimTime::SimTime()	{
 
-    gmt_ref.day = 0 ;
-    gmt_ref.hour = 0 ;
-    gmt_ref.min = 0 ;
-    gmt_ref.sec = 0 ;
+				gmt_ref.day	=	0	;
+				gmt_ref.hour	=	0	;
+				gmt_ref.min	=	0	;
+				gmt_ref.sec	=	0	;
 
-    met_ref.day = 0 ;
-    met_ref.hour = 0 ;
-    met_ref.min = 0 ;
-    met_ref.sec = 0 ;
+				met_ref.day	=	0	;
+				met_ref.hour	=	0	;
+				met_ref.min	=	0	;
+				met_ref.sec	=	0	;
 
-    the_simtime = this ;
+				the_simtime	=	this	;
 }
 
-int Trick::SimTime::init_times() {
+int	Trick::SimTime::init_times()	{
 
-    gmt_sec_ref = gmt_ref.day * 86400
-                + gmt_ref.hour * 3600
-                + gmt_ref.min * 60
-                + gmt_ref.sec;
+				gmt_sec_ref	=	gmt_ref.day	*	86400
+																+	gmt_ref.hour	*	3600
+																+	gmt_ref.min	*	60
+																+	gmt_ref.sec;
 
-    met_sec_ref = met_ref.day * 86400
-                + met_ref.hour * 3600
-                + met_ref.min * 60
-                + met_ref.sec;
+				met_sec_ref	=	met_ref.day	*	86400
+																+	met_ref.hour	*	3600
+																+	met_ref.min	*	60
+																+	met_ref.sec;
 
-    return 0 ;
+				return	0	;
 }
 
-double Trick::SimTime::get_rettime() {
+double	Trick::SimTime::get_rettime()	{
 
-    return(exec_get_sim_time());
-
-}
-
-double Trick::SimTime::get_gmttime() {
-
-    return(exec_get_sim_time() + gmt_sec_ref);
+				return(exec_get_sim_time());
 
 }
 
-double Trick::SimTime::get_mettime() {
+double	Trick::SimTime::get_gmttime()	{
 
-    return(exec_get_sim_time() + met_sec_ref);
+				return(exec_get_sim_time()	+	gmt_sec_ref);
 
 }
 
-TIME_OFFSET * Trick::SimTime::get_rettime_struct() {
+double	Trick::SimTime::get_mettime()	{
 
-    GET_TIME(ret_time, 0.0);
+				return(exec_get_sim_time()	+	met_sec_ref);
 
-    return(&ret_time) ;
 }
 
-TIME_OFFSET * Trick::SimTime::get_gmttime_struct() {
+TIME_OFFSET	*	Trick::SimTime::get_rettime_struct()	{
 
-    GET_TIME(gmt_time, gmt_sec_ref);
+				GET_TIME(ret_time,	0.0);
 
-    return(&gmt_time) ;
+				return(&ret_time)	;
 }
 
-TIME_OFFSET * Trick::SimTime::get_mettime_struct() {
+TIME_OFFSET	*	Trick::SimTime::get_gmttime_struct()	{
 
-    GET_TIME(met_time, met_sec_ref);
+				GET_TIME(gmt_time,	gmt_sec_ref);
 
-    return(&met_time) ;
+				return(&gmt_time)	;
+}
+
+TIME_OFFSET	*	Trick::SimTime::get_mettime_struct()	{
+
+				GET_TIME(met_time,	met_sec_ref);
+
+				return(&met_time)	;
 }
 

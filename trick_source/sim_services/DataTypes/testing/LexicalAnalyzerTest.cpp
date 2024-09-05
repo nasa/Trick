@@ -1,58 +1,58 @@
-#include <gtest/gtest.h>
-#include <stddef.h>
-#include "LexicalAnalyzer.hh"
-#include <iostream>
+#include	<gtest/gtest.h>
+#include	<stddef.h>
+#include	"LexicalAnalyzer.hh"
+#include	<iostream>
 
-TEST(LexicalAnalyzer, test1) {
+TEST(LexicalAnalyzer,	test1)	{
 
-    Token::e token;
-    LexicalAnalyzer lexer;
+				Token::e	token;
+				LexicalAnalyzer	lexer;
 
-    lexer.load("float");
-    token = lexer.getToken();
-    EXPECT_EQ(Token::Float, token );
+				lexer.load("float");
+				token	=	lexer.getToken();
+				EXPECT_EQ(Token::Float,	token	);
 
-    token = lexer.nextToken();
-    EXPECT_EQ(Token::EndOfFile, token );
+				token	=	lexer.nextToken();
+				EXPECT_EQ(Token::EndOfFile,	token	);
 }
 
-TEST(LexicalAnalyzer, test2) {
+TEST(LexicalAnalyzer,	test2)	{
 
-    Token::e token;
-    LexicalAnalyzer lexer;
+				Token::e	token;
+				LexicalAnalyzer	lexer;
 
-    lexer.load("double(*)[123]");
+				lexer.load("double(*)[123]");
 
-    token = lexer.getToken();
+				token	=	lexer.getToken();
 
-    EXPECT_EQ(Token::Double, token );
+				EXPECT_EQ(Token::Double,	token	);
 
-    token = lexer.matchToken(Token::Double);
+				token	=	lexer.matchToken(Token::Double);
 
-    EXPECT_EQ(Token::LeftParen, token );
+				EXPECT_EQ(Token::LeftParen,	token	);
 
-    token = lexer.matchToken(Token::LeftParen);
+				token	=	lexer.matchToken(Token::LeftParen);
 
-    EXPECT_EQ(Token::Asterisk, token );
+				EXPECT_EQ(Token::Asterisk,	token	);
 
-    token = lexer.matchToken(Token::Asterisk);
+				token	=	lexer.matchToken(Token::Asterisk);
 
-    EXPECT_EQ(Token::RightParen, token );
+				EXPECT_EQ(Token::RightParen,	token	);
 
-    token = lexer.matchToken(Token::RightParen);
+				token	=	lexer.matchToken(Token::RightParen);
 
-    EXPECT_EQ(Token::LeftBracket, token );
+				EXPECT_EQ(Token::LeftBracket,	token	);
 
-    token = lexer.matchToken(Token::LeftBracket);
+				token	=	lexer.matchToken(Token::LeftBracket);
 
-    EXPECT_EQ(Token::Integer, token );
+				EXPECT_EQ(Token::Integer,	token	);
 
-    token = lexer.matchToken(Token::Integer);
+				token	=	lexer.matchToken(Token::Integer);
 
-    EXPECT_EQ(Token::RightBracket, token );
+				EXPECT_EQ(Token::RightBracket,	token	);
 
-    token = lexer.matchToken(Token::RightBracket);
+				token	=	lexer.matchToken(Token::RightBracket);
 
-    EXPECT_EQ(Token::EndOfFile, token );
+				EXPECT_EQ(Token::EndOfFile,	token	);
 }
 

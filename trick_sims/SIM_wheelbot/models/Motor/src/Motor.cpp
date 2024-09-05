@@ -1,5 +1,5 @@
-#include "Motor.hh"
+#include	"Motor.hh"
 
-Motor::Motor () {}
-Motor::~Motor() {}
-double Motor::getActualSpeed() {return 0;}
+Motor::Motor	()	{}
+Motor::~Motor()	{}
+double	Motor::getActualSpeed()	{return	0;}

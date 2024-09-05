@@ -1,3 +1,3 @@
-// @trick_link_dependency{Warning.cpp}
+//	@trick_link_dependency{Warning.cpp}
 
-#include "Warning.hh"
+#include	"Warning.hh"

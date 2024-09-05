@@ -1,23 +1,23 @@
-#include "DCBattery.hh"
-#include <iostream>
+#include	"DCBattery.hh"
+#include	<iostream>
 
 
-DCBattery::DCBattery(double initialIdealVoltage, double initialInternalResistance)
-: actualVoltage(0), current(0), idealVoltage(initialIdealVoltage),
-  internalResistance(initialInternalResistance)  {
+DCBattery::DCBattery(double	initialIdealVoltage,	double	initialInternalResistance)
+:	actualVoltage(0),	current(0),	idealVoltage(initialIdealVoltage),
+		internalResistance(initialInternalResistance)		{
 }
 
-void DCBattery :: update ()
+void	DCBattery	::	update	()
 {
-    actualVoltage = idealVoltage - internalResistance * current;
-    actualVoltage = std :: min (idealVoltage, actualVoltage);
-    actualVoltage = std :: max (0.0, actualVoltage);
+				actualVoltage	=	idealVoltage	-	internalResistance	*	current;
+				actualVoltage	=	std	::	min	(idealVoltage,	actualVoltage);
+				actualVoltage	=	std	::	max	(0.0,	actualVoltage);
 }
-double DCBattery :: getActualVoltage ()
+double	DCBattery	::	getActualVoltage	()
 {
-    return actualVoltage;
+				return	actualVoltage;
 }
-void DCBattery :: setCurrent (double value)
+void	DCBattery	::	setCurrent	(double	value)
 {
-    current = value;
+				current	=	value;
 }

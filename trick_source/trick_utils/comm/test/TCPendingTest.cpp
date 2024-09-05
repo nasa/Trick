@@ -1,48 +1,48 @@
 
-#include <gtest/gtest.h>
+#include	<gtest/gtest.h>
 
-#include "trick/tc.h"
-#include "trick/attributes.h"
-#include "trick/tc_proto.h"
-#include "trick/trick_byteswap.h"
-#include "trick/trick_error_hndlr.h"
+#include	"trick/tc.h"
+#include	"trick/attributes.h"
+#include	"trick/tc_proto.h"
+#include	"trick/trick_byteswap.h"
+#include	"trick/trick_error_hndlr.h"
 
-class TCPendingTest : public testing::Test {
+class	TCPendingTest	:	public	testing::Test	{
 
-   protected:
-      TCPendingTest(){}
-      ~TCPendingTest(){}
+			protected:
+						TCPendingTest(){}
+						~TCPendingTest(){}
 
-      TCDevice* device;
+						TCDevice*	device;
 
-      void SetUp(){
+						void	SetUp(){
 
-         device = (TCDevice *) malloc(sizeof(TCDevice));
-         memset( (void *)device,'\0',sizeof(TCDevice) );
+									device	=	(TCDevice	*)	malloc(sizeof(TCDevice));
+									memset(	(void	*)device,'\0',sizeof(TCDevice)	);
 
-         device->socket = 1;
-      }
+									device->socket	=	1;
+						}
 
-      void TearDown(){
+						void	TearDown(){
 
-         free(device);
-      }
+									free(device);
+						}
 };
 
-TEST_F( TCPendingTest, testNullDevice ) {
+TEST_F(	TCPendingTest,	testNullDevice	)	{
 
-   int tcpending_status = tc_pending( NULL );
+			int	tcpending_status	=	tc_pending(	NULL	);
 
-   EXPECT_EQ( tcpending_status, -1 );
+			EXPECT_EQ(	tcpending_status,	-1	);
 }
 
 /*
-TEST_F( TCPendingTest, testInvalidSocket ) {
+TEST_F(	TCPendingTest,	testInvalidSocket	)	{
 
-   device->socket = TRICKCOMM_INVALID_SOCKET;
+			device->socket	=	TRICKCOMM_INVALID_SOCKET;
 
-   int tcpending_status = tc_pending( device );
+			int	tcpending_status	=	tc_pending(	device	);
 
-   EXPECT_EQ( tcpending_status, 0 );
+			EXPECT_EQ(	tcpending_status,	0	);
 }
 */

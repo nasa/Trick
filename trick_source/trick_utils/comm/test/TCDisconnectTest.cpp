@@ -1,43 +1,43 @@
 
-#include <gtest/gtest.h>
+#include	<gtest/gtest.h>
 
-#include "trick/tc.h"
-#include "trick/attributes.h"
-#include "trick/tc_proto.h"
-#include "trick/trick_byteswap.h"
-#include "trick/trick_error_hndlr.h"
+#include	"trick/tc.h"
+#include	"trick/attributes.h"
+#include	"trick/tc_proto.h"
+#include	"trick/trick_byteswap.h"
+#include	"trick/trick_error_hndlr.h"
 
 
-class TCDisconnectTest : public testing::Test {
+class	TCDisconnectTest	:	public	testing::Test	{
 
-   protected:
-      TCDisconnectTest(){}
-      ~TCDisconnectTest(){}
+			protected:
+						TCDisconnectTest(){}
+						~TCDisconnectTest(){}
 
-      TCDevice* device;
+						TCDevice*	device;
 
-      void SetUp(){
+						void	SetUp(){
 
-         device = (TCDevice *) malloc(sizeof(TCDevice));
-         memset( (void *)device,'\0',sizeof(TCDevice) );
-      }
+									device	=	(TCDevice	*)	malloc(sizeof(TCDevice));
+									memset(	(void	*)device,'\0',sizeof(TCDevice)	);
+						}
 
-      void TearDown(){
+						void	TearDown(){
 
-         free(device);
-      }
+									free(device);
+						}
 };
 
-TEST_F( TCDisconnectTest, testNoDevice ) {
+TEST_F(	TCDisconnectTest,	testNoDevice	)	{
 
-   int disconnect_status = tc_disconnect( NULL );
+			int	disconnect_status	=	tc_disconnect(	NULL	);
 
-   EXPECT_EQ( disconnect_status, TC_DRIVER_ALREADY_DISCONNECTED );
+			EXPECT_EQ(	disconnect_status,	TC_DRIVER_ALREADY_DISCONNECTED	);
 }
 
-TEST_F( TCDisconnectTest, testSuccess ) {
+TEST_F(	TCDisconnectTest,	testSuccess	)	{
 
-   int disconnect_status = tc_disconnect( device );
+			int	disconnect_status	=	tc_disconnect(	device	);
 
-   EXPECT_EQ( disconnect_status, TC_SUCCESS );
+			EXPECT_EQ(	disconnect_status,	TC_SUCCESS	);
 }

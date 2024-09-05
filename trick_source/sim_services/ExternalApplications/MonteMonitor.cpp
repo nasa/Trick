@@ -1,8 +1,8 @@
 
-#include <string>
+#include	<string>
 
-#include "trick/MonteMonitor.hh"
+#include	"trick/MonteMonitor.hh"
 
-Trick::MonteMonitor::MonteMonitor() {
-    command += std::string("trick-mm");
+Trick::MonteMonitor::MonteMonitor()	{
+				command	+=	std::string("trick-mm");
 }
