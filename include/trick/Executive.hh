@@ -47,6 +47,9 @@ namespace Trick {
             /** gets #except_return */
             virtual int get_except_return() const;
 
+            /** Set to true to pause before every job call during sim execution.\n */
+            bool debug_pause_flag ;               /**< trick_units(--) */
+
         protected:
             /** Attempts to attach a debugger in the event a signal shuts down the simulation.\n */
             bool attach_debugger;            /**< trick_units(--) */
@@ -173,6 +176,12 @@ namespace Trick {
 
             /** Next scheduled jobs call time.\n */
             long long job_call_time_tics;   /**< trick_units(--) */
+
+            /** Semaphore used to control pausing.\n */
+            sem_t * debug_sem ;                   /**< trick_io(**) trick_units(--) */
+
+            /** Semaphore name for debug_sem.\n */
+            std::string debug_sem_name ;                /**< trick_io(**) trick_units(--) */
 
             /** stream to record elapsed time of default_data, 
                 input_processor, and initialization queues \n */
@@ -1222,6 +1231,14 @@ namespace Trick {
             virtual int run() ;
 
             /**
+             @userdesc Command to step the simulation, pausing after each job. Set exec_command to StepCmd.
+             @par Python Usage:
+             @code trick.step() @endcode
+             @return always 0
+            */
+            virtual int step() ;
+
+            /**
              @userdesc Command to freeze the simulation now. Set exec_command to FreezeCmd.
              @par Python Usage:
              @code trick.freeze() @endcode
@@ -1330,6 +1347,34 @@ namespace Trick {
              @return always 0
             */
             virtual int exec_terminate(const char *file_name, const char *error);
+
+            /**
+             @brief Instrumentation class job that pauses before each job when debug_pause is on.
+             Waits on a semapahore before execution continues.
+             @param curr_job - pointer to current instrument job that points to the job to pause at
+             @return always 0
+             */
+            int debug_pause(Trick::JobData * curr_job) ;
+
+            /**
+             @brief Command to post the semaphore so that execution continues after pause.
+             @return always 0
+             */
+            int debug_signal() ;
+
+            /**
+             @brief Command to set debug_pause_flag to true which turns on the debug pausing.
+             Calls Trick::Executive::instrument_job_before to insert the debug_pause routine before every job to pause at.
+             @return always 0
+             */
+            int debug_pause_on() ;
+
+            /**
+             @brief Command to set debug_pause_flag to false which turns off the debug pausing.
+             Calls Trick::Executive::instrument_job_remove to remove the debug_pause routine from all job queues that it was inserted in.
+             @return always 0
+             */
+            int debug_pause_off() ;
             
             /* deleted functions  */
       private:

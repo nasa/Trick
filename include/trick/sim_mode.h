@@ -19,6 +19,7 @@ typedef enum {
     NoCmd = 0 ,         /* NoCmd */
     FreezeCmd = 2 ,     /* freeze */
     RunCmd = 3 ,        /* run */
+    StepCmd = 4,        /* step */
     ExitCmd = 10 ,      /* exit */
 
 } SIM_COMMAND;

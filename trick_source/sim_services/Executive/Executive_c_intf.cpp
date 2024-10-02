@@ -803,6 +803,18 @@ extern "C" int exec_run() {
 
 /**
  * @relates Trick::Executive
+ * @copydoc Trick::Executive::step
+ * C wrapper for Trick::Executive::step
+ */
+extern "C" int exec_step() {
+    if ( the_exec != NULL ) {
+        return the_exec->step() ;
+    }
+    return -1 ;
+}
+
+/**
+ * @relates Trick::Executive
    @userdesc C wrapper to add an instrumentation job before all initialization, integration,
     scheduled, shutdown, top_of_frame & end_of_frame jobs.
  * Calls Trick::Executive::instrument_job_before(job_name, "", NULL)
@@ -1094,5 +1106,36 @@ int exec_register_scheduler( Trick::Scheduler * scheduler ) {
         return the_exec->register_scheduler(scheduler) ;
     }
     return -1 ;
+}
+
+/**
+ * @relates Trick::DebugPause
+ * @copydoc Trick::DebugPause::debug_pause_on
+ * C wrapper for Trick::DebugPause::debug_pause_on
+ */
+extern "C" int debug_pause_on(void) {
+    if (the_exec != NULL) {
+        return the_exec->debug_pause_on() ;
+    }
+    return(0) ;
+}
+
+/**
+ * @relates Trick::DebugPause
+ * @copydoc Trick::DebugPause::debug_pause_off
+ * C wrapper for Trick::DebugPause::debug_pause_off
+ */
+extern "C" int debug_pause_off(void) {
+    if (the_exec != NULL) {
+        return the_exec->debug_pause_off() ;
+    }
+    return(0) ;
+}
+
+extern "C" int debug_signal(void) {
+    if (the_exec != NULL) {
+        return the_exec->debug_signal() ;
+    }
+    return(0) ;
 }
 

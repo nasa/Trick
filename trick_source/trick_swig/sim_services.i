@@ -50,8 +50,6 @@
 #endif
 #include "trick/DataRecordDispatcher.hh"
 #include "trick/data_record_proto.h"
-#include "trick/DebugPause.hh"
-#include "trick/debug_pause_proto.h"
 #include "trick/EchoJobs.hh"
 #include "trick/echojobs_proto.h"
 #include "trick/Environment.hh"

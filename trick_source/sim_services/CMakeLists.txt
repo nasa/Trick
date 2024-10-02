@@ -23,8 +23,6 @@ set( SS_SRC
   DataRecord/DataRecordDispatcher
   DataRecord/DataRecordGroup
   DataRecord/data_record_utilities
-  DebugPause/DebugPause
-  DebugPause/DebugPause_c_intf
   EchoJobs/EchoJobs
   EchoJobs/EchoJobs_c_intf
   Environment/Environment

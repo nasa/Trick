@@ -72,7 +72,6 @@ a replacement SimObject will create an uncompilable sim.
 ##include "trick/JSONVariableServer.hh"
 ##include "trick/data_record_proto.h"
 ##include "trick/DataRecordDispatcher.hh"
-##include "trick/DebugPause.hh"
 ##include "trick/EchoJobs.hh"
 ##include "trick/FrameLog.hh"
 ##include "trick/UnitTest.hh"
@@ -157,6 +156,8 @@ class SysSimObject : public Trick::SimObject {
             {TRK} ("system_advance_sim_time") sched.advance_sim_time() ;
 
             {TRK} ("system_thread_sync") sched.thread_sync() ;
+            
+            {TRK} ("instrumentation") sched.debug_pause(curr_job) ;
         }
 
     private:
@@ -665,12 +666,10 @@ class InstrumentationSimObject : public Trick::SimObject {
 
     public:
         Trick::EchoJobs echo_jobs ;
-        Trick::DebugPause debug_pause ;
 
         InstrumentationSimObject() {
             // Instrumentation class jobs.  Not scheduled by default
             {TRK} ("instrumentation") echo_jobs.echo_job(curr_job) ;
-            {TRK} ("instrumentation") debug_pause.debug_pause(curr_job) ;
         }
 }
 

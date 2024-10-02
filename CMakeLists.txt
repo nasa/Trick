@@ -146,7 +146,6 @@ set( IO_SRC
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_DRHDF5.cpp
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_DataRecordDispatcher.cpp
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_DataRecordGroup.cpp
-  ${CMAKE_BINARY_DIR}/temp_src/io_src/io_DebugPause.cpp
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_EchoJobs.cpp
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_EnumAttributesMap.cpp
   ${CMAKE_BINARY_DIR}/temp_src/io_src/io_Environment.cpp

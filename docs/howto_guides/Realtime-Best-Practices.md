@@ -274,7 +274,6 @@ Inserting one or more of the ```#define``` statements listed below to the top of
 #define TRICK_NO_REALTIME
 #define TRICK_NO_FRAMELOG
 #define TRICK_NO_MASTERSLAVE
-#define TRICK_NO_INSTRUMENTATION
 #define TRICK_NO_INTEGRATE
 #define TRICK_NO_REALTIMEINJECTOR
 #define TRICK_NO_ZEROCONF
@@ -292,7 +291,6 @@ LIBRARY DEPENDENCIES:
 *************************************************************/
 #define TRICK_NO_MONTE_CARLO
 #define TRICK_NO_MASTERSLAVE
-#define TRICK_NO_INSTRUMENTATION
 #define TRICK_NO_REALTIMEINJECTOR
 #define TRICK_NO_ZEROCONF
 #define TRICK_NO_UNITTEST

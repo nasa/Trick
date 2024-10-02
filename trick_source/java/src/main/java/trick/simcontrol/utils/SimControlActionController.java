@@ -244,15 +244,8 @@ public class SimControlActionController {
 	 */
     public void handleStep( int debug_flag ) {
         try {
-            if ( debug_flag == 0 ) {
-                simcom.put("trick.debug_pause_on()\n" +
-                           "trick.exec_run()\n") ;
-            } else {
-                simcom.put("trick.debug_signal()\n") ;
-            }
-        } catch (IOException e) {
-
-        }
+            simcom.put("trick.exec_step()\n") ;
+        } catch (IOException e) {}
     }
     
     /**

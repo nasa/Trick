@@ -527,7 +527,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
             	simRunDirField[i].setText("Slave " + i);
             }
             
-            commandSimcom.put("trick.var_exists(\"trick_instruments.debug_pause.debug_pause_flag\")\n") ;
+            commandSimcom.put("trick.var_exists(\"trick_sys.sched.debug_pause_flag\")\n") ;
             results = commandSimcom.get().split("\t");
             debug_present = Integer.parseInt(results[1]);
 
@@ -832,7 +832,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
                           "trick.var_add(\"trick_real_time.rt_sync.active\") \n";
 
             if ( debug_present != 0 ) {
-                status_vars += "trick.var_add(\"trick_instruments.debug_pause.debug_pause_flag\")\n" ;
+                status_vars += "trick.var_add(\"trick_sys.sched.debug_pause_flag\")\n" ;
             }
             if ( overrun_present != 0 ) {
                 status_vars += "trick.var_add(\"trick_real_time.rt_sync.total_overrun\")\n" ;
@@ -1319,7 +1319,7 @@ public class SimControlApplication extends TrickApplication implements PropertyC
                     disableAllCommands();
                     setActionsEnabled("freezeSim,lite", true);
                     if (debug_flag != 0) {
-                        setActionsEnabled("stepSim,dumpChkpntASCII", true);
+                        getAction("stepSim").setEnabled(true);
                     }
                     logoImagePanel.resume();
                     break;
@@ -1332,6 +1332,11 @@ public class SimControlApplication extends TrickApplication implements PropertyC
                     statusLabel.setEnabled(false);
                     logoImagePanel.stop();
                     break;
+            }
+
+            // Disable the step button if instrumentation jobs are off.
+            if (debug_present == 0) {
+        		getAction("stepSim").setEnabled(false);
             }
 
             runtimeStatePanel.setTitle(newStatusDesc);

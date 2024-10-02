@@ -51,6 +51,9 @@ Trick::Executive::Executive() {
     software_frame = 1.0;
     frame_count = 0 ;
     stack_trace = true ;
+
+    debug_pause_flag = false ;
+    
     /** @li (if on new-enough Linux) allow any process to ptrace this one.
      *      This allows stack trace / debugger attach when ptrace is
      *      restricted (e.g. on Ubuntu 16).
