@@ -50,6 +50,8 @@
 # The file into which generated Python modules are zipped. The default
 # value is python (in the current directory).
 #
+# TRICKIFY_SOURCE
+#
 # -----------------------------------------------------------------------------
 #
 # EXAMPLE:
@@ -166,6 +168,9 @@ $(TRICKIFY_PYTHON_DIR): $(SWIG_OBJECTS:.o=.cpp) | $(dir $(TRICKIFY_PYTHON_DIR))
 	$(info $(call COLOR,Zipping)    Python modules into $@)
 	$(call ECHO_AND_LOG,cd .trick && zip -Arq $@ .)
 
+S_source.hh :
+	python3 ${TRICK_HOME}/share/trick/makefiles/build_trickify_S_source_hh.py
+
 # SWIG_OBJECTS and IO_OBJECTS are meant to contain all of the *_py and io_*
 # object file names, respectively, by looking at products of ICG and
 # make_makefile_swig. However, we can't run a rule for ICG before those
@@ -197,7 +202,7 @@ $(TRICKIFY_PYTHON_DIR): $(SWIG_OBJECTS:.o=.cpp) | $(dir $(TRICKIFY_PYTHON_DIR))
 # dependency list. The method is laid out in more detail here:
 # http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 
-$(BUILD_DIR)S_source.d: | $(BUILD_DIR)
+$(BUILD_DIR)S_source.d: | $(BUILD_DIR) S_source.hh
 	$(call ECHO_AND_LOG,$(TRICK_HOME)/bin/trick-ICG $(TRICK_CXXFLAGS) $(TRICK_SYSTEM_CXXFLAGS) $(TRICK_ICGFLAGS) S_source.hh)
 	$(call ECHO_AND_LOG,$(TRICK_HOME)/$(LIBEXEC)/trick/make_makefile_swig)
 	$(call ECHO_AND_LOG,$(TRICK_CC) -MM -MP -MT $@ -MF $@ $(TRICKIFY_CXX_FLAGS) S_source.hh)
