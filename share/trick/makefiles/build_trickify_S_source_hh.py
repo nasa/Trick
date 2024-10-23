@@ -12,7 +12,7 @@ def find_files_by_extension(loc, ext):
     files = list(path.rglob(f'*.{ext}'))
     return files
 
-files = find_files_by_extension("/users/plherrin/trick/include/", "hh")
+files = find_files_by_extension(loc, "hh")
 s_source = open("S_source.hh", 'w')
 for i in range(len(files)):
     s_source.write('#include "' + str(files[i]) + '"\n')

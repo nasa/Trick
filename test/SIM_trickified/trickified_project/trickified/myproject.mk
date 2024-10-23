@@ -11,7 +11,9 @@ MYPROJECT_INCLUDE := -I$(MYPROJECT_HOME)/include
 TRICK_CFLAGS   += $(MYPROJECT_INCLUDE) $(MYPROJECT_SOURCE)
 TRICK_CXXFLAGS += $(MYPROJECT_INCLUDE) $(MYPROJECT_SOURCE)
 
-MYPROJECT_TRICK := $(MYPROJECT_HOME)/trickified/trickified_myproject.o
+export TRICKIFY_BUILD_TYPE := STATIC
+export TRICKIFY_OBJECT_NAME := trickified_myproject.a
+MYPROJECT_TRICK := $(MYPROJECT_HOME)/trickified/$(TRICKIFY_OBJECT_NAME)
 
 # Tell Trick the headers and source at this location are part of a
 # Trickified project

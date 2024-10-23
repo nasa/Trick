@@ -202,7 +202,7 @@ S_source.hh :
 # dependency list. The method is laid out in more detail here:
 # http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 
-$(BUILD_DIR)S_source.d: | $(BUILD_DIR) S_source.hh
+$(BUILD_DIR)S_source.d: S_source.hh | $(BUILD_DIR)
 	$(call ECHO_AND_LOG,$(TRICK_HOME)/bin/trick-ICG $(TRICK_CXXFLAGS) $(TRICK_SYSTEM_CXXFLAGS) $(TRICK_ICGFLAGS) S_source.hh)
 	$(call ECHO_AND_LOG,$(TRICK_HOME)/$(LIBEXEC)/trick/make_makefile_swig)
 	$(call ECHO_AND_LOG,$(TRICK_CC) -MM -MP -MT $@ -MF $@ $(TRICKIFY_CXX_FLAGS) S_source.hh)
