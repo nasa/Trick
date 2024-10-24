@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+$source_dir = "" ;         # Base path to build lib from. Default to working directory
+$make_S_source = 0 ;       # Whether to generate a S_source
+$full_build = 0 ;          # Whether to build only ICG/Swig artifacts or entire source
+
+foreach $itr (0 .. $#ARGV) 
+{
+    if($ARGV[$itr] eq "-R") #Rebuild S_source
+    {
+        $make_S_source = 1 ;
+    }
+    else
+    {
+        print "Unrecognized argument: $ARGV[$itr]\n" ;
+    }
+}

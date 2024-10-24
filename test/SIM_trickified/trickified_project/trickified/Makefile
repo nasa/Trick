@@ -1,7 +1,7 @@
-#include myproject.mk
-
 PROJECT_HOME := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/..)
 TRICK_HOME := $(abspath $(PROJECT_HOME)/../../..)
+
+include $(PROJECT_HOME)/myproject_vars.mk
 
 export TRICKIFY_SOURCE := $(PROJECT_HOME)/include
 # export TRICKIFY_BUILD_TYPE := PLO
