@@ -1,17 +1,57 @@
 #!/usr/bin/perl
 
-$source_dir = "" ;         # Base path to build lib from. Default to working directory
-$make_S_source = 0 ;       # Whether to generate a S_source
-$full_build = 0 ;          # Whether to build only ICG/Swig artifacts or entire source
+use Cwd qw();
 
-foreach $itr (0 .. $#ARGV) 
+$source_dir = "" ;            # Base path to build lib from. Default to working directory
+$trickify_make_args = "" ;    # Arguments to pass into the trickify make
+$trickify_make_path = "" ;    # Path of the trickify make file
+$make_S_source = 0 ;          # Whether to generate a S_source
+$full_build = 1 ;             # Whether to build only ICG/Swig artifacts or entire source
+
+$skip_arg = 0 ;
+foreach $argnum (0 .. $#ARGV) 
 {
-    if($ARGV[$itr] eq "-R") #Rebuild S_source
+    if($skip_arg)
+    {
+        $skip_arg = 0 ;
+        next ;
+    }
+    
+    $arg = $ARGV[$argnum] ;
+    if($arg eq "-d") # Set source directory
+    {
+        $source_dir = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
+    elsif($arg eq "-R") # Rebuild S_source
     {
         $make_S_source = 1 ;
     }
+    elsif($arg eq "-t") # Build trick artifacts only
+    {
+        $full_build = 0 ;
+    }
+    elsif($arg eq "-tm") # Trickify make args
+    {
+        $trickify_make_args = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
+    elsif($arg eq "-tp") # Set trickify make path
+    {
+        $trickify_make_path = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
     else
     {
-        print "Unrecognized argument: $ARGV[$itr]\n" ;
+        print "Unrecognized argument: $arg\n" ;
     }
 }
+
+$trickify_make_call = "make $trickify_make_args -f $trickify_make_path" . "/trickify.mk" ;
+print $trickify_make_call ;
+print "\n" ;
+print Cwd::abs_path() ;
+print "\n" ;
+print $0 ;
+print "\n" ;
+# print(`make`) ;

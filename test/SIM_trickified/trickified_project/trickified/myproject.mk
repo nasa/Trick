@@ -1,6 +1,6 @@
-mkfile_dir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+LOCAL_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-include $(mkfile_dir)/myproject_vars.mk
+include $(LOCAL_DIR)/myproject_vars.mk
 
 # Append a prerequisite to the $(SWIG_SRC) target. This will build the
 # Trickified library along with the sim if it does not already exist. Using
