@@ -1,12 +1,15 @@
 #!/usr/bin/perl
 
-use Cwd qw();
+$my_path = $0 ;
+$my_path =~ s/trick-ify// ;
 
-$source_dir = "" ;            # Base path to build lib from. Default to working directory
-$trickify_make_args = "" ;    # Arguments to pass into the trickify make
-$trickify_make_path = "" ;    # Path of the trickify make file
-$make_S_source = 0 ;          # Whether to generate a S_source
-$full_build = 1 ;             # Whether to build only ICG/Swig artifacts or entire source
+$source_dir = "." ;                                                       # Base path to build lib from. Default to working directory
+$trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
+$trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
+$make_S_source = 0 ;                                                      # Whether to generate a S_source
+$full_build = 1 ;                                                         # Whether to build only ICG/Swig artifacts or entire source
+$name = "trickified" ;                                                    # Name of the library
+$build_type = "o" ;                                                       # Type of library to be built (o, a , so)
 
 $skip_arg = 0 ;
 foreach $argnum (0 .. $#ARGV) 
@@ -41,17 +44,61 @@ foreach $argnum (0 .. $#ARGV)
         $trickify_make_path = $ARGV[$argnum + 1] ;
         $skip_arg = 1 ;
     }
+    elsif($arg eq "-n") # Set the library name
+    {
+        $name = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
+    elsif($arg eq "-b") # Set library build type
+    {
+        $val = $ARGV[$argnum + 1] ;
+        if( ($val eq "o") or ($val eq "a") or ($val eq "so") )
+        {
+            $build_type = $ARGV[$argnum + 1] ;
+        }
+        else
+        {
+            print "Invalid build type {$val}, valid build types are {o, a, so}\n"
+        }
+        $skip_arg = 1 ;
+    }
     else
     {
         print "Unrecognized argument: $arg\n" ;
     }
 }
 
-$trickify_make_call = "make $trickify_make_args -f $trickify_make_path" . "/trickify.mk" ;
-print $trickify_make_call ;
-print "\n" ;
-print Cwd::abs_path() ;
-print "\n" ;
-print $0 ;
-print "\n" ;
-# print(`make`) ;
+#Set Environment Variables
+$ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir" ; #TODO: Test with multiple dirs passed in at once
+$ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
+$ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
+if ( $build_type eq o )
+{
+    $ENV{'TRICKIFY_BUILD_TYPE'}  = PLO ;
+}
+elsif ( $build_type eq a )
+{
+    $ENV{'TRICKIFY_BUILD_TYPE'}  = STATIC ;
+}
+elsif ( $build_type eq so )
+{
+    $ENV{'TRICKIFY_BUILD_TYPE'}  = SHARED ;
+}
+
+print "BUILD INFO:
+        $ENV{'TRICKIFY_SOURCE'}
+	source_dir = $source_dir
+        trickify_make_args = $trickify_make_args
+	trickify_make_path = $trickify_make_path
+	make_S_source = $make_S_source
+	full_build = $full_build
+	name = $name
+	build_type = $build_type\n" ;
+
+#Build the S_source.hh
+$make_s_source = "python3 $my_path../share/trick/makefiles/build_trickify_S_source_hh.py" ;
+print(`$make_s_source`) ;
+
+#Build trickify call
+$trickify_make_call = "make $trickify_make_args -f $trickify_make_path" ;
+print(`$trickify_make_call`) ;
