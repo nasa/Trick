@@ -9,7 +9,8 @@ export TRICKIFY_CXX_FLAGS := -I $(PROJECT_HOME)/include -I $(TRICK_HOME)/include
 
 all:
 	#@$(MAKE) -s -f $(TRICK_HOME)/share/trick/makefiles/trickify.mk
-	@trick-ify -d "/users/plherrin/trick/test/SIM_trickified/trickified_project/include" -b a -n trickified_myproject
+	#@trick-ify -h "/users/plherrin/trick/test/SIM_trickified/trickified_project/include" -b a -n trickified_myproject
+	@trick-ify -d "/users/plherrin/trick/test/SIM_trickified/trickified_project/testing" -b a -n trickified_myproject
 
 clean:
 	@rm -rf build python trick $(TRICKIFY_OBJECT_NAME)

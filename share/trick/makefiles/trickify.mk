@@ -107,8 +107,8 @@ include $(dir $(lastword $(MAKEFILE_LIST)))Makefile.common
 BUILD_DIR := $(dir $(MAKE_OUT))
 PY_LINK_LIST := $(BUILD_DIR)trickify_py_link_list
 IO_LINK_LIST := $(BUILD_DIR)trickify_io_link_list
-SRC_LINK_LIST :=
-LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST) $(SRC_LINK_LIST)
+SRC_LINK_LIST := trickify_obj_list
+LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST) @$(SRC_LINK_LIST)
 ifneq ($(wildcard $(BUILD_DIR)),)
     SWIG_OBJECTS := $(shell cat $(PY_LINK_LIST))
     IO_OBJECTS   := $(shell cat $(IO_LINK_LIST))

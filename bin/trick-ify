@@ -3,10 +3,11 @@
 $my_path = $0 ;
 $my_path =~ s/trick-ify// ;
 
-$source_dir = "." ;                                                       # Base path to build lib from. Default to working directory
+$source_dir = "." ;                                                       # Base path to build header from. Default to working directory
+$header_dir = "." ;                                                       # Base path to build source from. Default to working directory
 $trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
 $trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
-$make_S_source = 0 ;                                                      # Whether to generate a S_source
+$build_s_source = 0 ;                                                     # Whether to generate a S_source
 $full_build = 1 ;                                                         # Whether to build only ICG/Swig artifacts or entire source
 $name = "trickified" ;                                                    # Name of the library
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
@@ -21,14 +22,25 @@ foreach $argnum (0 .. $#ARGV)
     }
     
     $arg = $ARGV[$argnum] ;
-    if($arg eq "-d") # Set source directory
+    if($arg eq "-d") # Set both source and header directory
+    {
+        $source_dir = $ARGV[$argnum + 1] ;
+        $header_dir = $source_dir ;
+        $skip_arg = 1 ;
+    }
+    elsif($arg eq "-s") # Set source directory
     {
         $source_dir = $ARGV[$argnum + 1] ;
         $skip_arg = 1 ;
     }
+    elsif($arg eq "-h") # Set header directory
+    {
+        $header_dir = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
     elsif($arg eq "-R") # Rebuild S_source
     {
-        $make_S_source = 1 ;
+        $build_s_source = 1 ;
     }
     elsif($arg eq "-t") # Build trick artifacts only
     {
@@ -65,6 +77,7 @@ foreach $argnum (0 .. $#ARGV)
     else
     {
         print "Unrecognized argument: $arg\n" ;
+        exit 1 ;
     }
 }
 
@@ -72,6 +85,7 @@ foreach $argnum (0 .. $#ARGV)
 $ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir" ; #TODO: Test with multiple dirs passed in at once
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
+$ENV{'TRICKIFY_HEADER'} = "$header_dir" ;
 if ( $build_type eq o )
 {
     $ENV{'TRICKIFY_BUILD_TYPE'}  = PLO ;
@@ -85,20 +99,46 @@ elsif ( $build_type eq so )
     $ENV{'TRICKIFY_BUILD_TYPE'}  = SHARED ;
 }
 
-print "BUILD INFO:
-        $ENV{'TRICKIFY_SOURCE'}
-	source_dir = $source_dir
-        trickify_make_args = $trickify_make_args
-	trickify_make_path = $trickify_make_path
-	make_S_source = $make_S_source
-	full_build = $full_build
-	name = $name
-	build_type = $build_type\n" ;
-
 #Build the S_source.hh
 $make_s_source = "python3 $my_path../share/trick/makefiles/build_trickify_S_source_hh.py" ;
 print(`$make_s_source`) ;
 
+#Build source file list, only if trickifying the entire library
+if($full_build)
+{
+    #$make_obj_list = "python3 $my_path../share/trick/makefiles/build_trickify_obj_list.py" ;
+    #print(`$make_obj_list`) ;
+    $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
+    print(`$make_src_list`) ;
+}
+else
+{
+    #open (fh, ">", "trickify_obj_list") ; 
+    #close (fh) ;
+    open (fh, ">", "trickify_src_list") ; 
+    close (fh) ;
+}
+
+open (fh, "<", "trickify_src_list") ;
+@src_files ;
+while ($line = <$fh>) 
+{
+    chomp $line ;
+    print $line AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;
+    push @src_files, $line ;
+}
+close (fh) ;
+
 #Build trickify call
 $trickify_make_call = "make $trickify_make_args -f $trickify_make_path" ;
 print(`$trickify_make_call`) ;
+
+print "TRICKIFY BUILD INFO:
+	header_dir = $header_dir
+	source_dir = $source_dir
+        trickify_make_args = $trickify_make_args
+	trickify_make_path = $trickify_make_path
+	build_s_source = $build_s_source
+	full_build = $full_build
+	name = $name
+	build_type = $build_type\n" ;

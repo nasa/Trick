@@ -7,4 +7,4 @@ path += "/share/trick/makefiles/build_trickify.py"
 
 exec(open(path).read())
 
-build_S_source()
+build_src_list()
