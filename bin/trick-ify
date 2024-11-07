@@ -11,6 +11,8 @@ $build_s_source = 0 ;                                                     # Whet
 $full_build = 1 ;                                                         # Whether to build only ICG/Swig artifacts or entire source
 $name = "trickified" ;                                                    # Name of the library
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
+$debug = 0 ;                                                              # Debug info flag
+$work_dir = "./trickify/" ;                                               # Directory to dump work artifacts
 
 $skip_arg = 0 ;
 foreach $argnum (0 .. $#ARGV) 
@@ -74,6 +76,15 @@ foreach $argnum (0 .. $#ARGV)
         }
         $skip_arg = 1 ;
     }
+    elsif($arg eq "-v") # Verbose, print debug info
+    {
+        $debug = 1 ;
+    }
+    elsif($arg eq "-w") # Set working directory
+    {
+        $work_dir = $ARGV[$argnum + 1] . "/trickify/" ;
+        $skip_arg = 1 ;
+    }
     else
     {
         print "Unrecognized argument: $arg\n" ;
@@ -86,6 +97,8 @@ $ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir" ; #TODO: Test with multiple dirs p
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
 $ENV{'TRICKIFY_HEADER'} = "$header_dir" ;
+$ENV{'TRICKIFY_WORK_DIR'} = "$work_dir" ;
+mkdir $work_dir ;
 if ( $build_type eq o )
 {
     $ENV{'TRICKIFY_BUILD_TYPE'}  = PLO ;
@@ -104,41 +117,71 @@ $make_s_source = "python3 $my_path../share/trick/makefiles/build_trickify_S_sour
 print(`$make_s_source`) ;
 
 #Build source file list, only if trickifying the entire library
+#TODO: Move build artifacts into build? Maybe?
 if($full_build)
 {
-    #$make_obj_list = "python3 $my_path../share/trick/makefiles/build_trickify_obj_list.py" ;
-    #print(`$make_obj_list`) ;
     $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
     print(`$make_src_list`) ;
 }
 else
 {
-    #open (fh, ">", "trickify_obj_list") ; 
-    #close (fh) ;
-    open (fh, ">", "trickify_src_list") ; 
+    open (fh, ">", "$work_dir"."trickify_src_list") ; 
     close (fh) ;
 }
 
-open (fh, "<", "trickify_src_list") ;
+#Build array of source files
+open ($fh, "$work_dir"."trickify_src_list") or die "Could not open trickify_src_list: $!" ;
 @src_files ;
-while ($line = <$fh>) 
+while (my $line = <$fh>) 
 {
     chomp $line ;
-    print $line AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA;
     push @src_files, $line ;
 }
 close (fh) ;
+
+#Build object files from source file list
+print "Building object files\n" ;
+foreach $src (@src_files)
+{
+    $file = $src ;
+    $file =~ s/$\Q.cpp\E// ; 
+    $file =~ s/$\Q.c\E// ; 
+    $cmd = "g++ -c $src -o $file.o" ;
+    if($debug)
+    {
+        print "Building obj file: $cmd\n" ;
+    }
+    print(`$cmd`) ;
+}
+
+#Build object file list, only if trickifying the entire library
+if($full_build)
+{
+    $make_obj_list = "python3 $my_path../share/trick/makefiles/build_trickify_obj_list.py" ;
+    print(`$make_obj_list`) ;
+}
+else
+{
+    open (fh, ">", "$work_dir"."trickify_obj_list") ; 
+    close (fh) ;
+}
 
 #Build trickify call
 $trickify_make_call = "make $trickify_make_args -f $trickify_make_path" ;
 print(`$trickify_make_call`) ;
 
-print "TRICKIFY BUILD INFO:
-	header_dir = $header_dir
-	source_dir = $source_dir
-        trickify_make_args = $trickify_make_args
-	trickify_make_path = $trickify_make_path
-	build_s_source = $build_s_source
-	full_build = $full_build
-	name = $name
-	build_type = $build_type\n" ;
+if($debug) {
+    print 
+   "TRICKIFY BUILD INFO:
+    header_dir = $header_dir
+    source_dir = $source_dir
+    trickify_make_args = $trickify_make_args
+    trickify_make_path = $trickify_make_path
+    build_s_source = $build_s_source
+    full_build = $full_build
+    name = $name
+    build_type = $build_type
+    work_dir = $work_dir\n" ;
+}
+
+#TODO: Can't run trickify neutrally, must set source dir/output dir or conflicts will occur. Should fix or just document?

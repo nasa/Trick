@@ -13,8 +13,11 @@ def build_S_source():
     loc = ""
     if "TRICKIFY_HEADER" in os.environ:
         loc = os.getenv("TRICKIFY_HEADER")
+    work_dir = ""
+    if "TRICKIFY_WORK_DIR" in os.environ:
+        work_dir = os.getenv("TRICKIFY_WORK_DIR")
 
-    s_source = open("S_source.hh", 'w')
+    s_source = open(work_dir + "S_source.hh", 'w')
     for ext in def_header_ext:
         files = find_files_by_extension(loc, ext)
         for i in range(len(files)):
@@ -24,9 +27,12 @@ def build_obj_list():
     loc = ""
     if "TRICKIFY_SOURCE" in os.environ:
         loc = os.getenv("TRICKIFY_SOURCE")
+    work_dir = ""
+    if "TRICKIFY_WORK_DIR" in os.environ:
+        work_dir = os.getenv("TRICKIFY_WORK_DIR")
 
     files = find_files_by_extension(loc, "o")
-    s_source = open("trickify_obj_list", 'w')
+    s_source = open(work_dir + "trickify_obj_list", 'w')
     for i in range(len(files)):
         s_source.write(str(files[i]) + '\n')
 
@@ -34,9 +40,12 @@ def build_src_list():
     loc = ""
     if "TRICKIFY_SOURCE" in os.environ:
         loc = os.getenv("TRICKIFY_SOURCE")
+    work_dir = ""
+    if "TRICKIFY_WORK_DIR" in os.environ:
+        work_dir = os.getenv("TRICKIFY_WORK_DIR")
 
     for ext in def_src_ext:
         files = find_files_by_extension(loc, ext)
-        s_source = open("trickify_src_list", 'w')
+        s_source = open(work_dir + "trickify_src_list", 'w')
         for i in range(len(files)):
             s_source.write(str(files[i]) + '\n')
