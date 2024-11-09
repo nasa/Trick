@@ -105,10 +105,8 @@ TRICKIFY_PYTHON_DIR := $(abspath $(TRICKIFY_PYTHON_DIR))
 include $(dir $(lastword $(MAKEFILE_LIST)))Makefile.common
 
 BUILD_DIR := $(dir $(MAKE_OUT))
-#PY_LINK_LIST := $(BUILD_DIR)trickify_py_link_list
-#IO_LINK_LIST := $(BUILD_DIR)trickify_io_link_list
-PY_LINK_LIST := $(MAKE_OUT)___trickify_py_link_list
-IO_LINK_LIST := $(BUILD_DIR)___trickify_io_link_list
+PY_LINK_LIST := $(BUILD_DIR)trickify_py_link_list
+IO_LINK_LIST := $(BUILD_DIR)trickify_io_link_list
 OBJ_LINK_LIST := trickify_obj_list
 LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST) @$(OBJ_LINK_LIST)
 ifneq ($(wildcard $(BUILD_DIR)),)

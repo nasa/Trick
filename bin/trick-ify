@@ -12,7 +12,8 @@ $full_build = 1 ;                                                         # Whet
 $name = "trickified" ;                                                    # Name of the library
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
 $debug = 0 ;                                                              # Debug info flag
-$work_dir = "./trickify/" ;                                               # Directory to dump work artifacts
+#$work_dir = "./trickify/" ;                                               # Directory to dump work artifacts
+$work_dir = "./" ;                                                         # Directory to dump work artifacts
 
 $skip_arg = 0 ;
 foreach $argnum (0 .. $#ARGV) 
@@ -82,7 +83,7 @@ foreach $argnum (0 .. $#ARGV)
     }
     elsif($arg eq "-w") # Set working directory
     {
-        $work_dir = $ARGV[$argnum + 1] . "/trickify/" ;
+        #$work_dir = $ARGV[$argnum + 1] . "/trickify/" ;
         $skip_arg = 1 ;
     }
     else
@@ -118,6 +119,7 @@ print(`$make_s_source`) ;
 
 #Build source file list, only if trickifying the entire library
 #TODO: Move build artifacts into build? Maybe?
+print "Building trickify_src_list\n" ;
 if($full_build)
 {
     $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
@@ -144,6 +146,7 @@ print "Building object files\n" ;
 foreach $src (@src_files)
 {
     $file = $src ;
+    #TODO double check this works on different boxes
     $file =~ s/$\Q.cpp\E// ; 
     $file =~ s/$\Q.c\E// ; 
     $cmd = "g++ -c $src -o $file.o" ;
@@ -155,6 +158,7 @@ foreach $src (@src_files)
 }
 
 #Build object file list, only if trickifying the entire library
+print "Building trickify_obj_list\n" ;
 if($full_build)
 {
     $make_obj_list = "python3 $my_path../share/trick/makefiles/build_trickify_obj_list.py" ;
@@ -167,6 +171,7 @@ else
 }
 
 #Build trickify call
+print "Begin Trickification...\n" ;
 $trickify_make_call = "make $trickify_make_args -f $trickify_make_path" ;
 print(`$trickify_make_call`) ;
 
@@ -185,3 +190,4 @@ if($debug) {
 }
 
 #TODO: Can't run trickify neutrally, must set source dir/output dir or conflicts will occur. Should fix or just document?
+#TODO: Can we change build dir path?

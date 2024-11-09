@@ -21,7 +21,8 @@ def build_S_source():
     for ext in def_header_ext:
         files = find_files_by_extension(loc, ext)
         for i in range(len(files)):
-            s_source.write('#include "' + str(files[i]) + '"\n')
+            #s_source.write('#include "' + work_dir + "/../" + str(files[i]) + '"\n')
+            s_source.write('#include "' + work_dir + str(files[i]) + '"\n')
 
 def build_obj_list():
     loc = ""
@@ -34,7 +35,8 @@ def build_obj_list():
     files = find_files_by_extension(loc, "o")
     s_source = open(work_dir + "trickify_obj_list", 'w')
     for i in range(len(files)):
-        s_source.write(str(files[i]) + '\n')
+        #s_source.write(work_dir + "/../" + str(files[i]) + '\n')
+        s_source.write(work_dir + str(files[i]) + '\n')
 
 def build_src_list():
     loc = ""
@@ -48,4 +50,5 @@ def build_src_list():
         files = find_files_by_extension(loc, ext)
         s_source = open(work_dir + "trickify_src_list", 'w')
         for i in range(len(files)):
-            s_source.write(str(files[i]) + '\n')
+            #s_source.write(work_dir + "/../" + str(files[i]) + '\n')
+            s_source.write(work_dir + str(files[i]) + '\n')
