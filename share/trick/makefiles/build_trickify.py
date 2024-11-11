@@ -13,16 +13,12 @@ def build_S_source():
     loc = ""
     if "TRICKIFY_HEADER" in os.environ:
         loc = os.getenv("TRICKIFY_HEADER")
-    work_dir = ""
-    if "TRICKIFY_WORK_DIR" in os.environ:
-        work_dir = os.getenv("TRICKIFY_WORK_DIR")
 
-    s_source = open(work_dir + "S_source.hh", 'w')
+    s_source = open("S_source.hh", 'w')
     for ext in def_header_ext:
         files = find_files_by_extension(loc, ext)
         for i in range(len(files)):
-            #s_source.write('#include "' + work_dir + "/../" + str(files[i]) + '"\n')
-            s_source.write('#include "' + work_dir + str(files[i]) + '"\n')
+            s_source.write('#include "' + str(files[i]) + '"\n')
 
 def build_obj_list():
     loc = ""

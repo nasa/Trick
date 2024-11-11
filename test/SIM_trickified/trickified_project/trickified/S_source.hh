@@ -1,1 +1,2 @@
-#include "/users/plherrin/trick/test/SIM_trickified/trickified_project/testing/testing.hh"
+#include "/home/patrick/trick/test/SIM_trickified/trickified_project/trickified/../include/Foo.hh"
+#include "/home/patrick/trick/test/SIM_trickified/trickified_project/trickified/../include/Bar.hh"

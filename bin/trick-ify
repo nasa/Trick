@@ -13,7 +13,8 @@ $name = "trickified" ;                                                    # Name
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
 $debug = 0 ;                                                              # Debug info flag
 #$work_dir = "./trickify/" ;                                               # Directory to dump work artifacts
-$work_dir = "./" ;                                                         # Directory to dump work artifacts
+$work_dir = "./" ;                                                        # Directory to dump work artifacts
+$trick_home = $my_path . ".." ;                                           # Trick directory to use for building
 
 $skip_arg = 0 ;
 foreach $argnum (0 .. $#ARGV) 
@@ -73,7 +74,8 @@ foreach $argnum (0 .. $#ARGV)
         }
         else
         {
-            print "Invalid build type {$val}, valid build types are {o, a, so}\n"
+            print "Invalid build type {$val}, valid build types are {o, a, so}\n" ;
+            exit 1 ;
         }
         $skip_arg = 1 ;
     }
@@ -86,6 +88,11 @@ foreach $argnum (0 .. $#ARGV)
         #$work_dir = $ARGV[$argnum + 1] . "/trickify/" ;
         $skip_arg = 1 ;
     }
+    elsif($arg eq "-th") # Set trick home directory
+    {
+        $trick_home = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
     else
     {
         print "Unrecognized argument: $arg\n" ;
@@ -94,7 +101,7 @@ foreach $argnum (0 .. $#ARGV)
 }
 
 #Set Environment Variables
-$ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir" ; #TODO: Test with multiple dirs passed in at once
+$ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir -I $trick_home" . "/include" ; #TODO: Test with multiple dirs passed in at once
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
 $ENV{'TRICKIFY_HEADER'} = "$header_dir" ;
@@ -146,9 +153,8 @@ print "Building object files\n" ;
 foreach $src (@src_files)
 {
     $file = $src ;
-    #TODO double check this works on different boxes
-    $file =~ s/$\Q.cpp\E// ; 
-    $file =~ s/$\Q.c\E// ; 
+    $file =~ s/\Q.cpp\E$// ; 
+    $file =~ s/\Q.c$\E$// ; 
     $cmd = "g++ -c $src -o $file.o" ;
     if($debug)
     {
@@ -186,7 +192,8 @@ if($debug) {
     full_build = $full_build
     name = $name
     build_type = $build_type
-    work_dir = $work_dir\n" ;
+    work_dir = $work_dir 
+    trick_home = $trick_home\n" ;
 }
 
 #TODO: Can't run trickify neutrally, must set source dir/output dir or conflicts will occur. Should fix or just document?

@@ -1,6 +1,6 @@
 #include "testing.hh"
 
-int main()
+int some_function()
 {
 	test_class test ;
 	std::cout << test.a << ", " << test.b << ", " << test.c << std::endl ;

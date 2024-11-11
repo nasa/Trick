@@ -17,3 +17,5 @@ class test_class
 	int b;
 	int c;
 };
+
+int some_function();
