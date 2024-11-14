@@ -7,7 +7,9 @@ $source_dir = "." ;                                                       # Base
 $header_dir = "." ;                                                       # Base path to build source from. Default to working directory
 $trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
 $trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
-$build_s_source = 0 ;                                                     # Whether to generate a S_source
+$build_s_source = 1 ;                                                     # Whether to generate a S_source
+$build_trickify_src_list = 1 ;                                            # Whether to generate a trickify_src_list
+$build_trickify_obj_list = 1 ;                                            # Whether to generate a trickify_obj_list
 $full_build = 1 ;                                                         # Whether to build only ICG/Swig artifacts or entire source
 $name = "trickified" ;                                                    # Name of the library
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
@@ -42,9 +44,17 @@ foreach $argnum (0 .. $#ARGV)
         $header_dir = $ARGV[$argnum + 1] ;
         $skip_arg = 1 ;
     }
-    elsif($arg eq "-R") # Rebuild S_source
+    elsif($arg eq "-ph") # Preserve S_source.hh
     {
-        $build_s_source = 1 ;
+        $build_s_source = 0 ;
+    }
+    elsif($arg eq "-ps") # Preserve trickify_src_list
+    {
+        $build_trickify_src_list = 0 ;
+    }
+    elsif($arg eq "-po") # Preserve trickify_obj_list
+    {
+        $build_trickify_obj_list = 0 ;
     }
     elsif($arg eq "-t") # Build trick artifacts only
     {
@@ -101,6 +111,10 @@ foreach $argnum (0 .. $#ARGV)
 }
 
 #Set Environment Variables
+if ( $full_build )
+{
+    $ENV{'FULL_TRICKIFY_BUILD'} = "1" ;
+}
 $ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir -I $trick_home" . "/include" ; #TODO: Test with multiple dirs passed in at once
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
@@ -121,21 +135,28 @@ elsif ( $build_type eq so )
 }
 
 #Build the S_source.hh
-$make_s_source = "python3 $my_path../share/trick/makefiles/build_trickify_S_source_hh.py" ;
-print(`$make_s_source`) ;
+if ($build_s_source)
+{
+    print "Building S_source.hh\n" ;
+    $make_s_source = "python3 $my_path../share/trick/makefiles/build_trickify_S_source_hh.py" ;
+    print(`$make_s_source`) ;
+}
 
 #Build source file list, only if trickifying the entire library
 #TODO: Move build artifacts into build? Maybe?
-print "Building trickify_src_list\n" ;
-if($full_build)
+if ($build_trickify_src_list)
 {
-    $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
-    print(`$make_src_list`) ;
-}
-else
-{
-    open (fh, ">", "$work_dir"."trickify_src_list") ; 
-    close (fh) ;
+    print "Building trickify_src_list\n" ;
+    if($full_build)
+    {
+        $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
+        print(`$make_src_list`) ;
+    }
+    else
+    {
+        open (fh, ">", "$work_dir"."trickify_src_list") ; 
+        close (fh) ;
+    }
 }
 
 #Build array of source files
@@ -149,18 +170,21 @@ while (my $line = <$fh>)
 close (fh) ;
 
 #Build object files from source file list
-print "Building object files\n" ;
-foreach $src (@src_files)
+if ($build_trickify_src_list)
 {
-    $file = $src ;
-    $file =~ s/\Q.cpp\E$// ; 
-    $file =~ s/\Q.c$\E$// ; 
-    $cmd = "g++ -c $src -o $file.o" ;
-    if($debug)
+    print "Building object files\n" ;
+    foreach $src (@src_files)
     {
-        print "Building obj file: $cmd\n" ;
+        $file = $src ;
+        $file =~ s/\Q.cpp\E$// ; 
+        $file =~ s/\Q.c$\E$// ; 
+        $cmd = "g++ -c $src -o $file.o" ;
+        if($debug)
+        {
+            print "Building obj file: $cmd\n" ;
+        }
+        print(`$cmd`) ;
     }
-    print(`$cmd`) ;
 }
 
 #Build object file list, only if trickifying the entire library

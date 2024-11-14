@@ -108,10 +108,14 @@ BUILD_DIR := $(dir $(MAKE_OUT))
 PY_LINK_LIST := $(BUILD_DIR)trickify_py_link_list
 IO_LINK_LIST := $(BUILD_DIR)trickify_io_link_list
 OBJ_LINK_LIST := trickify_obj_list
-LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST) @$(OBJ_LINK_LIST)
+ifdef FULL_TRICKIFY_BUILD
+	LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST) @$(OBJ_LINK_LIST)
+else
+	LINK_LISTS := @$(IO_LINK_LIST) @$(PY_LINK_LIST)
+endif
 ifneq ($(wildcard $(BUILD_DIR)),)
-    SWIG_OBJECTS := $(shell cat $(PY_LINK_LIST))
-    IO_OBJECTS   := $(shell cat $(IO_LINK_LIST))
+	SWIG_OBJECTS := $(shell cat $(PY_LINK_LIST))
+	IO_OBJECTS   := $(shell cat $(IO_LINK_LIST))
 endif
 
 TRICK_CFLAGS   += $(TRICKIFY_CXX_FLAGS)

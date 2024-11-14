@@ -10,3 +10,4 @@ clean:
 	@rm -rf $(MYPROJECT_TRICK)
 	@rm -rf trickify_obj_list
 	@rm -rf trickify_src_list
+	@rm -rf S_source.hh
