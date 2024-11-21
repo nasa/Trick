@@ -8,8 +8,6 @@ class Foo {
 
     int i;
 
-    void foo() {
-        std::cout << i++ << '\n';
-    }
+    void foo();
 
 };

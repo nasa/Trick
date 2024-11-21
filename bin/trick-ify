@@ -5,6 +5,7 @@ $my_path =~ s/trick-ify// ;
 
 $source_dir = "." ;                                                       # Base path to build header from. Default to working directory
 $header_dir = "." ;                                                       # Base path to build source from. Default to working directory
+$source_make_call = "" ;                                                  # Make call to build object files
 $trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
 $trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
 $build_s_source = 1 ;                                                     # Whether to generate a S_source
@@ -60,6 +61,11 @@ foreach $argnum (0 .. $#ARGV)
     {
         $full_build = 0 ;
     }
+    elsif($arg eq "-m") # Make call to build object files
+    {
+        $source_make_call = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
     elsif($arg eq "-tm") # Trickify make args
     {
         $trickify_make_args = $ARGV[$argnum + 1] ;
@@ -111,11 +117,17 @@ foreach $argnum (0 .. $#ARGV)
 }
 
 #Set Environment Variables
-if ( $full_build )
+if ($full_build)
 {
     $ENV{'FULL_TRICKIFY_BUILD'} = "1" ;
 }
-$ENV{'TRICKIFY_CXX_FLAGS'} = "-I $source_dir -I $trick_home" . "/include" ; #TODO: Test with multiple dirs passed in at once
+my @src_dirs = split ' ', $source_dir ;
+$source_dir_arg = "" ;
+foreach $dir (@src_dirs)
+{
+    $source_dir_arg .= "-I " . $dir . " ";
+}
+$ENV{'TRICKIFY_CXX_FLAGS'} = "$source_dir_args -I $trick_home" . "/include" ;
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
 $ENV{'TRICKIFY_HEADER'} = "$header_dir" ;
@@ -143,61 +155,57 @@ if ($build_s_source)
 }
 
 #Build source file list, only if trickifying the entire library
-#TODO: Move build artifacts into build? Maybe?
-if ($build_trickify_src_list)
+if ($build_trickify_src_list and $full_build)
 {
     print "Building trickify_src_list\n" ;
-    if($full_build)
-    {
-        $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
-        print(`$make_src_list`) ;
-    }
-    else
-    {
-        open (fh, ">", "$work_dir"."trickify_src_list") ; 
-        close (fh) ;
-    }
+    $make_src_list = "python3 $my_path../share/trick/makefiles/build_trickify_src_list.py" ;
+    print(`$make_src_list`) ;
 }
 
 #Build array of source files
-open ($fh, "$work_dir"."trickify_src_list") or die "Could not open trickify_src_list: $!" ;
-@src_files ;
-while (my $line = <$fh>) 
+if ($full_build)
 {
-    chomp $line ;
-    push @src_files, $line ;
+    open ($fh, "$work_dir"."trickify_src_list") or die "Could not open trickify_src_list: $!" ;
+    @src_files ;
+    while (my $line = <$fh>) 
+    {
+        chomp $line ;
+        push @src_files, $line ;
+    }
+    close (fh) ;
 }
-close (fh) ;
 
 #Build object files from source file list
-if ($build_trickify_src_list)
+if ($full_build)
 {
     print "Building object files\n" ;
-    foreach $src (@src_files)
+    if($source_make_call eq "")
     {
-        $file = $src ;
-        $file =~ s/\Q.cpp\E$// ; 
-        $file =~ s/\Q.c$\E$// ; 
-        $cmd = "g++ -c $src -o $file.o" ;
-        if($debug)
+        foreach $src (@src_files)
         {
-            print "Building obj file: $cmd\n" ;
+            $file = $src ;
+            $file =~ s/\Q.cpp\E$// ; 
+            $file =~ s/\Q.c$\E$// ; 
+            $cmd = "g++ -c $src -o $file.o" ;
+            if($debug)
+            {
+                print "Building obj file: $cmd\n" ;
+            }
+            print(`$cmd`) ;
         }
-        print(`$cmd`) ;
+    }
+    else
+    {
+        print(`$source_make_call`) ;
     }
 }
 
 #Build object file list, only if trickifying the entire library
-print "Building trickify_obj_list\n" ;
-if($full_build)
+if($build_trickify_obj_list and $full_build)
 {
+    print "Building trickify_obj_list\n" ;
     $make_obj_list = "python3 $my_path../share/trick/makefiles/build_trickify_obj_list.py" ;
     print(`$make_obj_list`) ;
-}
-else
-{
-    open (fh, ">", "$work_dir"."trickify_obj_list") ; 
-    close (fh) ;
 }
 
 #Build trickify call
@@ -209,7 +217,8 @@ if($debug) {
     print 
    "TRICKIFY BUILD INFO:
     header_dir = $header_dir
-    source_dir = $source_dir
+    source_dir = $source_dir_arg
+    source_make_call = $source_make_call
     trickify_make_args = $trickify_make_args
     trickify_make_path = $trickify_make_path
     build_s_source = $build_s_source
@@ -219,6 +228,3 @@ if($debug) {
     work_dir = $work_dir 
     trick_home = $trick_home\n" ;
 }
-
-#TODO: Can't run trickify neutrally, must set source dir/output dir or conflicts will occur. Should fix or just document?
-#TODO: Can we change build dir path?

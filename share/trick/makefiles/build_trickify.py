@@ -13,38 +13,39 @@ def build_S_source():
     loc = ""
     if "TRICKIFY_HEADER" in os.environ:
         loc = os.getenv("TRICKIFY_HEADER")
+        dirs = loc.split()
 
     s_source = open("S_source.hh", 'w')
-    for ext in def_header_ext:
-        files = find_files_by_extension(loc, ext)
-        for i in range(len(files)):
-            s_source.write('#include "' + str(files[i]) + '"\n')
+
+    for path in dirs:
+        for ext in def_header_ext:
+            files = find_files_by_extension(path, ext)
+            for i in range(len(files)):
+                s_source.write('#include "' + str(files[i]) + '"\n')
 
 def build_obj_list():
     loc = ""
     if "TRICKIFY_SOURCE" in os.environ:
         loc = os.getenv("TRICKIFY_SOURCE")
-    work_dir = ""
-    if "TRICKIFY_WORK_DIR" in os.environ:
-        work_dir = os.getenv("TRICKIFY_WORK_DIR")
+        dirs = loc.split()
 
-    files = find_files_by_extension(loc, "o")
-    s_source = open(work_dir + "trickify_obj_list", 'w')
-    for i in range(len(files)):
-        #s_source.write(work_dir + "/../" + str(files[i]) + '\n')
-        s_source.write(work_dir + str(files[i]) + '\n')
+    obj_list = open("trickify_obj_list", 'w')
+
+    for path in dirs:
+        files = find_files_by_extension(path, "o")
+        for i in range(len(files)):
+            obj_list.write(str(files[i]) + '\n')
 
 def build_src_list():
     loc = ""
     if "TRICKIFY_SOURCE" in os.environ:
         loc = os.getenv("TRICKIFY_SOURCE")
-    work_dir = ""
-    if "TRICKIFY_WORK_DIR" in os.environ:
-        work_dir = os.getenv("TRICKIFY_WORK_DIR")
+        dirs = loc.split()
 
-    for ext in def_src_ext:
-        files = find_files_by_extension(loc, ext)
-        s_source = open(work_dir + "trickify_src_list", 'w')
-        for i in range(len(files)):
-            #s_source.write(work_dir + "/../" + str(files[i]) + '\n')
-            s_source.write(work_dir + str(files[i]) + '\n')
+    src_list = open("trickify_src_list", 'w')
+
+    for path in dirs:
+        for ext in def_src_ext:
+            files = find_files_by_extension(path, ext)
+            for i in range(len(files)):
+                src_list.write(str(files[i]) + '\n')
