@@ -3,8 +3,8 @@
 $my_path = $0 ;
 $my_path =~ s/trick-ify// ;
 
-$source_dir = "." ;                                                       # Base path to build header from. Default to working directory
-$header_dir = "." ;                                                       # Base path to build source from. Default to working directory
+$source_dir = "" ;                                                        # Base path to build header from.
+$header_dir = "" ;                                                        # Base path to find header files.
 $source_make_call = "" ;                                                  # Make call to build object files
 $trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
 $trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
@@ -15,8 +15,6 @@ $full_build = 1 ;                                                         # Whet
 $name = "trickified" ;                                                    # Name of the library
 $build_type = "o" ;                                                       # Type of library to be built (o, a , so)
 $debug = 0 ;                                                              # Debug info flag
-#$work_dir = "./trickify/" ;                                               # Directory to dump work artifacts
-$work_dir = "./" ;                                                        # Directory to dump work artifacts
 $trick_home = $my_path . ".." ;                                           # Trick directory to use for building
 
 $skip_arg = 0 ;
@@ -99,11 +97,6 @@ foreach $argnum (0 .. $#ARGV)
     {
         $debug = 1 ;
     }
-    elsif($arg eq "-w") # Set working directory
-    {
-        #$work_dir = $ARGV[$argnum + 1] . "/trickify/" ;
-        $skip_arg = 1 ;
-    }
     elsif($arg eq "-th") # Set trick home directory
     {
         $trick_home = $ARGV[$argnum + 1] ;
@@ -114,6 +107,18 @@ foreach $argnum (0 .. $#ARGV)
         print "Unrecognized argument: $arg\n" ;
         exit 1 ;
     }
+}
+
+if($header_dir eq "")
+{
+    print "Must set a header directory\n" ;
+    exit 1 ;
+}
+
+if($source_dir eq "" and $full_build)
+{
+    print "Must set a source directory\n" ;
+    exit 1 ;
 }
 
 #Set Environment Variables
@@ -131,8 +136,6 @@ $ENV{'TRICKIFY_CXX_FLAGS'} = "$source_dir_args -I $trick_home" . "/include" ;
 $ENV{'TRICKIFY_OBJECT_NAME'} = "$name.$build_type" ;
 $ENV{'TRICKIFY_SOURCE'} = "$source_dir" ;
 $ENV{'TRICKIFY_HEADER'} = "$header_dir" ;
-$ENV{'TRICKIFY_WORK_DIR'} = "$work_dir" ;
-mkdir $work_dir ;
 if ( $build_type eq o )
 {
     $ENV{'TRICKIFY_BUILD_TYPE'}  = PLO ;
@@ -165,7 +168,7 @@ if ($build_trickify_src_list and $full_build)
 #Build array of source files
 if ($full_build)
 {
-    open ($fh, "$work_dir"."trickify_src_list") or die "Could not open trickify_src_list: $!" ;
+    open ($fh, "trickify_src_list") or die "Could not open trickify_src_list: $!" ;
     @src_files ;
     while (my $line = <$fh>) 
     {
@@ -186,7 +189,7 @@ if ($full_build)
             $file = $src ;
             $file =~ s/\Q.cpp\E$// ; 
             $file =~ s/\Q.c$\E$// ; 
-            $cmd = "g++ -c $src -o $file.o" ;
+            $cmd = "g++ -I $trick_home" . "/include -c $src -o $file.o" ;
             if($debug)
             {
                 print "Building obj file: $cmd\n" ;
@@ -225,6 +228,5 @@ if($debug) {
     full_build = $full_build
     name = $name
     build_type = $build_type
-    work_dir = $work_dir 
     trick_home = $trick_home\n" ;
 }
