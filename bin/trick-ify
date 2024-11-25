@@ -3,9 +3,10 @@
 $my_path = $0 ;
 $my_path =~ s/trick-ify// ;
 
-$source_dir = "" ;                                                        # Base path to build header from.
-$header_dir = "" ;                                                        # Base path to find header files.
+$source_dir = "" ;                                                        # Base path to build header from
+$header_dir = "" ;                                                        # Base path to find header files
 $source_make_call = "" ;                                                  # Make call to build object files
+$source_make_args = "" ;                                                  # Args to pass into default object make
 $trickify_make_args = "" ;                                                # Arguments to pass into the trickify make
 $trickify_make_path = "$my_path../share/trick/makefiles/trickify.mk" ;    # Path of the trickify make file
 $build_s_source = 1 ;                                                     # Whether to generate a S_source
@@ -62,6 +63,11 @@ foreach $argnum (0 .. $#ARGV)
     elsif($arg eq "-m") # Make call to build object files
     {
         $source_make_call = $ARGV[$argnum + 1] ;
+        $skip_arg = 1 ;
+    }
+    elsif($arg eq "-ma") # Default make call args to build object files
+    {
+        $source_make_args = $ARGV[$argnum + 1] ;
         $skip_arg = 1 ;
     }
     elsif($arg eq "-tm") # Trickify make args
@@ -189,7 +195,7 @@ if ($full_build)
             $file = $src ;
             $file =~ s/\Q.cpp\E$// ; 
             $file =~ s/\Q.c$\E$// ; 
-            $cmd = "g++ -I $trick_home" . "/include -c $src -o $file.o" ;
+            $cmd = "g++ $source_make_args -I $trick_home" . "/include -c $src -o $file.o" ;
             if($debug)
             {
                 print "Building obj file: $cmd\n" ;
