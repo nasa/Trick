@@ -158,6 +158,9 @@ namespace Trick {
 
             void set_clock(Trick::Clock & in_clock) ;
 
+
+            Trick::JobData  target_job_array; /* -- job array to access job info in realtime */
+
         private:
             std::vector<std::string> trick_jobs; // ** vector containing all trick job names
             std::vector<std::string> user_jobs;  // ** vector containing all user job names
