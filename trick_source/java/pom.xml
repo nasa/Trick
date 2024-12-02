@@ -282,6 +282,38 @@
               <finalName>MM</finalName>
             </configuration>
           </execution>
+          <execution>
+
+            <id>jobperf</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>trick.jobperf.JobPerf</mainClass>
+                </transformer>
+              </transformers>
+              <finalName>JPerf</finalName>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>rtperf</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>trick.rtperf.rtPerf</mainClass>
+                </transformer>
+              </transformers>
+              <finalName>rtPerf</finalName>
+            </configuration>
+          </execution>
 
         </executions>
       </plugin> 
