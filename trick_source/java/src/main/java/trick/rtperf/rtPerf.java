@@ -102,7 +102,8 @@ import org.jfree.data.general.DefaultPieDataset;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class rtPerf extends TrickApplication implements PropertyChangeListener {
+public class rtPerf extends TrickApplication implements PropertyChangeListener
+{
     
     //========================================
     //    Public data
@@ -205,47 +206,70 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * starts the communication server for sim health status messages.
      */
     @Action
-    public void connect() {
+    public void connect()
+    {
+        System.err.println("Host is " + host + " and port is " + port);
         // get host and port for selected sim  	
-        if (runningSimList != null && runningSimList.getSelectedItem() != null) {
-        	String selectedStr = runningSimList.getSelectedItem().toString();
-        	// remove the run info if it is shown
-        	int leftPre = selectedStr.indexOf("(");
-        	if (leftPre != -1) {
-        		selectedStr = selectedStr.substring(0, leftPre);
-        	}
-        	// can be separated either by : or whitespace
-        	String[] elements = selectedStr.split(":");
-        	
-        	if (elements == null || elements.length < 2) {
-        		elements = selectedStr.split("\\s+");
-        	}
-        	
-        	if (elements == null || elements.length < 2) {       
-				String errMsg = "Can't connect! Please provide valid host name and port number separated by : or whitespace!";		
-                printErrorMessage(errMsg);
-        		return;
-        	}
-        	host = elements[0].trim();
-        	try {
-        	port = Integer.parseInt(elements[1].trim());
-        	} catch (NumberFormatException nfe) {
-				String errMsg = elements[1] + " is not a valid port number!";
-        		printErrorMessage(errMsg);
-        		return;
-        	}
-        }
-        
+//        if (runningSimList != null && runningSimList.getSelectedItem() != null)
+//        {
+//            System.err.println("Line 1\n");
+//        	String selectedStr = runningSimList.getSelectedItem().toString();
+//        	// remove the run info if it is shown
+//        	int leftPre = selectedStr.indexOf("(");
+//        	if (leftPre != -1)
+//            {
+//                System.err.println("Line 2\n");
+//        		selectedStr = selectedStr.substring(0, leftPre);
+//        	}
+//        	// can be separated either by : or whitespace
+//        	String[] elements = selectedStr.split(":");
+//        	
+//        	if (elements == null || elements.length < 2)
+//            {
+//                System.err.println("Line 3\n");
+//        		elements = selectedStr.split("\\s+");
+//        	}
+//        	
+//        	if (elements == null || elements.length < 2)
+//            { 
+//                System.err.println("Line 4\n");
+//				String errMsg = "Can't connect! Please provide valid host name and port number separated by : or whitespace!";		
+//                printErrorMessage(errMsg);
+//        		return;
+//        	}
+//
+//            System.err.println("Line 5\n");
+//        	host = elements[0].trim();
+//        	
+//            try
+//            {
+//        	    port = Integer.parseInt(elements[1].trim());
+//        	}
+//            catch (NumberFormatException nfe)
+//            {
+//                System.err.println("Line 6\n");
+//				String errMsg = elements[1] + " is not a valid port number!";
+//        		printErrorMessage(errMsg);
+//        		return;
+//        	}
+//        }
+
         getInitializationPacket();
         
-        if (commandSimcom == null) {
+        if (commandSimcom == null)
+        {
+            System.err.println("Line 7\n");
 			String errMsg = "Sorry, can't connect. Please make sure the availability of both server and port!";
 			printErrorMessage(errMsg);
             return;
-        } else {            
+        }
+        else
+        {
+            System.err.println("Line 8\n");
             Object[] keys = actionMap.allKeys();
             // If there is a server connection established, enable all actions.
-            for (int i = 0; i < keys.length; i++) {
+            for (int i = 0; i < keys.length; i++)
+            {
                 String theKey = (String)keys[i];
                 getAction(theKey).setEnabled(true);
             }
@@ -261,109 +285,131 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     /**
      * Gets the initialization packet from Variable Server if it is up.
      */
-    public void getInitializationPacket() {    	
+    public void getInitializationPacket()
+    {    	
         String simRunDir = null;
         String[] results = null;      
-        try {
+        try
+        {
 			String errMsg = "Error: RealTimePerformanceApplication:getInitializationPacket()";
-            try {
-            	if (host != null && port != -1) {
+            try
+            {
+            	if (host != null && port != -1)
+                {
             		commandSimcom = new VariableServerConnection(host, port, varServerTimeout);
-            	} else {
+            	}
+                else
+                {
             		commandSimcom = null;
             	}
-            } catch (UnknownHostException host_exception) {
+            }
+            catch (UnknownHostException host_exception)
+            {
                 /** The IP address of the host could not be determined. */
                 errMsg += "\n Unknown host \""+host+"\"";
                 errMsg += "\n Please use a valid host name (e.g. localhost)";
                 errOnInitConnect = true;   
 		printErrorMessage(errMsg); 
-            } catch (SocketTimeoutException ste) {
+            }
+            catch (SocketTimeoutException ste)
+            {
                 /** Connection attempt timed out. */
                 errMsg += "\n Connection Timeout \""+host+"\"";
                 errMsg += "\n Please try a different host name (e.g. localhost)";
                 errOnInitConnect = true;
                 printErrorMessage(errMsg);           
-            } catch (IOException ioe) {
+            }
+            catch (IOException ioe)
+            {
                 /** Port number is unavailable, or there is no connection, etc. */
                 errMsg += "\n Invalid TCP/IP port number \""+port+"\"";
                 errMsg += "\n Please check the server and enter a proper port number!";
                 errMsg += "\n IOException ..." + ioe;
                 errMsg += "\n If there is no connection, please make sure SIM is up running properly!";
                 errOnInitConnect = true;
-		printErrorMessage(errMsg);
+		        printErrorMessage(errMsg);
             } 
             
-            if (commandSimcom == null) {
+            if (commandSimcom == null)
+            {
             	(new RetrieveHostPortTask()).execute();
             	return;
             }
                        
             actionController.setVariableServerConnection(commandSimcom);
 
-            simState = new SimState();
+//            simState = new SimState();
 
             // Sends commands to the variable server to add several variables for retrieving simulation details.
             commandSimcom.put("trick.var_set_client_tag(\"rtPerf\")\n");
-            commandSimcom.put("trick.var_add(\"trick_real_time.rt_sync.rt_monitor\")\n"); // Need to change these simCom commands to somethign
-        
-
-            commandSimcom.put("trick.var_send() \n" +
-                              "trick.var_clear() \n");
+            commandSimcom.put("trick.var_add(\"trick_frame_log.frame_log.target_job_array.frame_time_seconds\")\n"); 
+            commandSimcom.put("trick.var_send()\n");
 
             results = commandSimcom.get().split("\t");
-            if (results != null && results.length > 0) {
-                execTimeTicValue = Double.parseDouble(results[3]);
-                simStartTime = Double.parseDouble(results[1]);
-                long terminateTime = Long.parseLong(results[2]);                
-                if (terminateTime >= Long.MAX_VALUE - 1) {
-                	enableProgressBar = false;
-                }
-                
-                // need to minus the sim start time as it could be a number other than 0.0
-                simStopTime = terminateTime/execTimeTicValue - simStartTime;
-            }
-
-
-            simRunDirField = new JTextField[slaveCount+1];
-            overrunField = new JTextField[slaveCount+1];
-
-            for (int i = 0; i < simRunDirField.length; i++) {
-                if (i==0) {
-                    simRunDirField[i] = new JTextField(results[4] + java.io.File.separator + results[5] + " " + results[6]);
-                } else {
-                    simRunDirField[i] = new JTextField();
-                }
-                overrunField[i] = new JTextField("    ");
-                overrunField[i].setPreferredSize( new Dimension(60, overrunField[i].getHeight()) );
-            }
-            simRunDir = results[7];
-            simRunDir = results[4] + java.io.File.separator + simRunDir;
-
-            simState.setRunPath(simRunDir);
-
-            
-            for (int i = 1; i < simRunDirField.length; i++) {
-            	simRunDirField[i].setText("Slave " + i);
-            }
-        
-
-            if ( message_present == 1 ) {
-                commandSimcom.put("trick.var_add(\"trick_message.mdevice.port\") \n" +
-                                  "trick.var_send() \n" +
-                                  "trick.var_clear() \n");
-                results = commandSimcom.get().split("\t");
-                message_port = Integer.parseInt(results[1]) ;
-
-            }
+            System.out.println(results[0] + " and " + results[1]);
+//            if (results != null && results.length > 0)
+//            {
+//                execTimeTicValue = Double.parseDouble(results[3]);
+//                simStartTime = Double.parseDouble(results[1]);
+//                long terminateTime = Long.parseLong(results[2]);                
+//                if (terminateTime >= Long.MAX_VALUE - 1)
+//                {
+//                	enableProgressBar = false;
+//                }
+//                
+//                // need to minus the sim start time as it could be a number other than 0.0
+//                simStopTime = terminateTime/execTimeTicValue - simStartTime;
+//            }
+//
+//
+//            simRunDirField = new JTextField[slaveCount+1];
+//            overrunField = new JTextField[slaveCount+1];
+//
+//            for (int i = 0; i < simRunDirField.length; i++)
+//            {
+//                if (i==0)
+//                {
+//                    simRunDirField[i] = new JTextField(results[4] + java.io.File.separator + results[5] + " " + results[6]);
+//                }
+//                else
+//                {
+//                    simRunDirField[i] = new JTextField();
+//                }
+//                overrunField[i] = new JTextField("    ");
+//                overrunField[i].setPreferredSize( new Dimension(60, overrunField[i].getHeight()) );
+//            }
+//            simRunDir = results[7];
+//            simRunDir = results[4] + java.io.File.separator + simRunDir;
+//
+//            simState.setRunPath(simRunDir);
+//
+//            
+//            for (int i = 1; i < simRunDirField.length; i++)
+//            {
+//            	simRunDirField[i].setText("Slave " + i);
+//            }
+//        
+//
+//            if ( message_present == 1 )
+//            {
+//                commandSimcom.put("trick.var_add(\"trick_message.mdevice.port\") \n" +
+//                                  "trick.var_send() \n" +
+//                                  "trick.var_clear() \n");
+//                results = commandSimcom.get().split("\t");
+//                message_port = Integer.parseInt(results[1]) ;
+//
+//            }
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException nfe)
+        {
 
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
 
         }
-        catch (NullPointerException npe) {
+        catch (NullPointerException npe)
+        {
             npe.printStackTrace();
         }
     }
@@ -375,8 +421,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * Invoked when SimStatusMonitor task's progress property changes.
      * This is required by {@link PropertyChangeListener}.
      */
-    public void propertyChange(PropertyChangeEvent evt) {
-        if ("progress" == evt.getPropertyName()) {
+    public void propertyChange(PropertyChangeEvent evt)
+    {
+        if ("progress" == evt.getPropertyName())
+        {
           int progress = (Integer) evt.getNewValue();
           progressBar.setValue(progress);
         }
@@ -387,21 +435,25 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * Cleans up the socket communication before exiting the application.
      */
     @Override
-    protected void shutdown() {
+    protected void shutdown()
+    {
         super.shutdown();
-        try {
-            if (commandSimcom != null) {
+        try
+        {
+            if (commandSimcom != null)
+            {
                 commandSimcom.close();
             }
-            if (statusSimcom != null) {
+            if (statusSimcom != null)
+            {
                 statusSimcom.close();
             }
-            if (healthStatusSocketChannel != null) {
+            if (healthStatusSocketChannel != null)
+            {
             healthStatusSocketChannel.close() ;
             }
         }
-        catch (java.io.IOException ioe) {
-        }
+        catch (java.io.IOException ioe) { }
     }
 
     /**
@@ -410,7 +462,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * @see #startup
      */
     @Override
-    protected void initialize(String[] args) {
+    protected void initialize(String[] args)
+    {
         super.initialize(args);
         actionController = new SimControlActionController();
 
@@ -425,7 +478,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * @see #startup
      */
     @Override
-    protected void ready() {
+    protected void ready()
+    {
     	super.ready();
 
     	//logoImagePanel.start();
@@ -438,13 +492,16 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     	// the startup() is done. That's why ready() never gets called even though startup()
     	// is done. So modified the code to start the logo animation player after startup()
     	// and moved the following code back to where it should be.
-        if (commandSimcom == null) {
+        if (commandSimcom == null)
+        {
         	//logoImagePanel.pause();
             Object[] keys = actionMap.allKeys();
             // If there is no server connection, disable all actions except connect and quit.
-            for (int i = 0; i < keys.length; i++) {
+            for (int i = 0; i < keys.length; i++)
+            {
                 String theKey = (String)keys[i];
-                if (!(theKey.equals("connect") || theKey.equals("quit"))) {
+                if (!(theKey.equals("connect") || theKey.equals("quit")))
+                {
                     getAction(theKey).setEnabled(false);
                 }
             }
@@ -453,7 +510,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
             return;
         }
         
-        if (isRestartOptionOn) {
+        if (isRestartOptionOn)
+        {
         	printSendHS();
         }
         
@@ -469,7 +527,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * @see #ready
      */
     @Override
-    protected void startup() {
+    protected void startup()
+    {
         super.startup();
 
         // dont't want to the confirmation dialog for sim control panel
@@ -481,7 +540,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
         view.setToolBar(createToolBar());
         view.setStatusBar(createStatusBar());
 
-        if(errOnInitConnect && (runningSimList != null) ) {
+        if(errOnInitConnect && (runningSimList != null) )
+        {
             runningSimList.addItem("localhost : " + port);  
         } 
 
@@ -495,8 +555,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
 	 * Prints an error message to the status message pane. In the event there is an error with it, a JOptionPane will pop up.
 	 * @param err
 	 */
-	protected void printErrorMessage(String err) {
-		try {
+	protected void printErrorMessage(String err)
+    {
+		try
+        {
 			// Get the document attached to the Status Message Pane 
 			Document doc = statusMsgPane.getDocument();
 
@@ -509,27 +571,36 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
 
 			// If Lite mode is engaged, or the window is small enough 
 			// to obscure the message pane, create a popup for the error as well.
-			if (liteButton.isSelected() || getMainFrame().getSize().height <= LITE_SIZE.height + 50) {
+			if (liteButton.isSelected() || getMainFrame().getSize().height <= LITE_SIZE.height + 50)
+            {
 				JOptionPane.showMessageDialog(getMainFrame(), err, "Sim Control Panel Error", JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (BadLocationException ble) {
+		}
+        catch (BadLocationException ble)
+        {
 			JOptionPane.showMessageDialog(getMainFrame(), 
 										  "Status Message Pane had an issue when printing: " + err, 
 										  "Status Message Pane Error", 
 										  JOptionPane.ERROR_MESSAGE);
-		} catch (NullPointerException npe) {
+		}
+        catch (NullPointerException npe)
+        {
 			System.err.println( "Sim Control Error at Initialization: \n" + err);
 		}
+        return;
 	}
 
 
     /**
      * Helper method to print the send_hs file to the statusMsgPane.
      */
-    private void printSendHS() {
-    	if (simState != null) {
+    private void printSendHS()
+    {
+    	if (simState != null)
+        {
     		File sendHS = new File(simState.getRunPath() + java.io.File.separator + "send_hs");
-    		if (!sendHS.exists()) {
+    		if (!sendHS.exists())
+            {
     			return;
     		}
     		
@@ -542,25 +613,38 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
             Style defaultStyle = sc.addStyle("Default", null);
             
             BufferedReader reader = null;
-    		try {   			
+    		try
+            {   			
     			reader = new BufferedReader(new FileReader(sendHS));
-    			while ((lineText = reader.readLine()) != null) {
+    			while ((lineText = reader.readLine()) != null)
+                {
     				doc.insertString(doc.getLength(), lineText+System.getProperty("line.separator"), defaultStyle);
     			}   				
-    		} catch (FileNotFoundException fnfe) {
+    		}
+            catch (FileNotFoundException fnfe)
+            {
     			// do nothing
-    		} catch (IOException ioe) {
+    		}
+            catch (IOException ioe)
+            {
     			// do nothing
-    		} catch (BadLocationException ble) {
+    		}
+            catch (BadLocationException ble)
+            {
     			// do nothing
     		}
     		
-    		finally {
-    			try {
-    				if (reader != null) {
+    		finally
+            {
+    			try
+                {
+    				if (reader != null)
+                    {
     					reader.close();
     				}
-    			} catch (IOException ioe) {
+    			}
+                catch (IOException ioe)
+                {
     				
     			}
     		}
@@ -570,8 +654,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     /**
      * Adds all the variables to variable server for getting SIM states.
      */
-    private void scheduleGetSimState() {
-        try {
+    private void scheduleGetSimState()
+    {
+        try
+        {
             statusSimcom = new VariableServerConnection(host, port);
             statusSimcom.put("trick.var_set_client_tag(\"SimControl2\")\n");
 
@@ -583,10 +669,12 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
                           "trick.var_add(\"trick_real_time.rt_sync.actual_run_ratio\") \n" +
                           "trick.var_add(\"trick_real_time.rt_sync.active\") \n";
 
-            if ( debug_present != 0 ) {
+            if ( debug_present != 0 )
+            {
                 status_vars += "trick.var_add(\"trick_instruments.debug_pause.debug_pause_flag\")\n" ;
             }
-            if ( overrun_present != 0 ) {
+            if ( overrun_present != 0 )
+            {
                 status_vars += "trick.var_add(\"trick_real_time.rt_sync.total_overrun\")\n" ;
             }
             statusSimcom.put(status_vars) ;
@@ -596,10 +684,12 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
             getAction("connect").setEnabled(false);         
             //runningSimList.setEnabled(false);
         }
-        catch (NumberFormatException nfe) {
+        catch (NumberFormatException nfe)
+        {
 
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
             statusLabel.setText("Not Ready");
             statusLabel.setEnabled(false);
             statusSimcom = null;
@@ -612,21 +702,26 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     //========================================
     //    Inner Classes
     //========================================
-    private class RetrieveHostPortTask extends SwingWorker<Void, Void> {
+    private class RetrieveHostPortTask extends SwingWorker<Void, Void>
+    {
     	
     	private MulticastSocket multicastSocket = null;
     	
     	@Override
-        public Void doInBackground() {
-    		while (getAction("connect").isEnabled()) {
+        public Void doInBackground()
+        {
+    		while (getAction("connect").isEnabled())
+            {
     			retrieveHostPort();
     		}
             return null;
         }
     	
     	@Override
-    	public void done() {
-    		if (multicastSocket != null) {
+    	public void done()
+        {
+    		if (multicastSocket != null)
+            {
                 multicastSocket.close();
             }
     	}
@@ -637,8 +732,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     	 */
     	//for Java 7, the type of elements of JComboBox needs to be specified to avoid the warning and it's not supported in Java 6
     	@SuppressWarnings("unchecked")
-    	private void retrieveHostPort() {
-    	    try {
+    	private void retrieveHostPort()
+        {
+    	    try
+            {
     	    	multicastSocket = new MulticastSocket(9265);
     	        InetAddress group = InetAddress.getByName("239.3.14.15");
     	        multicastSocket.joinGroup(group);
@@ -652,20 +749,26 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     	        // Reset the packet length or future messages will be clipped.
     	        packet.setLength(buffer.length);
     	        // version Trick 10 or later	           	       
-    	        if (info[7] != null) {	    	        
-	    	        if (runningSimList != null) {
+    	        if (info[7] != null)
+                {	    	        
+	    	        if (runningSimList != null)
+                    {
 	    	        	String hostPort = info[0] + " : " + info[1] + " (" + info[5] + " " + info[6] + ")";
-	    	        	if (!UIUtils.comboBoxContains((DefaultComboBoxModel)runningSimList.getModel(), hostPort)) {
+	    	        	if (!UIUtils.comboBoxContains((DefaultComboBoxModel)runningSimList.getModel(), hostPort))
+                        {
 	    	        		// only show localhost's resource
 	    	        		// TODO: may want to have whole network resource
-	    	        		if (InetAddress.getLocalHost().equals(InetAddress.getByName(info[0]))) {
+	    	        		if (InetAddress.getLocalHost().equals(InetAddress.getByName(info[0])))
+                            {
 	    	        			runningSimList.addItem(hostPort);
 	    	        			runningSimList.setSelectedItem(hostPort);	    	        			
 	    	        		}
 	    	        	}	    	        	
 	    	        }
     	        }
-    	    } catch (IOException ioe) {
+    	    }
+            catch (IOException ioe)
+            {
     	    	// do nothing
     	    }    		
     	}   	
@@ -678,8 +781,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * @param actsStr    All actions that need setting state. Each action is separated by ",".
      * @param flag        The state is set to for the actions.
      */
-    private void setActionsEnabled(String actsStr, boolean flag) {
-        if (actsStr != null) {
+    private void setActionsEnabled(String actsStr, boolean flag)
+    {
+        if (actsStr != null)
+        {
             String[] acts = actsStr.split(",");
             setActionsEnabled(acts, flag);
         }
@@ -693,10 +798,14 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * @param acts        The array of all the actions.
      * @param flag        The state is set to for the actions.
      */
-    private void setActionsEnabled(String[] acts, boolean flag) {
-        if (acts != null) {
-            for (int i = 0; i < acts.length; i++) {
-                if (getAction(acts[i].trim()) != null) {
+    private void setActionsEnabled(String[] acts, boolean flag)
+    {
+        if (acts != null)
+        {
+            for (int i = 0; i < acts.length; i++)
+            {
+                if (getAction(acts[i].trim()) != null)
+                {
                     getAction(acts[i].trim()).setEnabled(flag);
                 }
             }
@@ -707,7 +816,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * Creates the main panel for this application.
      */
     @Override
-    protected JComponent createMainPanel() {
+    protected JComponent createMainPanel()
+    {
         DefaultPieDataset dataset = new DefaultPieDataset();
         dataset.setValue("Completed", 60);
         dataset.setValue("In Progress", 30);
@@ -729,8 +839,10 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
     /**
      * Inner class for the task of monitoring health status.
      */
-    private class MonitorHealthStatusTask extends Task<Void, Void> {
-        public MonitorHealthStatusTask(Application app) {
+    private class MonitorHealthStatusTask extends Task<Void, Void>
+    {
+        public MonitorHealthStatusTask(Application app)
+        {
             super(app);
         }
         
@@ -738,17 +850,23 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
          * Main task. Executed in background thread.
          */
         @Override
-        public Void doInBackground() { 
+        public Void doInBackground()
+        { 
             return null;
         }
 
         @Override
-        protected void finished() {
-            try {
-                if (healthStatusSocketChannel != null) {
+        protected void finished()
+        {
+            try
+            {
+                if (healthStatusSocketChannel != null)
+                {
                     healthStatusSocketChannel.close() ;
                 }
-            } catch (java.io.IOException ioe) {
+            }
+            catch (java.io.IOException ioe)
+            {
 
             }
         }
@@ -758,26 +876,32 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
      * Inner class for the task of monitoring the status of the currently running simulation.
      *
      */
-    private class MonitorSimStatusTask extends Task<Void, Void> {
+    private class MonitorSimStatusTask extends Task<Void, Void>
+    {
         /**
          * Constructor with specified {@link Application}.
          *
          * @param app    The specified {@link Application} that needs Sim status monitoring.
          */
-        public MonitorSimStatusTask(Application app) {
+        public MonitorSimStatusTask(Application app)
+        {
             super(app);
         }
 
         @Override
-        protected Void doInBackground() {
+        protected Void doInBackground()
+        {
             String results[] = null;
             int ii ;
 
-            while (true) {
+            while (true)
+            {
 
-                try {
+                try
+                {
 
-                    if (statusSimcom != null) {
+                    if (statusSimcom != null)
+                    {
 
                         String resultsStr = statusSimcom.get();
                         if (resultsStr == null) 
@@ -787,9 +911,11 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
                         ii = 1 ;
 
                         // whenever there is data in statusSimcom socket, do something
-                        if (results != null && results[0].equals("0")) {
+                        if (results != null && results[0].equals("0"))
+                        {
                             // "trick_sys.sched.time_tics"
-                            if (results[ii] != null && results[ii] != "") {
+                            if (results[ii] != null && results[ii] != "")
+                            {
                                 double time_tics = Double.parseDouble(results[ii]);                                
                                 double execOutTime = time_tics/execTimeTicValue;
                                 simState.setExecOutTime(execOutTime);
@@ -797,10 +923,12 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
                             }
 
                             // "trick_sys.sched.mode"
-                            if (results.length > ii && results[ii] != null && results[ii] != "") {
+                            if (results.length > ii && results[ii] != null && results[ii] != "")
+                            {
                                 modeIndex = Integer.parseInt(results[ii]);
                                 simState.setMode(modeIndex);
-                                switch (modeIndex) {
+                                switch (modeIndex)
+                                {
                                     case SimState.INITIALIZATION_MODE:
                                     	//currentSimStatusDesc = "Ready to Run";
                                         //setSimStateDesc(currentSimStatusDesc);
@@ -820,37 +948,46 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
                             }
 
                             // "real_time.rt_sync.actual_run_ratio"
-                            if (results.length > ii && results[ii] != null && results[ii] != "") {
+                            if (results.length > ii && results[ii] != null && results[ii] != "")
+                            {
                                 simState.setSimRealtimeRatio(Float.parseFloat(results[ii]));
                                 ii++ ;
                             }
 
                             // "real_time.rt_sync.active"
-                            if (results.length > ii && results[ii] != null && results[ii] != "") {
+                            if (results.length > ii && results[ii] != null && results[ii] != "")
+                            {
                                 simState.setRealtimeActive(Integer.parseInt(results[ii]));
                                 ii++;
                             }
 
                             // "instruments.debug_pause.debug_pause_flag"
-                            if (debug_present == 1 && results.length > ii && results[ii] != null && results[ii] != "") {
+                            if (debug_present == 1 && results.length > ii && results[ii] != null && results[ii] != "")
+                            {
                                 debug_flag = Integer.parseInt(results[ii]);
-                                if ( debug_flag == 1 ) {
+                                if ( debug_flag == 1 )
+                                {
                                     simState.setMode(SimState.DEBUG_STEPPING_MODE);
                                 }
                                 ii++ ;
                             }
 
                             // "real_time.rt_sync.total_overrun"
-                            if (overrun_present == 1 && results.length > ii && results[ii] != null && results[ii] != "") {
+                            if (overrun_present == 1 && results.length > ii && results[ii] != null && results[ii] != "")
+                            {
                                 simState.setOverruns(Integer.parseInt(results[ii]));
                                 ii++ ;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             // break the while (true) loop
                             break;
                         }
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     break;
                 }
             } // end while (true)
@@ -858,29 +995,37 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
         }
 
         @Override
-        protected void succeeded(Void ignored) {
+        protected void succeeded(Void ignored)
+        {
             simState.setMode(SimState.COMPLETE_MODE);
         }
 
         @Override
-        protected void finished() {
-            try {
-                if (commandSimcom != null) {
+        protected void finished()
+        {
+            try
+            {
+                if (commandSimcom != null)
+                {
                     commandSimcom.close();
                 }
-                if (statusSimcom != null) {
+                if (statusSimcom != null)
+                {
                     statusSimcom.close();
                 }
-                if (isAutoExitOn) {
+                if (isAutoExitOn)
+                {
                 	exit();
                 }
             }
-            catch (IOException e) {
+            catch (IOException e)
+            {
             }
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Application.launch(rtPerf.class, args);
 
         // Arrays.toString(args) converts such as localhost 7000 -r to [localhost, 7000, -r],
@@ -892,7 +1037,8 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
         Matcher matcher = restartOptionPattern.matcher(commandLine);
 
         // if -r | -restart is used, set the flag and then remove it from the command line 
-        if (matcher.find()) {
+        if (matcher.find())
+        {
             isRestartOptionOn = true;
             commandLine = matcher.replaceAll("");
         }
@@ -901,28 +1047,36 @@ public class rtPerf extends TrickApplication implements PropertyChangeListener {
         Pattern autoExitOptionPattern = Pattern.compile("(\\-auto\\_exit)(,|$)");
         Matcher autoExitMatcher = autoExitOptionPattern.matcher(commandLine);
 
-        if (autoExitMatcher.find()) {
+        if (autoExitMatcher.find())
+        {
             isAutoExitOn = true;
             commandLine = autoExitMatcher.replaceAll("");            
         } 
         
         Scanner commandScanner = new Scanner(commandLine).useDelimiter(",");
         // now need to figure out host and port, if not specified, available host&port will be listed
-        if (commandScanner.hasNextInt()) {
+        if (commandScanner.hasNextInt())
+        {
         	port = commandScanner.nextInt();
-        	if (commandScanner.hasNext()) {
+        	if (commandScanner.hasNext())
+            {
         		host = commandScanner.next();
         	}
-        } else {
-        	if (commandScanner.hasNext()) {
+        }
+        else
+        {
+        	if (commandScanner.hasNext())
+            {
         		host = commandScanner.next();
-        		if (commandScanner.hasNextInt()) {
+        		if (commandScanner.hasNextInt())
+                {
         			port = commandScanner.nextInt();
         		}
         	}
         }      
         
-        if (commandScanner != null) {
+        if (commandScanner != null)
+        {
         	commandScanner.close();
         }
     }
