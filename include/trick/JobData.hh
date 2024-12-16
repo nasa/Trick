@@ -92,7 +92,7 @@ namespace Trick {
             long long frame_time ;          /**< trick_io(**) */
 
             /** Cumulative time in seconds used for job in frame (rt_stop_time - rt_start_time) / time_tic_value */
-            double frame_time_seconds;       /**< trick_io(**) trick_units(s) */
+            double frame_time_seconds;       /**< trick_io(*io) trick_units(s) */
 
             /** Sim_object_id.id (for job identification in timeline logging) */
             double frame_id;                /**< trick_io(**) */

@@ -361,6 +361,13 @@ int Trick::FrameLog::frame_clock_stop(Trick::JobData * curr_job) {
     Trick::JobData * target_job = (Trick::JobData *)curr_job->sup_class_data ;
     int thread, mode;
     double time_scale;
+
+    bool isMonitor = false;
+
+    std::string monitor_job_name = "trick_real_time.rt_sync.rt_monitor";
+
+    if ( monitor_job_name.compare(target_job->name) == 0 )
+        isMonitor = true;
     
     /** @par Detailed Design: */
     if ( target_job != NULL ) {
@@ -370,6 +377,10 @@ int Trick::FrameLog::frame_clock_stop(Trick::JobData * curr_job) {
             time_scale = 1.0 / target_job->time_tic_value;
             target_job->frame_time += (target_job->rt_stop_time - target_job->rt_start_time);
             target_job->frame_time_seconds = target_job->frame_time * time_scale;
+            if (isMonitor)
+            {
+                target_job_array = *target_job;
+            }
             thread = target_job->thread;
 
             mode = exec_get_mode();
