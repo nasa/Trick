@@ -1,7 +1,7 @@
 
 include ${TRICK_HOME}/share/trick/makefiles/Makefile.common
 
-CC  = cc
+CC  = gcc
 CPP = c++
 
 ifndef TRICK_HOST_CPU

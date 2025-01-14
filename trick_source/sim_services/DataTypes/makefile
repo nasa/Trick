@@ -1,6 +1,6 @@
 
 RM = rm -rf
-CC = cc
+CC = gcc
 CPP = c++
 
 

@@ -1,7 +1,7 @@
 
 include ${TRICK_HOME}/share/trick/makefiles/Makefile.common
 
-CC        = cc
+CC        = gcc
 
 OBJ_DIR    = object_${TRICK_HOST_CPU}
 LIBDIR    = ../lib_${TRICK_HOST_CPU}

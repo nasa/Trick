@@ -2,7 +2,7 @@
 include ${TRICK_HOME}/share/trick/makefiles/Makefile.common
 
 RM = rm -rf
-CC = cc
+CC = gcc
 CPP = c++
 
 DPX_DIR = ..

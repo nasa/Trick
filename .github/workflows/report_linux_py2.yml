@@ -20,7 +20,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: dorny/test-reporter@v1
+    - uses: dorny/test-reporter@v4
       with:
         artifact: Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}} # artifact name
         name: Results_Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}} # Name of the check run which will be created
