@@ -231,57 +231,15 @@ public class FontChooser extends JDialog implements ActionListener, ListSelectio
     //for Java 7, the type of elements of JComboBox needs to be specified to avoid the warning and it's not supported in Java 6
     @SuppressWarnings("unchecked")
 	private void buildGUI(Frame parent) {
-		JPanel selectionPanel = new JPanel();
-		fontList = new JList(fonts);
-		fontList.getSelectionModel().addListSelectionListener(this);
-		sizeList = new JList(sizes);
-		sizeList.getSelectionModel().addListSelectionListener(this);
-		JPanel fontPanel = getListPanel("Font", fontList);
-		selectionPanel.add(fontPanel);
-		JPanel sizePanel = getListPanel("Size", sizeList);
-		selectionPanel.add(sizePanel);
-		JPanel stylePanel = new JPanel();
-		stylePanel.setLayout(new BoxLayout(stylePanel, BoxLayout.Y_AXIS));
-		JLabel styleLabel = new JLabel("Style");
-		boldBox = new JCheckBox(BOLD_OPTION);
-		boldBox.addActionListener(this);
-		italicBox = new JCheckBox(ITALIC_OPTION);
-		italicBox.addActionListener(this);
-		stylePanel.add(styleLabel);
-		stylePanel.add(Box.createRigidArea(new Dimension(0,5)));
-		stylePanel.add(boldBox);
-		stylePanel.add(italicBox);
-		stylePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		stylePanel.setPreferredSize(new Dimension(stylePanel.getPreferredSize().width, fontPanel.getPreferredSize().height));
-		selectionPanel.add(stylePanel);
-		selectionPanel.setMinimumSize(selectionPanel.getPreferredSize());
-		
-		JPanel samplePanel = new JPanel(new BorderLayout());
-		samplePanel.setBorder(new TitledBorder(new EtchedBorder(), "Preview"));
-		
-		sampleLabel = new JLabel("", JLabel.CENTER);
-		sampleLabel.setBackground(Color.white);
-		sampleLabel.setBorder(new LineBorder(Color.black));
-		sampleLabel.setOpaque(true);
-		sampleLabel.setPreferredSize(new Dimension(120, 60));
-		
-		samplePanel.add(sampleLabel, BorderLayout.CENTER);
-		
-		JPanel buttonPanel = new JPanel();
-		okButton = new JButton(OK_OPTION);
-		okButton.addActionListener(this);
-		cancelButton = new JButton(CANCEL_OPTION);
-		cancelButton.addActionListener(this);		
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		buttonPanel.add(Box.createHorizontalStrut(30));
-		buttonPanel.add(okButton);
-		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-		buttonPanel.add(cancelButton);
+		JPanel selectionPanel = buildSelectionPanel(),
+			   samplePanel    = buildSamplePanel(),
+			   buttonPanel    = buildButtonPanel();
 		
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+
 		getContentPane().add(selectionPanel);
 		getContentPane().add(Box.createVerticalStrut(15));
+
 		getContentPane().add(samplePanel);
 		getContentPane().add(buttonPanel);
 		getContentPane().add(Box.createVerticalStrut(5));
@@ -297,6 +255,7 @@ public class FontChooser extends JDialog implements ActionListener, ListSelectio
 	 */
 	private JPanel getListPanel(String labelText, JList list) {
 		JPanel ret = new JPanel();
+		ret.setName(labelText);
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		JScrollPane listScroller = new JScrollPane(list);
         listScroller.setAlignmentX(LEFT_ALIGNMENT);
@@ -312,6 +271,111 @@ public class FontChooser extends JDialog implements ActionListener, ListSelectio
         return ret;
 	}
 	
+	/**
+	 * Builds the font selection panel.
+	 * 
+	 * @return the built panel
+	 */
+	private JPanel buildSelectionPanel() {
+		JPanel selectionPanel = new JPanel();
+
+		fontList = new JList(fonts);
+		fontList.getSelectionModel().addListSelectionListener(this);
+		sizeList = new JList(sizes);
+		sizeList.getSelectionModel().addListSelectionListener(this);
+
+		JPanel fontPanel  = getListPanel("Font", fontList),
+			   sizePanel  = getListPanel("Size", sizeList),
+			   stylePanel = buildStylePanel(fontPanel.getPreferredSize().height);
+
+		selectionPanel.add(fontPanel);
+		selectionPanel.add(sizePanel);
+		selectionPanel.add(stylePanel);
+
+		// selectionPanel.setMinimumSize(selectionPanel.getPreferredSize());
+
+		return selectionPanel;
+	}
+
+	/**
+	 * Builds the style selection panel.
+	 * 
+	 * @param height the preferred height of the built style panel. 
+	 * 				 Should be the preferred height of the font panel.
+	 * @return the built panel
+	 */
+	private JPanel buildStylePanel(int height) {
+		JPanel stylePanel = new JPanel();
+		stylePanel.setLayout(new BoxLayout(stylePanel, BoxLayout.Y_AXIS));
+
+		String name = "Style";
+		JLabel styleLabel = new JLabel(name);
+
+		boldBox = new JCheckBox(BOLD_OPTION);
+		boldBox.setName("BoldCheck");
+		boldBox.addActionListener(this);
+
+		italicBox = new JCheckBox(ITALIC_OPTION);
+		italicBox.setName("ItalicCheck");
+		italicBox.addActionListener(this);
+
+		stylePanel.add(styleLabel);
+		stylePanel.add(Box.createRigidArea(new Dimension(0,5)));
+		stylePanel.add(boldBox);
+		stylePanel.add(italicBox);
+		stylePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		stylePanel.setPreferredSize(new Dimension(stylePanel.getPreferredSize().width, height));
+		stylePanel.setName(name);
+
+		return stylePanel;
+	}
+
+	/**
+	 * Builds the font preview panel.
+	 * 
+	 * @return the built panel
+	 */
+	private JPanel buildSamplePanel() {
+		JPanel samplePanel = new JPanel(new BorderLayout());
+		String title = "Preview";
+		samplePanel.setName(title);
+		samplePanel.setBorder(new TitledBorder(new EtchedBorder(), title));
+		
+		sampleLabel = new JLabel("", JLabel.CENTER);
+		sampleLabel.setBackground(Color.white);
+		sampleLabel.setBorder(new LineBorder(Color.black));
+		sampleLabel.setOpaque(true);
+		sampleLabel.setPreferredSize(new Dimension(120, 60));
+		
+		samplePanel.add(sampleLabel, BorderLayout.CENTER);
+		
+		return samplePanel;
+	}
+
+	/**
+	 * Builds the button panel to accept the new font or cancel the operation.
+	 * 
+	 * @return the built panel
+	 */
+	private JPanel buildButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+
+		okButton = new JButton(OK_OPTION);
+		okButton.addActionListener(this);
+		cancelButton = new JButton(CANCEL_OPTION);
+		cancelButton.addActionListener(this);	
+
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		buttonPanel.setName("Buttons");
+
+		buttonPanel.add(Box.createHorizontalStrut(30));
+		buttonPanel.add(okButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		buttonPanel.add(cancelButton);
+
+		return buttonPanel;
+	}
 	
 	//========================================
 	//	Inner Classes

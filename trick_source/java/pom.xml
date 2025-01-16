@@ -58,6 +58,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-swing-junit</artifactId>
+      <version>3.9.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>third-party</groupId>
       <artifactId>bsaf</artifactId>
       <version>1.9.2</version>
@@ -314,6 +320,20 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
+          <configuration>
+            <printSummary>true</printSummary>
+			<excludes>
+			  <!-- <exclude> **/SimControlApplicationTest.java 		</exclude> -->
+			  <!-- <exclude> **/DreApplicationTest.java 		</exclude> -->
+			  <exclude> **/TrickDPApplicationTest.java 		</exclude>
+			  <exclude> **/TrickQPApplicationTest.java 		</exclude>
+			  <exclude> **/MonteMonitorApplicationTest.java </exclude>
+			  <exclude> **/MtvApplicationTest.java 			</exclude>
+			  <exclude> **/SieApplicationTest.java 			</exclude>
+			  <exclude> **/SnifferApplicationTest.java 		</exclude>
+			  <!-- <exclude> **/TVApplicationTest.java 			</exclude> -->
+			</excludes>
+          </configuration>
         </plugin>
 
         <plugin>

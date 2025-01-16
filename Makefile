@@ -319,6 +319,9 @@ sim_test32:
 pytest:
 	make -C share/trick/pymods/trick
 
+gui_test:
+	@ $(MAKE) -C trick_source/java test
+
 COVERAGE_DIRS = trick_source/sim_services \
 				trick_source/trick_utils/var_binary_parser \
 				trick_source/trick_utils/unicode \

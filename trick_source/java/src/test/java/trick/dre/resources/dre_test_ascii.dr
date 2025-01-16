@@ -1,0 +1,44 @@
+global DR_GROUP_ID
+global drg
+try:
+    if DR_GROUP_ID >= 0:
+        DR_GROUP_ID += 1
+except NameError:
+    DR_GROUP_ID = 0
+    drg = []
+
+drg.append(trick.DRAscii("DR_Test_ASCII"))
+drg[DR_GROUP_ID].set_freq(trick.DR_Changes)
+drg[DR_GROUP_ID].set_cycle(0.2)
+drg[DR_GROUP_ID].set_single_prec_only(True)
+drg[DR_GROUP_ID].set_max_file_size(3 * 1048576) # multiply converts MiB to B --Dr. Dre
+drg[DR_GROUP_ID].add_variable("drx.drt.charB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.charB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.charB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.charB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.intB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.intB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.intB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.intB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.shortB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.shortB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.shortB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.shortB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.ucharB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.ucharB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.ucharB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.ucharB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.uintB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.uintB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.uintB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.uintB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.ushortB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.ushortB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.ushortB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.ushortB.var4")
+drg[DR_GROUP_ID].add_variable("drx.drt.mixB.var1")
+drg[DR_GROUP_ID].add_variable("drx.drt.mixB.var2")
+drg[DR_GROUP_ID].add_variable("drx.drt.mixB.var3")
+drg[DR_GROUP_ID].add_variable("drx.drt.mixB.var4")
+trick.add_data_record_group(drg[DR_GROUP_ID], trick.DR_No_Buffer)
+drg[DR_GROUP_ID].enable()

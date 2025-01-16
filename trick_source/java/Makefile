@@ -6,7 +6,15 @@ include ${TRICK_HOME}/share/trick/makefiles/Makefile.common
 
 all:
 	@echo "[32mBuilding java application...[0m"
-	@${MVN} package -q -Dcmake=false -Dmaven.wagon.http.retryHandler.count=15
+	@${MVN} package -q -Dmaven.test.skip -Dcmake=false -Dmaven.wagon.http.retryHandler.count=15
+
+test-headless:
+	@echo "[32mBuilding gui-less java tests...[0m"
+	@${MVN} test -Dcmake=false -Dmaven.wagon.http.retryHandler.count=15 -Djava.awt.headless=true
+
+test:
+	@echo "[32mBuilding java tests...[0m"
+	@${MVN} test -Dcmake=false -Dmaven.wagon.http.retryHandler.count=15 -Djava.awt.headless=false
 
 javadoc:
 	${MVN} javadoc:javadoc

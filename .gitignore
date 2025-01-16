@@ -22,6 +22,7 @@ bin/trick-gxplot
 bin/trick-trk2ascii
 bin/trick-trk2csv
 bin/trick-trkConvert
+build/
 aclocal.m4
 autom4te.cache
 trick_test
@@ -43,3 +44,4 @@ trickops_logs/
 coverage.info
 *.dSYM
 *.log
+failed_test.*

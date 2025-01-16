@@ -1,0 +1,2 @@
+resources/RUN_gui_test/*
+!resources/RUN_gui_test/input.py

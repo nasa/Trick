@@ -182,24 +182,18 @@ public class DreApplication extends TrickApplication {
     @Action
     public void selectDRBinary() {
         format = "DRBinary";
-        DRAscii_item.setSelected(false);
         DRBinary_item.setSelected(true);
-        DRHDF5_item.setSelected(false);
     }
 
     @Action
     public void selectDRAscii() {
         format = "DRAscii";
         DRAscii_item.setSelected(true);
-        DRBinary_item.setSelected(false);
-        DRHDF5_item.setSelected(false);
     }
 
     @Action
     public void selectDRHDF5() {
         format = "DRHDF5";
-        DRAscii_item.setSelected(false);
-        DRBinary_item.setSelected(false);
         DRHDF5_item.setSelected(true);
     }
 
@@ -207,23 +201,17 @@ public class DreApplication extends TrickApplication {
     public void selectDRAlways() {
         frequency = "DR_Always";
         DRAlways_item.setSelected(true);
-        DRChanges_item.setSelected(false);
-        DRStepChanges_item.setSelected(false);
     }
 
     @Action
     public void selectDRChanges() {
         frequency = "DR_Changes";
-        DRAlways_item.setSelected(false);
         DRChanges_item.setSelected(true);
-        DRStepChanges_item.setSelected(false);
     }
 
     @Action
     public void selectDRStepChanges() {
         frequency = "DR_Step_Changes";
-        DRAlways_item.setSelected(false);
-        DRChanges_item.setSelected(false);
         DRStepChanges_item.setSelected(true);
     }
 
@@ -241,32 +229,23 @@ public class DreApplication extends TrickApplication {
     public void selectDRBuffer() {
         buffering = "DR_Buffer";
         DRBuffer_item.setSelected(true);
-        DRNoBuffer_item.setSelected(false);
-        DRRingBuffer_item.setSelected(false);
     }
 
     @Action
     public void selectDRNoBuffer() {
         buffering = "DR_No_Buffer";
-        DRBuffer_item.setSelected(false);
         DRNoBuffer_item.setSelected(true);
-        DRRingBuffer_item.setSelected(false);
     }
 
     @Action
     public void selectDRRingBuffer() {
         buffering = "DR_Ring_Buffer";
-        DRBuffer_item.setSelected(false);
-        DRNoBuffer_item.setSelected(false);
         DRRingBuffer_item.setSelected(true);
     }
 
     @Action
     public void selectDRThreadBuffer() {
         buffering = "DR_Thread_Buffer";
-        DRBuffer_item.setSelected(false);
-        DRNoBuffer_item.setSelected(false);
-        DRRingBuffer_item.setSelected(false);
     }
 
     @Action
@@ -417,8 +396,8 @@ public class DreApplication extends TrickApplication {
         JMenuBar menuBar = super.createMenuBar();
         JMenu menu = menuBar.getMenu(0);
         menu.add(new JSeparator(), 0);
-        menu.add(new JMenuItem(getAction("saveDR")), 0);
-        menu.add(new JMenuItem(getAction("openDR")), 0);
+        menu.add(createMenuItem("saveDR"), 0);
+        menu.add(createMenuItem("openDR"), 0);
 
         menuBar.add(createOptionsMenu(), 1);
 
@@ -430,64 +409,49 @@ public class DreApplication extends TrickApplication {
      */
     private JMenu createOptionsMenu() {
         JMenu optionsMenu = new JMenu();
+        JRadioButtonMenuItem[] rbuttons;
+        String[] formats     = {"selectDRBinary", "selectDRAscii",    "selectDRHDF5"}, 
+                 frequencies = {"selectDRAlways", "selectDRChanges",  "selectDRStepChanges"}, 
+                 buffers     = {"selectDRBuffer", "selectDRNoBuffer", "selectDRRingBuffer"};
+
         optionsMenu.setName("optionsMenu");
 
         optionsMenu.add(new JLabel("Format		"));
-
-        DRBinary_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRBinary_item);
-        DRBinary_item.setAction(getAction("selectDRBinary"));
-
-        DRAscii_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRAscii_item);
-        DRAscii_item.setAction(getAction("selectDRAscii"));
-
-        DRHDF5_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRHDF5_item);
-        DRHDF5_item.setAction(getAction("selectDRHDF5"));
-
-        selectDRBinary(); // by default, DR_Binary      
+        rbuttons = addRadioButtonMenuItems(optionsMenu, formats);
+        
+        DRBinary_item = rbuttons[0];
+        DRAscii_item  = rbuttons[1];
+        DRHDF5_item   = rbuttons[2];
+        
         optionsMenu.addSeparator();
 
         optionsMenu.add(new JLabel("Freq"));
+        rbuttons = addRadioButtonMenuItems(optionsMenu, frequencies);
 
-        DRAlways_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRAlways_item);
-        DRAlways_item.setAction(getAction("selectDRAlways"));
-
-        DRChanges_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRChanges_item);
-        DRChanges_item.setAction(getAction("selectDRChanges"));
-
-        DRStepChanges_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRStepChanges_item);
-        DRStepChanges_item.setAction(getAction("selectDRStepChanges"));
-
-        selectDRAlways(); // by default, DR_Always
+        DRAlways_item      = rbuttons[0];
+        DRChanges_item     = rbuttons[1];
+        DRStepChanges_item = rbuttons[2];
 
         optionsMenu.addSeparator();
 
-        singlePrecisionCheckBox = new JCheckBoxMenuItem(getAction("toggleSinglePrecision"));
-        toggleSinglePrecision();
+        singlePrecisionCheckBox = createCheckBoxMenuItem("toggleSinglePrecision", false);
 
         optionsMenu.add(singlePrecisionCheckBox);
+
         optionsMenu.addSeparator();
 
         optionsMenu.add(new JXLabel("Buffering"));
+        rbuttons = addRadioButtonMenuItems(optionsMenu, buffers);
 
-        DRBuffer_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRBuffer_item);
-        DRBuffer_item.setAction(getAction("selectDRBuffer"));
+        DRBuffer_item     = rbuttons[0];
+        DRNoBuffer_item   = rbuttons[1];
+        DRRingBuffer_item = rbuttons[2];
 
-        DRNoBuffer_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRNoBuffer_item);
-        DRNoBuffer_item.setAction(getAction("selectDRNoBuffer"));
 
-        DRRingBuffer_item = new JRadioButtonMenuItem();
-        optionsMenu.add(DRRingBuffer_item);
-        DRRingBuffer_item.setAction(getAction("selectDRRingBuffer"));
-
-        selectDRBuffer();
+        selectDRBinary(); // by default, DR_Binary      
+        selectDRAlways(); // by default, DR_Always
+        selectDRBuffer(); // by default, DR_Buffer
+        toggleSinglePrecision();
 
         return optionsMenu;
     }
@@ -538,6 +502,7 @@ public class DreApplication extends TrickApplication {
 
     private void nameFieldInit() {
         nameField = new JTextField(15);
+        nameField.setName("groupNameField");
         nameField.setMinimumSize(nameField.getPreferredSize());
         nameField.setPreferredSize(nameField.getPreferredSize());
         nameField.setMaximumSize(nameField.getPreferredSize());
@@ -545,22 +510,26 @@ public class DreApplication extends TrickApplication {
 
     private void cycleFieldInit() {
         cycleField = new NumberTextField("0.1", 5);
+        cycleField.setName("cycleField");
         cycleField.setMinimumSize(cycleField.getPreferredSize());
     }
 
     private void maxFileSizeFieldInit() {
         maxFileSizeField = new NumberTextField("1", 10);
+        maxFileSizeField.setName("fileSizeField");
         maxFileSizeField.setMinimumSize((maxFileSizeField.getPreferredSize()));
     }
 
     private void sizeUnitsBoxInit() {
         String[] units = {"B", "KiB", "MiB", "GiB"};
         sizeUnitsBox = new JComboBox<>(units);
+        sizeUnitsBox.setName("unitsComboBox");
         sizeUnitsBox.setSelectedItem(sizeUnitsBox.getItemAt(3));
     }
 
     private void unlimitedSizeBoxInit() {
         unlimitedSizeBox = new JCheckBox("Unlimited File Size", false);
+        unlimitedSizeBox.setName("sizeLimitToggle");
         unlimitedSizeBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -732,40 +701,75 @@ public class DreApplication extends TrickApplication {
         }
     }
 
+    protected void writeFileHeader(Writer writer) throws Exception {
+        String header = "global DR_GROUP_ID\n" +
+                        "global drg\n" +
+                        "try:\n" +
+                        "    if DR_GROUP_ID >= 0:\n" +
+                        "        DR_GROUP_ID += 1\n" +
+                        "except NameError:\n" +
+                        "    DR_GROUP_ID = 0\n" +
+                        "    drg = []\n\n";
+        
+        writer.write(header);
+        writer.flush();
+    }
+    
+    protected void writeGroupSettings(Writer writer) throws Exception {
+        String format_stencil = "drg.append(trick.%s(\"%s\"))\n",
+               freq_stencil   = "drg[DR_GROUP_ID].set_freq(trick.%s)\n",
+               cycle_stencil  = "drg[DR_GROUP_ID].set_cycle(%s)\n",
+               prec_stencil   = "drg[DR_GROUP_ID].set_single_prec_only(%s)\n",
+               size_stencil   = "drg[DR_GROUP_ID].set_max_file_size(%s%s",
+               settings       = String.format(format_stencil, format, nameField.getText().trim()) +
+                                String.format(freq_stencil, frequency) +
+                                String.format(cycle_stencil, cycleField.getText()) +
+                                String.format(prec_stencil, single_prec_only) +
+                                String.format(size_stencil, maxFileSizeField.getText().trim(),
+                                                            getMultiplier((String) sizeUnitsBox.getSelectedItem()));
+
+        writer.write(settings);
+        writer.flush();
+    }
+    
+    protected void writeVariables(Writer writer) throws Exception {
+        for (String variable : variables) {
+            writer.write("drg[DR_GROUP_ID].add_variable(\"" + variable + "\")\n");
+        }
+
+        writer.flush();
+    }
+    
+    protected void writeFileFooter(Writer writer) throws Exception {
+        String footer = "trick.add_data_record_group(drg[DR_GROUP_ID], trick." + buffering + ")\n" +
+                        "drg[DR_GROUP_ID].enable()\n";
+                        
+        writer.write(footer);
+        writer.flush();
+    }
+
     /**
      * routine to write the saved options for data recording to a file.
      *
      * @param file File the name of the file to save
      */
     private void saveFile(File file) {
+        BufferedWriter writer = null;
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            try {
-                writer.write("global DR_GROUP_ID\n");
-                writer.write("global drg\n");
-                writer.write("try:\n");
-                writer.write("    if DR_GROUP_ID >= 0:\n");
-                writer.write("        DR_GROUP_ID += 1\n");
-                writer.write("except NameError:\n");
-                writer.write("    DR_GROUP_ID = 0\n" +
-                        "    drg = []\n\n");
-                writer.write("drg.append(trick." + format + "(\"" + nameField.getText().trim() + "\"))\n");
-                writer.write("drg[DR_GROUP_ID].set_freq(trick." + frequency + ")\n");
-                writer.write("drg[DR_GROUP_ID].set_cycle(" + cycleField.getText() + ")\n");
-                writer.write("drg[DR_GROUP_ID].set_single_prec_only(" + single_prec_only + ")\n");
-
-                for (String variable : variables) {
-                    writer.write("drg[DR_GROUP_ID].add_variable(\"" + variable + "\")\n");
-                }
-                writer.write("drg[DR_GROUP_ID].set_max_file_size(" + maxFileSizeField.getText().trim() + getMultiplier((String) sizeUnitsBox.getSelectedItem()));
-                writer.write("trick.add_data_record_group(drg[DR_GROUP_ID], trick." + buffering + ")\n");
-                writer.write("drg[DR_GROUP_ID].enable()\n");
-            } finally {
-                writer.close();
-            }
+            writer = new BufferedWriter(new FileWriter(file));
+            
+            writeFileHeader(writer);
+            writeGroupSettings(writer);
+            writeVariables(writer);
+            writeFileFooter(writer);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(getMainFrame(), e.toString(),
                     "Error Saving File", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            if(writer != null) {
+                try{ writer.close(); }
+                catch(Exception IGNORED) {}
+            }
         }
     }
 

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -142,7 +143,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
     Collection<SieTemplate> rootInstances;
 
     /** the S_sie.resource parsing thread */
-    SwingWorker<Void, Void> sieSwingWorker;
+    SwingWorker<Void, String> sieSwingWorker;
 
     /** exposes the variable hierarchy */
     protected TVVariableTree variableTree;
@@ -1158,7 +1159,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
      * results
      */
     private void processSieFile() {
-        sieSwingWorker = new SwingWorker<Void, Void>() {
+        sieSwingWorker = new SwingWorker<Void, String>() {
 
             {
             execute();
@@ -1166,7 +1167,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
 
             @Override
             public Void doInBackground() throws Exception {
-                statusLabel.setText("Receiving S_sie.resource file");
+                publish("Receiving S_sie.resource file");
 
                 VariableServerConnection sieChannel = new VariableServerConnection(getHostName(), getPort());
                 //sieChannel.setDebugLevel(3);
@@ -1203,11 +1204,19 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
                 sieChannel.close();
 
                 if (!isCancelled()) {
-                    statusLabel.setText("Parsing S_sie.resource file");
+                    publish("Parsing S_sie.resource file");
                     rootInstances = SieResourceDomParser.parse(new InputSource(new StringReader(sieData.toString())));
                 }
 
                 return null;
+            }
+
+            @Override
+            protected void process(List<String> chunks) {
+                int length = chunks.size();
+                if (length > 0) {
+                    statusLabel.setText(chunks.get(length - 1));
+                }
             }
 
             @Override

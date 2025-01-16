@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<trickView>
+    <cyclePeriod>0.5</cyclePeriod>
+    <variable>
+        <name>drx.drt.a</name>
+        <tvByte>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:byte">88</value>
+            <unsigned>false</unsigned>
+            <format>Decimal</format>
+        </tvByte>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.b</name>
+        <tvByte>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:byte">88</value>
+            <unsigned>true</unsigned>
+            <format>Decimal</format>
+        </tvByte>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.c</name>
+        <tvShort>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:short">88</value>
+            <unsigned>false</unsigned>
+            <format>Decimal</format>
+        </tvShort>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.uintB.var1</name>
+        <tvInteger>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:int">28</value>
+            <unsigned>true</unsigned>
+            <format>Decimal</format>
+        </tvInteger>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.intB.var1</name>
+        <tvInteger>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:int">28</value>
+            <unsigned>false</unsigned>
+            <format>Decimal</format>
+        </tvInteger>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.ucharB.var1</name>
+        <tvByte>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:byte">3</value>
+            <unsigned>true</unsigned>
+            <format>Decimal</format>
+        </tvByte>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.charB.var1</name>
+        <tvByte>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:byte">-1</value>
+            <unsigned>false</unsigned>
+            <format>Decimal</format>
+        </tvByte>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.ushortB.var1</name>
+        <tvShort>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:short">14</value>
+            <unsigned>true</unsigned>
+            <format>Decimal</format>
+        </tvShort>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.shortB.var1</name>
+        <tvShort>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:short">78</value>
+            <unsigned>false</unsigned>
+            <format>Decimal</format>
+        </tvShort>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+    <variable>
+        <name>drx.drt.mixB.var1</name>
+        <tvByte>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:byte">1</value>
+            <unsigned>true</unsigned>
+            <format>Decimal</format>
+        </tvByte>
+        <state>Valid</state>
+        <units>1</units>
+    </variable>
+</trickView>
