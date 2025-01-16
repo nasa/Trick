@@ -56,7 +56,7 @@ jobs:
         make
         make install
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build Trick
       run: |
         export CFLAGS="-m32"

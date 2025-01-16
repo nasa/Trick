@@ -31,10 +31,10 @@ jobs:
           source ../.venv/bin/activate
           export PATH="/tmp/koviz-master/bin:${PATH}"
           ./run_tests.py
-      - uses: actions/upload-artifact@v3.0.0
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: doctests
+          name: doctests_${{ github.run_id }}_${{ github.job }}
           path: |
             share/trick/trickops/tests/*_doctest_log.txt
             /tmp/log.*
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: doctests
+          name: doctests_${{ github.run_id }}_${{ github.job }}
           path: |
             share/trick/trickops/tests/*_doctest_log.txt
             /tmp/log.*

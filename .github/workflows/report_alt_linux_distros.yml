@@ -26,9 +26,18 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: dorny/test-reporter@v1
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+    
+    - name: Download the artifact
+      uses: actions/download-artifact@v4
       with:
-        artifact: Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}} # artifact name
+        name: Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}}
+        path: . # download the artifact in the current directory
+    
+    - name: Report the test results
+      uses: dorny/test-reporter@v1
+      with:
         name: Results_Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}} # Name of the check run which will be created
         path: '*.xml'                     # Path to test results (inside artifact .zip)
         reporter: java-junit              # Format of test results

@@ -32,7 +32,7 @@ jobs:
         dnf install -y gtest-devel gmock-devel
 
     - name: Checkout repository
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
 
     - name: Configure Trick
       run: |

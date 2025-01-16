@@ -129,7 +129,7 @@ jobs:
       - name: Install GTest
         run: ${{matrix.install_gtest}}
       - name: Checkout repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
       - name: Configure Trick
         run: |
           export MAKEFLAGS=-j`nproc`
@@ -145,7 +145,7 @@ jobs:
           python3 -m venv .venv && . .venv/bin/activate && pip3 install -r requirements.txt
           cd ../../../; make test
       - name: Upload Tests
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v4
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Trick_${{matrix.cfg.os}}${{matrix.cfg.tag}}_py${{matrix.python}}
