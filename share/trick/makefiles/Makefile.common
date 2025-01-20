@@ -94,10 +94,10 @@ else
     LIBEXEC = lib
 endif
 
-TRICK_INCLUDES := -isystem${TRICK_HOME}/trick_source -isystem${TRICK_HOME}/include -isystem${TRICK_HOME}/include/trick/compat
+TRICK_INCLUDES := -isystem${TRICK_HOME}/trick_source -isystem${TRICK_HOME}/include -isystem${TRICK_HOME}/include/trick/compat -I./build
 TRICK_VERSIONS := -DTRICK_VER=$(TRICK_MAJOR) -DTRICK_MINOR=$(TRICK_MINOR)
 
-export TRICK_SYSTEM_CXXFLAGS := $(TRICK_INCLUDES) $(TRICK_VERSIONS) -fpic $(UDUNITS_INCLUDES)
+export TRICK_SYSTEM_CXXFLAGS := $(TRICK_INCLUDES) $(TRICK_VERSIONS) -fpic $(UDUNITS_INCLUDES) -I${TRICK_HOME}/build
 export TRICK_SYSTEM_SFLAGS   := -I${TRICK_HOME}/share/trick -I${TRICK_HOME}/share $(TRICK_INCLUDES) $(TRICK_VERSIONS)
 
 HAVE_ZEROCONF ?= 0
@@ -107,7 +107,7 @@ endif
 
 ifeq ($(USE_ER7_UTILS),ON)
     ER7_UTILS_HOME := $(TRICK_HOME)/trick_source/er7_utils
-    TRICK_SYSTEM_CXXFLAGS += -DUSE_ER7_UTILS_INTEGRATORS
+    TRICK_SYSTEM_CXXFLAGS += -DUSE_ER7_UTILS_INTEGRATORS 
     TRICK_LIBS += -ler7_utils
     ifneq ($(wildcard ${ER7_UTILS_HOME}/CheckpointHelper),)
         USE_ER7_UTILS_CHECKPOINTHELPER = 1

@@ -33,6 +33,8 @@
 #include "PrintAttributes.hh"
 #include "Utilities.hh"
 #include "FindTrickICG.hh"
+#include "ConstructorPrinter.hh"
+
 
 /* Command line arguments.  These work better as globals, as suggested in llvm/CommandLine documentation */
 llvm::cl::list<std::string> include_dirs("I", llvm::cl::Prefix, llvm::cl::desc("Include directory"), llvm::cl::value_desc("directory"));
@@ -52,6 +54,7 @@ llvm::cl::list<std::string> input_file_names(llvm::cl::Positional, llvm::cl::des
 llvm::cl::list<std::string> sink(llvm::cl::Sink, llvm::cl::ZeroOrMore);
 llvm::cl::list<std::string> pre_compiled_headers("include", llvm::cl::Prefix, llvm::cl::desc("pre-compiled headers"), llvm::cl::value_desc("pre_compiled_headers"));
 
+llvm::cl::opt<bool> use_tmm_alloc_args("use_tmm_alloc_args", llvm::cl::desc("use_tmm_alloc_args"), llvm::cl::init(false)) ;
 llvm::cl::opt<bool> global_compat15("c", llvm::cl::desc("Print the offsetof calculations in attributes")) ;
 llvm::cl::opt<llvm::cl::boolOrDefault> print_trick_icg("print-TRICK-ICG", llvm::cl::desc("Print warnings where TRICK_ICG may cause io_src inconsistencies")) ;
 llvm::cl::alias compat15_alias ("compat15" , llvm::cl::desc("Alias for -c") , llvm::cl::aliasopt(global_compat15)) ;
@@ -284,8 +287,11 @@ int main(int argc, char * argv[]) {
         printAttributes.createMapFiles();
     }
 
+    PrintConstructors constructorPrinter;
+
     // Tell the compiler to use our ICGASTconsumer
-    ICGASTConsumer* astConsumer = new ICGASTConsumer(ci, hsd, cs, printAttributes);
+    ICGASTConsumer* astConsumer = new ICGASTConsumer(ci, hsd, cs, printAttributes, constructorPrinter);
+
 #if (LIBCLANG_MAJOR > 3) || ((LIBCLANG_MAJOR == 3) && (LIBCLANG_MINOR >= 6))
     ci.setASTConsumer(std::move(std::unique_ptr<clang::ASTConsumer>(astConsumer)));
 #else
@@ -339,7 +345,17 @@ int main(int argc, char * argv[]) {
 
     // Print the list of headers that have the ICG:(No) comment
     printAttributes.printICGNoFiles();
+    
+    printAttributes.setUseTMMAllocArgs(use_tmm_alloc_args);
 
+    if(use_tmm_alloc_args || !sim_services_flag) 
+    {
+        printAttributes.setUseTMMAllocArgs(true);
+        printAttributes.writeTrickTypeToStructHeader();
+        constructorPrinter.printAll();
+        constructorPrinter.writeToFile("build/constructors.json");
+    }
+    
     if (icgDiagConsumer->error_in_user_code) {
         std::cout << color(ERROR, "Trick build was terminated due to error in user code!") << std::endl;
         exit(-1);

@@ -41,7 +41,7 @@ class PrintFileContents10 : public PrintFileContentsBase {
         virtual void printClassMapHeader(std::ostream & out, std::string function_name ) ;
         virtual void printClassMap(std::ostream & outfile , ClassValues * cv) ;
         virtual void printClassMapFooter(std::ostream & out) ;
-
+        
         /** Prints all enums for global map */
         virtual void printEnumMapHeader(std::ostream & out, std::string function_name ) ;
         virtual void printEnumMap(std::ostream & out, EnumValues * ev) ;
@@ -102,6 +102,8 @@ class PrintFileContents10 : public PrintFileContentsBase {
         void print_clear_stl(std::ostream & outfile , FieldDescription * fdes , ClassValues * in_class) ;
 
         void printStlFunction(const std::string& name, const std::string& parameters, const std::string& call, std::ostream& ostream, FieldDescription& fieldDescription, ClassValues& classValues);
+
+        void printTemplateConstructorWrapper(std::ostream & ostream , ClassValues * cv ) ;
 } ;
 
 #endif

@@ -1,8 +1,6 @@
 # Compile only sims
 SIM_alloc_test:
   path: test/SIM_alloc_test
-SIM_alloc_test:
-  path: test/SIM_alloc_test
 SIM_anon_enum:
   path: test/SIM_anon_enum
 SIM_default_member_initializer:
@@ -86,6 +84,13 @@ SIM_test_io:
   runs:
     RUN_test/unit_test.py:
       returns: 0
+SIM_tmm_with_args:
+  path: test/SIM_tmm_with_args
+  build_args: "-t"
+  binary:  "T_main_{cpu}_test.exe"
+  runs:
+    RUN_test/unit_test.py:
+    returns: 0
 SIM_test_ip:
   path: test/SIM_test_ip
   build_args: "-t"
@@ -116,6 +121,13 @@ SIM_threads:
       returns: 0
 SIM_trickified:
   path: test/SIM_trickified
+  build_args: "-t"
+  binary: "T_main_{cpu}_test.exe"
+  runs:
+    RUN_test/unit_test.py:
+      returns: 0
+SIM_tmm_with_args:
+  path: test/SIM_tmm_with_args
   build_args: "-t"
   binary: "T_main_{cpu}_test.exe"
   runs:

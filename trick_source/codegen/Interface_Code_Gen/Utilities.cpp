@@ -230,3 +230,32 @@ int gccVersionToIntOrDefault(const char* verno, int def) {
     }
     return result;
 }
+
+
+const char * accessToChar(clang::AccessSpecifier spec)
+{
+    switch(spec)
+    {
+        case clang::AccessSpecifier::AS_public:
+        {
+            return "public";
+            break;
+        }
+        case clang::AccessSpecifier::AS_private:
+        {
+            return "private";
+            break;
+        }
+        case clang::AccessSpecifier::AS_protected:
+        {
+            return "protected";
+            break;
+        }
+        default:
+        {
+            return "";
+            break;
+        }
+
+    }
+}

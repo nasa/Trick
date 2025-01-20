@@ -86,4 +86,3 @@ std::vector<FieldDescription*> PrintFileContentsBase::getPrintableFields(ClassVa
     }
     return results;
 }
-

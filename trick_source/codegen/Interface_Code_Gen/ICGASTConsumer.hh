@@ -9,6 +9,7 @@
 class HeaderSearchDirs ;
 class CommentSaver ;
 class PrintAttributes ;
+class PrintConstructors;
 
 /**
 
@@ -27,7 +28,7 @@ class PrintAttributes ;
 class ICGASTConsumer : public clang::SemaConsumer {
     public:
         ICGASTConsumer( clang::CompilerInstance & in_ci , HeaderSearchDirs & in_hsd ,
-         CommentSaver & in_cs , PrintAttributes & in_pa ) ;
+         CommentSaver & in_cs , PrintAttributes & in_pa, PrintConstructors & in_pc) ;
 
         TranslationUnitVisitor & getTranslationUnitVisitor() ;
 
@@ -45,7 +46,7 @@ class ICGASTConsumer : public clang::SemaConsumer {
         /** The top level AST visitor. Called to parse tree in HandleTranslationUnit */
         TranslationUnitVisitor tuv ;
 
-
+        PrintConstructors & pc;
 };
 
 #endif

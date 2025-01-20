@@ -4,8 +4,8 @@
 #include "ICGASTConsumer.hh"
 
 ICGASTConsumer::ICGASTConsumer( clang::CompilerInstance & in_ci , HeaderSearchDirs & in_hsd ,
- CommentSaver & in_cs , PrintAttributes & in_pa ) :
- ci(in_ci) , hsd(in_hsd) , tuv(in_ci, in_hsd, in_cs, in_pa) {}
+ CommentSaver & in_cs , PrintAttributes & in_pa, PrintConstructors & in_pc) :
+ ci(in_ci) , hsd(in_hsd) , pc(in_pc),  tuv(in_ci, in_hsd, in_cs, in_pa, in_pc) {}
 
 TranslationUnitVisitor & ICGASTConsumer::getTranslationUnitVisitor() {
     return tuv ;

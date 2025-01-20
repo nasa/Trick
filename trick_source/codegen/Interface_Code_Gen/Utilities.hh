@@ -5,6 +5,8 @@
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Basic/SourceLocation.h"
+#include "clang/Basic/Specifiers.h"
+
 #include "HeaderSearchDirs.hh"
 
 enum Color {
@@ -29,5 +31,10 @@ std::string underline(const std::string& text, unsigned length);
 std::string quote(const std::string& text);
 std::string & replace_special_chars( std::string & str);
 int gccVersionToIntOrDefault(const char* verno, int def);
+
+
+
+inline const char * boolToChar(bool b) { return b ? "true" : "false";}
+const char * accessToChar(clang::AccessSpecifier spec);
 
 #endif

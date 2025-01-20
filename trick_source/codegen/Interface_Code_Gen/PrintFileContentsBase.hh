@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 
+
 class ConstructValues ;
 class ClassValues ;
 class EnumValues ;
@@ -41,6 +42,7 @@ class PrintFileContentsBase {
         virtual void printEnumMapHeader(std::ostream & ostream, std::string function_name ) ;
         virtual void printEnumMap(std::ostream & ostream, EnumValues * ev) ;
         virtual void printEnumMapFooter(std::ostream & ostream) ;
+
 
         /* gets a vector of fields that can be printed */
         std::vector<FieldDescription*> getPrintableFields(ClassValues& classValues, unsigned int ioMask = 0xFFFFFFF);

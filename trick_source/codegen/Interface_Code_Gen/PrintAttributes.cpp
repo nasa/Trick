@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <stdio.h>
+
 #include <limits.h>
 
 #include "clang/Frontend/CompilerInstance.h"
@@ -16,6 +17,7 @@
 #include "PrintFileContentsBase.hh"
 #include "PrintFileContents10.hh"
 #include "FieldDescription.hh"
+#include "FunctionDescription.hh"
 #include "HeaderSearchDirs.hh"
 #include "CommentSaver.hh"
 #include "ClassValues.hh"
@@ -437,7 +439,7 @@ void PrintAttributes::printIOMakefile() {
 
     makefile_io_src.open("build/Makefile_io_src") ;
     makefile_io_src
-        << "TRICK_IO_CXXFLAGS += -Wno-invalid-offsetof -Wno-old-style-cast -Wno-write-strings -Wno-unused-variable" << std::endl
+        << "TRICK_IO_CXXFLAGS += -Wno-invalid-offsetof -Wno-old-style-cast -Wno-write-strings -Wno-unused-variable -Ibuild" << std::endl
         << std::endl
         << "ifeq ($(IS_CC_CLANG), 0)" << std::endl
         << "    TRICK_IO_CXXFLAGS += -Wno-unused-local-typedefs -Wno-unused-but-set-variable" << std::endl
@@ -648,4 +650,145 @@ bool PrintAttributes::isHeaderExcluded(const std::string& header, bool exclude_e
 
 void PrintAttributes::markHeaderAsVisited(const std::string& header) {
     visited_files.insert(header);
+}
+
+void PrintAttributes::writeTrickTypeToStructHeader()
+{
+   
+    _mkdir("build/trick");
+
+    std::set<std::string> class_names_to_print;
+    for(auto& pair : processed_classes)
+    {
+        bool foundMatch = false;
+        const std::set<std::string>& stringSet = pair.second;
+        for(const std::string& element : stringSet)
+        {
+            if(typedef_classes.find(element) != typedef_classes.end())
+            {
+                foundMatch = true;
+            }
+            else 
+            {
+                class_names_to_print.insert(element);
+            }   
+        }
+
+    }
+    
+    std::ofstream out_file;
+    out_file.open("build/trick/trick_type_to_string_ext.hh");
+
+    out_file << "/********************************* TRICK HEADER *******************************\n";
+    out_file << "PURPOSE: ( Map types that trick knows about to strings using tempalte specialization )\n";
+    out_file << "LIBRARY DEPENDENCY:\n";
+    out_file << "(())\n";
+    out_file << "*******************************************************************************/\n";
+    
+    out_file << "\n";
+    out_file << "#pragma once";
+    out_file << "\n\n";
+    out_file << "#include \"trick/trick_type_to_string.hh\"\n";
+    out_file << "#include <string>\n";
+    out_file << "//Forward declarations\n";
+
+
+
+    //Forward declarations
+    for (auto class_name : class_names_to_print)
+    {
+        if(class_name.find("::") != std::string::npos)
+        {
+
+            //TODO: Move this into utilities if there isn't already a version if it in there
+            auto split_name = [](std::string& qualified_name) -> std::pair<std::vector<std::string>, std::string> {
+                std::vector<std::string> namespaces;
+                std::string type;
+
+                std::string delimiter = "::";
+                size_t start = 0 ;
+                //pos will point to just BEFORE the first ':' in "::"
+                size_t pos = qualified_name.find(delimiter, start);
+                
+                while(pos != std::string::npos)
+                {
+                    std::string ns = qualified_name.substr(start, pos - start);
+                    if(!ns.empty())
+                    {
+                        namespaces.emplace_back(ns);
+                    }
+
+                    //Shift start so we don't find the same :: again
+                    start = pos + 2;
+                    pos = qualified_name.find(delimiter, start);
+                }
+                
+                type = qualified_name.substr(start);
+
+                return {namespaces, type};
+
+            };
+
+            auto qualified_name_components = split_name(class_name);
+            //Lambda function to generate a string with count spaces (for indenting)
+            auto spaces = [](size_t count) -> std::string {
+                std::string some_spaces;
+                for(size_t i = 0; i < count; ++i)
+                {
+                    some_spaces.append(" ");
+                }
+
+                return some_spaces;
+            };
+
+            //Wrap these in namespace <namespace> declarations
+            size_t ns_count = 0;
+            for (auto ns : qualified_name_components.first)
+            {
+                out_file << spaces(ns_count) << "namespace " << ns << "{\n";
+                ns_count++;
+            }
+
+            out_file << spaces(ns_count) << "class " <<  qualified_name_components.second << ";\n";
+
+            for(size_t i = ns_count; i > 0; --i)
+            {
+                out_file << spaces(i - 1) << "}\n";
+            }
+        }
+        else 
+        {
+            out_file << "class " << class_name << ";\n";
+        }
+        
+    }
+
+    out_file << "\n\n";
+    //Create specializations for all types contained in class_names_to_print
+    for (auto class_name : class_names_to_print)
+    {
+        out_file << "template<>\n";
+        out_file << "struct TrickTypeToString<" << class_name << ">\n";
+        out_file << "{\n";
+        out_file << "   static std::string getName() \n";
+        out_file << "   {\n";
+        out_file << "       return \"" << class_name << "\";\n";
+        out_file << "   }\n";
+        out_file << "};\n\n";
+        out_file << "\n\n";
+    }
+
+    out_file.close();
+
+}
+
+
+void PrintAttributes::addTypedefClass(std::string typedef_class)
+{
+    typedef_classes.insert(typedef_class);
+}
+
+void PrintAttributes::setUseTMMAllocArgs(bool use_tmm_alloc_args)
+{
+    this->use_tmm_alloc_args = use_tmm_alloc_args;
 }

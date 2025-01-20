@@ -10,7 +10,7 @@
 #include "ConstructValues.hh"
 
 class FieldDescription ;
-
+class FunctionDescription ;
 /**
 
   ClassValues holds information describing a class found with ICG.  The
@@ -33,6 +33,8 @@ class ClassValues : public ConstructValues {
 
         /** Appends a single field to field_descripts */
         void addFieldDescription(FieldDescription * in_fdes) ;
+        
+        void addFunctionDescription(FunctionDescription* in_fdes);
 
         /** Appends a vector of fields to field_descripts.
             A vector comes from adding all inherited fields at once */
@@ -44,7 +46,13 @@ class ClassValues : public ConstructValues {
             return field_descripts ;
         }
 
+        const std::vector<FunctionDescription*>& getFunctionDescriptions()  {
+            return function_descripts ;
+        }
+
         void clearFieldDescription() ;
+
+        void clearFunctionDescription() ;
 
         /** Appends an inherited class name to the list this class inherits from */
         void addInheritedClass( std::string class_name ) ;
@@ -86,6 +94,8 @@ class ClassValues : public ConstructValues {
 
     private:
         std::vector< FieldDescription * > field_descripts ;
+
+        std::vector< FunctionDescription * > function_descripts ;
 
         std::map< std::string , FieldDescription * > field_name_to_info_map ;
         std::set< std::string > field_names_to_qualify ;

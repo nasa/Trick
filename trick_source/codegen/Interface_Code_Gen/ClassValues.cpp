@@ -50,6 +50,11 @@ void ClassValues::addFieldDescription(FieldDescription * in_fdes) {
     field_name_to_info_map[in_fdes->getName()] = in_fdes ;
 }
 
+void ClassValues::addFunctionDescription(FunctionDescription * in_fdes)
+{
+    function_descripts.push_back(in_fdes);
+}
+
 void ClassValues::addInheritedFieldDescriptions(std::vector<FieldDescription *> in_fdes,
   unsigned int class_offset, bool virtual_inherited ) {
     // Make a copy of all of the FieldDescription variables.
@@ -178,6 +183,11 @@ void ClassValues::clearAmbiguousVariables() {
 void ClassValues::clearFieldDescription() {
     field_descripts.clear() ;
 }
+
+void ClassValues::clearFunctionDescription() {
+    function_descripts.clear() ;
+}
+
 
 void ClassValues::addInheritedClass(std::string  class_name) {
     inherited_classes.push_back(class_name) ;

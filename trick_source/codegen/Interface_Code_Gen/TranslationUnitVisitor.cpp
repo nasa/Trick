@@ -19,10 +19,11 @@
 #include "Utilities.hh"
 #include "PrintAttributes.hh"
 #include "BraceMacro.hh"
+#include "ConstructorPrinter.hh"
 
 TranslationUnitVisitor::TranslationUnitVisitor(clang::CompilerInstance & in_ci , HeaderSearchDirs & in_hsd ,
-  CommentSaver & in_cs , PrintAttributes & in_pa ) :
-  ci(in_ci) , hsd(in_hsd) , cs(in_cs) , pa(in_pa) {}
+  CommentSaver & in_cs , PrintAttributes & in_pa, PrintConstructors & in_pc) :
+  ci(in_ci) , hsd(in_hsd) , cs(in_cs) , pa(in_pa), ctor_printer(in_pc) {}
 
 bool TranslationUnitVisitor::TraverseDecl(clang::Decl *d) {
     if (!d)
@@ -69,8 +70,8 @@ bool TranslationUnitVisitor::TraverseDecl(clang::Decl *d) {
             else {
                 //crd->dump() ; std::cout << std::endl ;
                 if ( isInUserCode(ci , crd->RBRACELOC(), hsd) ) {
-                    CXXRecordVisitor cvis(ci , cs, hsd , pa, true) ;
-
+                    CXXRecordVisitor cvis(ci , cs, hsd , pa, &ctor_printer, true) ;
+            
                     cvis.TraverseCXXRecordDecl(static_cast<clang::CXXRecordDecl *>(d)) ;
                     pa.printClass(cvis.get_class_data()) ;
 

@@ -8,6 +8,8 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <utility>
+
 #include "Utilities.hh"
 
 namespace clang {
@@ -65,8 +67,14 @@ class PrintAttributes {
         void printSieEnum( EnumValues * ev ) ;
 
         bool isHeaderExcluded(const std::string& header, bool exclude_ext_libs = true);
-        void markHeaderAsVisited(const std::string& header);
 
+        void markHeaderAsVisited(const std::string& header);
+        
+        void writeTrickTypeToStructHeader();
+
+        void addTypedefClass(std::string typedef_class);
+
+        void setUseTMMAllocArgs(bool use_tmm_alloc_args);
     protected:
 
         const bool verboseBuild = (getenv("TRICK_VERBOSE_BUILD") || getenv("VERBOSE"));
@@ -101,6 +109,9 @@ class PrintAttributes {
 
         /** We are processing sim_services */
         bool sim_services_flag ;
+
+        /** Control if files related to tmm_alloc_args are generated */
+        bool use_tmm_alloc_args ;
 
         /** We are specifying an output directory for all files */
         std::string output_dir ;
@@ -145,6 +156,9 @@ class PrintAttributes {
         std::map< std::string , std::set< std::string > > processed_classes ;
         /** map of processed enums sorted by file */
         std::map< std::string , std::set< std::string > > processed_enums ;
+        
+        std::set<std::string> typedef_classes;
+
 
 } ;
 

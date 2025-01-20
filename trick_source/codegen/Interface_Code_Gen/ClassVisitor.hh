@@ -13,6 +13,7 @@ class CommentSaver ;
 class EnumValues ;
 class HeaderSearchDirs ;
 class PrintAttributes ;
+class PrintConstructors;
 
 /**
 
@@ -34,6 +35,14 @@ class PrintAttributes ;
 class CXXRecordVisitor : public clang::RecursiveASTVisitor<CXXRecordVisitor> {
     public:
         CXXRecordVisitor( clang::CompilerInstance & in_ci ,
+         CommentSaver & in_cs ,
+         HeaderSearchDirs & in_hsd ,
+         PrintAttributes & in_pa ,
+         PrintConstructors * in_pc,
+         bool in_include_virtual_base ) ;
+
+
+         CXXRecordVisitor( clang::CompilerInstance & in_ci ,
          CommentSaver & in_cs ,
          HeaderSearchDirs & in_hsd ,
          PrintAttributes & in_pa ,
@@ -72,6 +81,9 @@ class CXXRecordVisitor : public clang::RecursiveASTVisitor<CXXRecordVisitor> {
 
         /** Holds the class information found, usually returned to caller of this visitor. */
         ClassValues cval ;
+
+        /* Used to print constructors after ICG is done parsing */
+        PrintConstructors * ctor_printer;
 
         /** Flag to specify if we should process virtual base classes. */
         bool include_virtual_base ;

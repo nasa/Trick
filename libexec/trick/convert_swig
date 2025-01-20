@@ -17,6 +17,7 @@ use html ;
 use get_paths ;
 use verbose_build ;
 
+
 ##
 ## ================================================================================
 ## Program: convert_swig
@@ -40,6 +41,8 @@ Options:
             display this help and exit
     -s, --stl
             Allow convert_swig to process STLs
+    -t, --tmm
+            Create swig interface wrappers for tmm_alloc_args
 
 Usage:
     convert_swig <IN_FILES>
@@ -52,6 +55,8 @@ Examples:
 
 my $help = '';  # option variable with default value (false)
 my $stls = 0;  # option variable with default value (false)
+my $tmm = 0; # option variable with default value(false)
+
 
 my %sim ;
 my %out_of_date ;
@@ -118,6 +123,7 @@ my %stl_names = qw(deque 1 set 1 multiset 1 unordered_map 1 multimap 1 hash_set 
 
 Getopt::Long::Configure ("bundling");
 GetOptions ( "stl|s" => sub { $stls = 1 } ,
+             "tmm|t" => sub { $tmm = 1} ,
              'help|h' => \$help ) or usage() ;
 
 if ( $help ) {
@@ -131,6 +137,8 @@ my @include_dirs       = get_include_paths() ;
 my @defines            = get_defines() ;
 my @exclude_paths      = get_paths("TRICK_EXCLUDE") ;
 my @swig_exclude_paths = get_paths("TRICK_SWIG_EXCLUDE") ;
+
+my $constructor_json_location = "build/constructors.json";
 
 if ( "$ENV{'TRICK_CFLAGS'} $ENV{'TRICK_CXXFLAGS'}" !~ /DTRICK_VER=/ ) {
     push @defines , "-DTRICK_VER=$year" ;
@@ -168,6 +176,10 @@ if ( scalar keys %out_of_date == 0 ) {
     exit ;
 }
 
+
+if($tmm) {
+    use JSON::PP ;
+}
 ## Finally, call process_file() to create SWIG interface files for each of the out_of_date headers.
 ##
 
@@ -316,7 +328,15 @@ sub process_file() {
         print OUT "
 \%insert(\"begin\") \%{
 #include <Python.h>
-#include <cstddef>
+#include <cstddef>\n";
+
+        if($tmm) {
+            print OUT "
+#include \"trick/tmm_alloc_args.hh\"
+            ";
+        }
+
+        print OUT "
 \%}
 
 \%{
@@ -619,7 +639,7 @@ sub process_class($$$$$) {
 
     #print "*** extracted = $extracted ***\n" ;
     #print "*** contents = $$contents_ref ***\n" ;
-
+    
     # SWIG doesn't like "const static".  Change it to "static const"
     $extracted =~ s/const\s+static/static const/g ;
 
@@ -762,6 +782,18 @@ sub process_class($$$$$) {
     # write the class contents and semicolon to ensure any template declarations below are after the semicolon.
     $$new_contents_ref .= "\n" . $my_class_contents . $extracted . ";\n" ;
 
+    if($tmm) {
+        my $extend_block;
+        my $new_object_block;
+
+        ($extend_block, $new_object_block) = process_constructor_json($class_name);
+        
+        $$new_contents_ref .= $extend_block;
+        $$new_contents_ref .= $new_object_block;
+    }
+
+    
+
     my $c_ = "$curr_namespace$class_name" ;
     $c_ =~ s/\:/_/g ;
     # Add a #define line that signals that this class has been processed by swig. Classes excluded in #if 0 blocks will
@@ -855,7 +887,128 @@ sub process_typedef_const_struct($$$$) {
 
     ($extracted, $$contents_ref) = extract_bracketed( "{" . $$contents_ref , "{}") ;
     $$contents_ref =~ s/^(\s*([\w,\s\*]+)?\s*;)//sx ;
+}
 
+## ================================================================================
+## process_constructor_json
+##
+## Synopsis
+##
+## 
+sub process_constructor_json {
+    my ($class_name) = @_;
+
+    my $extend_block = "\n\n%extend $class_name {\n";
+    my $new_object_block = "";
+
+    #Try to read the json file
+    my $json_data = do {
+        local $/;
+        open my $fh , '<', $constructor_json_location or do {
+            warn "Could not open constructor file: '$constructor_json_location': $!\n";
+            exit 0;
+        };
+        <$fh>
+    };
+
+    #Create perl structure from data in json
+    my $class_constructor_data = eval { decode_json($json_data) };
+
+    if($@) {
+        warn " Failed to parse JSON: $@#\n";
+        exit 0;
+    }
+
+    # Debugging: Check the type of $data
+    #print "DEBUG: Type of \$json_data is ", ref($class_constructor_data) || 'SCALAR', "\n";
+
+
+    #Check if the class exist in the json data 
+    my ($target_class) = grep {$_->{'className'} eq $class_name } @$class_constructor_data;
+
+    unless ($target_class) {
+        warn "Class '$class_name' not found in JSON data.  This might be okay.\n";
+        return
+    }
+
+    #Check if it has constructors 
+    my $constructors = $target_class->{'constructors'};
+    my $constructor_counter = 0;
+    foreach my $constructor (@$constructors) {
+        if ($constructor->{'accessSpecifier'} eq "public")
+        {
+            my $func_name = "alloc";
+
+            my @params;
+            my @types;
+            my @arg_names;
+
+            if(exists $constructor->{'parameters'} && ref($constructor->{'parameters'}) eq 'ARRAY') {
+                my $param_counter = 0;
+                foreach my $param (@{$constructor->{'parameters'}}) {
+                    if(exists $param->{'type'} && exists $param->{'name'}) {
+                        my $type = $param->{'type'};
+                        my $name = $param->{'name'};
+                        if (!defined $name || $name eq '')  {
+                            $name = "arg_";
+                            $name .= "$param_counter";
+                            $param_counter++;
+                        }
+                        push @params, "$type $name";
+                        push @types, $type;
+                        push @arg_names, $name;
+                    } else {
+                        warn "Something has gone horribly wrong.";
+                    }
+                } 
+            }
+
+            # Create parameter list for constructor
+            my $param_list = join(", ", @params);
+            my $types_list = join(", ", @types);
+            #print "$param_list\n";
+
+            
+            
+        # Create argument list for tmm_alloc_args
+            my $args = join(", ", @arg_names);
+            
+            #print "$args";
+
+            my $class_name_to_use;
+            #See if the class that we're allocating has any qualifiers
+            #if it does, use the fully qualified version - Note: Find
+            #out why this needs to be done.  
+
+            if($class_name eq $target_class->{'qualifiedClassName'}) {
+                $class_name_to_use = $class_name;
+            } else {
+                $class_name_to_use = $target_class->{'qualifiedClassName'};
+            }
+            
+            #Don't use the fully qualified version here since this ends up inside the namespace.
+            my $function_signature = "    static $class_name* $func_name($param_list)  {\n";
+            
+            #print "Function Signature: $function_signature\n";
+
+            $new_object_block .= "\n%newobject ${class_name}::alloc($types_list);\n";
+
+            $extend_block .= $function_signature;
+
+            my $function_body;
+            #If there are arguments - add them
+            $function_body = "        return tmm_alloc_args<$class_name_to_use>($args);\n";
+            $function_body .= "    }\n";
+
+            $extend_block .= $function_body;
+
+            $constructor_counter++;
+        }
+    }
+    
+    $extend_block .= "}\n";
+
+    return($extend_block, $new_object_block); 
 }
 
 __END__

@@ -136,6 +136,8 @@ bool TypedefVisitor::VisitTypedefDecl(clang::TypedefDecl *td) {
     typedef_location = td->getSourceRange() ;
     typedef_decl_context = td->getDeclContext() ;
 
+    this->pa.addTypedefClass(typedef_name) ;
+
     return true;
 }
 

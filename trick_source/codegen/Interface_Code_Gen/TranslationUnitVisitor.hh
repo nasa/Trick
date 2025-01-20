@@ -15,6 +15,7 @@ class ClassValues ;
 class EnumValues ;
 class HeaderSearchDirs ;
 class PrintAttributes ;
+class PrintConstructors;
 
 /**
 
@@ -30,14 +31,13 @@ class PrintAttributes ;
 class TranslationUnitVisitor : public clang::RecursiveASTVisitor<TranslationUnitVisitor> {
     public:
         TranslationUnitVisitor( clang::CompilerInstance & in_ci , HeaderSearchDirs & hsd ,
-         CommentSaver & cs , PrintAttributes & in_pa ) ;
+         CommentSaver & cs , PrintAttributes & in_pa, PrintConstructors & in_pc) ;
 
         /** custom node traversal function that dispatches nodes we are interested in
             to lower level AST visitors */
         bool TraverseDecl(clang::Decl *D);
 
     private:
-
         /** The compiler instance  */
         clang::CompilerInstance & ci ;
 
@@ -50,7 +50,11 @@ class TranslationUnitVisitor : public clang::RecursiveASTVisitor<TranslationUnit
         /** attributes printer */
         PrintAttributes & pa ;
 
+        /* Used to print constructors to file */
+        PrintConstructors & ctor_printer;
+
         std::map < std::string , std::set< std::string > > fwd_declared_classes ;
+
 } ;
 
 #endif

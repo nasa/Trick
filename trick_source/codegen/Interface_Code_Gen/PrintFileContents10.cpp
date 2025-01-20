@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <sstream>
+#include <iterator>
 
 #include "PrintFileContents10.hh"
 #include "FieldDescription.hh"
+#include "FunctionDescription.hh"
 #include "ClassValues.hh"
 #include "EnumValues.hh"
 #include "Utilities.hh"
@@ -38,7 +40,7 @@ void PrintFileContents10::printIOHeader(std::ostream & ostream , std::string hea
              << "#include \"trick/UnitsMap.hh\"\n"
              << "#include \"trick/checkpoint_stl.hh\"\n"
              << "#include \"" << header_file_name << "\"\n"
-             << "\n" ;
+            << "\n" ;
 }
 
 /** Prints enumeration attributes */
@@ -410,4 +412,70 @@ void PrintFileContents10::printStlFunction(const std::string& name, const std::s
             << "    " << typeName << "* stl = reinterpret_cast<" << typeName << "*>(start_address);" << std::endl
             << "    " << call << ";" << std::endl
             << "}" << std::endl ;
+}
+
+
+void PrintFileContents10::printTemplateConstructorWrapper(std::ostream & ostream , ClassValues * cv ) {
+    std::string name = cv->getFullyQualifiedMangledTypeName();
+    auto& function_descripts = cv->getFunctionDescriptions();
+    
+    for (auto& function_descript : function_descripts) {
+        if(!function_descript->getIsDefaultConstructor() && function_descript->getIsPublic())
+        {
+        //Create mangled name for this constructor
+        std::string mangled_name = function_descript->getMangledName();
+
+        if(mangled_name.find("Trick::") == std::string::npos && mangled_name.find("std::") == std::string::npos && mangled_name.find("er7_utils::") == std::string::npos)
+        {
+
+            //Since these are constructors, we don't want the return type since it will be void - thanks clang!
+            ostream << function_descript->getContainerClass() << "* " << mangled_name << "(";
+            auto arguments = function_descript->getFunctionArgs();
+
+            std::string arg_base = "arg_";
+
+            size_t arg_counter = 0;
+            auto it = arguments.begin();
+            auto end = arguments.end();
+
+            while(it != end) 
+            {
+                auto argument = *it;
+
+                ostream << argument.typeName;
+                
+                ostream << " " << arg_base + std::to_string(arg_counter);
+                
+                ++it;
+                ++arg_counter;
+
+                if (it != end) {
+                    ostream << ", ";
+                }
+            }
+
+            ostream << ")\n{\n";
+            ostream << "    return tmm_alloc_args<" + function_descript->getFunctionName() + ">(";
+
+            for (size_t i = 0; i < arguments.size(); ++i)
+            {
+                ostream << "arg_" + std::to_string(i);
+
+                if ( i != arguments.size() - 1)
+                {
+                    ostream << ", ";
+                }
+            }
+
+            ostream << ");\n";
+
+            ostream << "}\n";
+
+            }
+
+            ostream << "\n\n";
+
+        }
+    }
+
 }

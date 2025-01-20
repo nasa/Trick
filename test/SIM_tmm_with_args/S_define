@@ -1,0 +1,65 @@
+/************************TRICK HEADER*************************
+PURPOSE:
+    (This sim test using tmm_alloc_args template function in a
+    simulation environment)
+*************************************************************/
+
+#include "sim_objects/default_trick_sys.sm"
+
+##include "alloc_with_args.hh"
+##include "trick/tmm_alloc_args.hh"
+
+class AllocTestSimObject : public Trick::SimObject {
+
+    public:
+        AllocTestWithArguments* atwargs_1;
+        AllocTestWithArguments* atwargs_2;
+        AllocTestWithArguments* atwargs_3;
+        AllocTestWithArguments* atwargs_4;
+        AllocTestWithArguments* atwargs_5;
+
+        AllocTestWithArguments* atwargs_input_file;
+
+        AllocTestSimObject() {
+            constructor_test();
+        }
+
+
+    ~AllocTestSimObject()
+    {
+        trick_MM->delete_var(static_cast<void*>(atwargs_1));
+        trick_MM->delete_var(static_cast<void*>(atwargs_2));
+        trick_MM->delete_var(static_cast<void*>(atwargs_3));
+        trick_MM->delete_var(static_cast<void*>(atwargs_4));
+    }
+
+
+    void constructor_test()
+    {
+        atwargs_1 = tmm_alloc_args<AllocTestWithArguments>();
+        
+        atwargs_2 = tmm_alloc_args<AllocTestWithArguments>(0, 1.0);
+
+        //Args: int*, double*, std::string&
+        int test_int = 5;
+        double test_double = 10.0;
+        std::string test_string = "test_string";
+
+        atwargs_3 = tmm_alloc_args<AllocTestWithArguments>(&test_int, &test_double, test_string);
+
+        //Args: int* double& , std::string
+        test_int = 4;
+        test_double = 8.0;
+        
+        atwargs_4 = tmm_alloc_args<AllocTestWithArguments>(&test_int, test_double, "test_string");
+
+        atwargs_5 = new AllocTestWithArguments();
+
+        atwargs_5 = tmm_alloc_args<AllocTestWithArguments>( atwargs_5, &test_int, test_double, "test_string");
+
+    }
+
+    
+};
+
+AllocTestSimObject alloc_test ;
