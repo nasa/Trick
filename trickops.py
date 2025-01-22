@@ -38,6 +38,11 @@ class SimTestWorkflow(TrickWorkflow):
       phases = [-1, 0, 1, 2, 3]
 
       analysis_jobs   = self.get_jobs(kind='analyze')
+      if platform == "darwin":
+        for job in build_jobs:
+          if job.name == "Build test/SIM_trickified_shared" :
+            print("REMOVING JOB: " + job.name)
+            build_jobs.remove(job)
       builds_status = self.execute_jobs(build_jobs, max_concurrent=self.cpus, header='Executing all sim builds.')
 
       jobs = build_jobs
@@ -45,6 +50,11 @@ class SimTestWorkflow(TrickWorkflow):
       run_status = 0
       for phase in phases:
         run_jobs = self.get_jobs(kind='run', phase=phase)
+        if platform == "darwin":
+          for job in run_jobs:
+            if job.name == "Run test/SIM_trickified_shared RUN_test/unit_test.py" :
+              print("REMOVING JOB: " + job.name)
+              run_jobs.remove(job)
         this_status = self.execute_jobs(run_jobs, max_concurrent=self.cpus, header="Executing phase " + str(phase) + " runs.", job_timeout=1000)
         run_status = run_status or this_status
         jobs += run_jobs

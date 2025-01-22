@@ -1,0 +1,20 @@
+#include "sim_objects/default_trick_sys.sm"
+##include "Foo.hh"
+##include "Bar.h"
+##include "Baz.hh"
+
+class Sandbox : public Trick::SimObject {
+
+    public:
+
+    Foo foo;
+    Baz baz;
+
+    Sandbox() {
+        (1, "scheduled") foo.foo();
+    }
+
+};
+
+
+Sandbox sandbox;
