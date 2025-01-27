@@ -4,9 +4,12 @@
 
 #include "trick/Executive.hh"
 #include "trick/ExecutiveException.hh"
+#include "trick/CheckPointRestart.hh"
 #include "trick/exec_proto.h"
 #include "trick/message_proto.h"
 #include "trick/message_type.h"
+
+extern Trick::CheckPointRestart * the_cpr ;
 
 /**
 @details
@@ -32,6 +35,10 @@ int Trick::Executive::freeze_loop() {
     }
 
     message_publish(MSG_INFO, "Freeze ON. Simulation time holding at %f seconds.\n" , get_sim_time()) ;
+    
+    if (!the_cpr->checkpoint_times.empty()) {
+    	the_cpr->write_checkpoint();
+    }
 
     while (mode == Freeze) {
 

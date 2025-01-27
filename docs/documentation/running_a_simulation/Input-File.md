@@ -450,19 +450,31 @@ trick.freeze(trick.exec_get_sim_time() + 5.0)
 
 ## Checkpoint the Simulation
 
-To checkpoint a simulation call `trick.checkpoint([<checkpoint_time>])`.  `trick.checkpoint()` called with no
-arguments will checkpoint immediately.  An optional checkpoint time may be provided to checkpoint some time
-in the future.
+`trick.checkpoint()` called with no arguments will checkpoint immediately. To checkpoint a simulation call `trick.checkpoint(<checkpoint_time>)`.
+An optional checkpoint time may be provided to checkpoint some time in the future. When you supply a name, you can save the checkpoint to a specific file. For example, `trick.checkpoint(<file_name>)` creates a checkpoint in a file with the given name immediately. `trick.checkpoint(<checkpoint_time>, <file_name>)` saves a checkpoint in
+the described file at the given time. 
 
 ```python
 # Checkpoints immediately
 trick.checkpoint()
 
+# Checkpoints immediately, saving to 'checkpoint_save'
+trick.checkpoint("checkpoint_save")
+
 # Checkpoints at an absolute time
 trick.checkpoint(100.0)
 
+# Checkpoints at an absolute time, saving to 'late_checkpoint'
+trick.checkpoint(100.0, "late_checkpoint")
+
 # Checkpoints 5 seconds relative from the current sim_time
 trick.checkpoint(trick.exec_get_sim_time() + 5.0)
+
+# Checkpoints to 'checkpoint.txt' immediately 
+trick.checkpoint("checkpoint.txt")
+
+# Checkpoints to 'checkpoint2.txt' at an absolute time
+trick.checkpoint(50.0, "checkpoint.txt")
 ```
 
 ## Stopping the Simulation

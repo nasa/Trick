@@ -6,6 +6,8 @@ from trick.unit_test import *
 def main():
     exec(open("Modified_data/fooChange2.dr").read())
     
+    # Testing that separately scheduling a freeze and checkpoint at the same time still results in a checkpoint
+    trick.freeze(5.0) 
     trick.checkpoint(5.0)
 
     trick.stop(20.0)

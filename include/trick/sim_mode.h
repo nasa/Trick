@@ -14,6 +14,10 @@ PROGRAMMERS:
 #ifndef SIMMODE_HH
 #define SIMMODE_HH
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
 
     NoCmd = 0 ,         /* NoCmd */
@@ -37,5 +41,11 @@ typedef enum {
     ExitMode = 6          /* exit */
 
 } SIM_MODE ;
+
+const char * simModeCharString(SIM_MODE mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -5,7 +5,7 @@ def main():
     trick.exec_set_job_onoff("the_object.stlc.test", 1, False)
     trick.exec_set_job_onoff("the_object.stlc.print", 1, False)
 
-    trick.add_read( 0.5, 'trick.checkpoint("chkpnt_in")')
+    trick.checkpoint(0.5, "chkpnt_in")
 
     trick.exec_set_freeze_frame(0.10)
     trick.stop(1.0)

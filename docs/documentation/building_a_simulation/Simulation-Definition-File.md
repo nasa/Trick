@@ -254,7 +254,7 @@ requires a job class.
 <tr><td bgcolor="#ffff99">SELF-SCHEDULING</td><td>jobs in the scheduled job loop that must schedule themselves when to run</td></tr>
 <tr><td bgcolor="#ccffcc">CYCLIC</td><td>jobs in the scheduled job loop that run cyclically according to their specified cycle time</td></tr>
 <tr><td bgcolor="#e6ceff">FREEZE</td><td>jobs that are run during the freeze execution mode</td></tr>
-<tr><td bgcolor="#ffc285">CHECKPOINT</td><td>jobs that are run when a checkpoint is dumpded or loaded</td></tr>
+<tr><td bgcolor="#ffc285">CHECKPOINT</td><td>jobs that are run when a checkpoint is dumped or loaded</td></tr>
 </table>
 
 <b>Table SD_1 Trick-Provided Job Classes</b>

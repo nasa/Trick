@@ -98,7 +98,7 @@ A checkpoint of a simulation is usually initiated from the Input Processor. That
 1. The input file, or
 2. The variable server.
  
-```trick.checkpoint( <time> )``` is called from Python. This Python function is bound to the corresponding C++ function. At a simulation frame boundary (so that data is time-homogeneous), three things happen:
+```trick.checkpoint( <time> )``` is called from Python. This Python function is bound to the corresponding C++ function. At a simulation frame boundary (so that data is time-homogeneous), the simulation freezes and then three things happen:
 
 1. The ```"checkpoint"``` jobs in the S_define file are executed. These job-classes allow you to prepare your sim to be checkpointed. Perhaps you want to transform simulation state data into a different form for checkpointing. This is up to you.
 
@@ -109,7 +109,7 @@ A checkpoint of a simulation is usually initiated from the Input Processor. That
 <a id=loading-a-checkpoint></a>
 ### What Happens When You Load a Checkpoint.
 Trick.load_checkpoint() is called from Python.
-At a simulation frame boundary, three things happen:
+At a simulation frame boundary, the simulation freezes and then three things happen:
 
 1. The ```“preload_checkpoint”``` jobs are called. These job-classes allow you to prepare your sim for a checkpoint-restore, in whatever way you see fit.
  

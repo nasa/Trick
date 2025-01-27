@@ -1,3 +1,6 @@
+
+object_${TRICK_HOST_CPU}/simModeCharString.o: simModeCharString.c \
+ ${TRICK_HOME}/include/trick/sim_mode.h 
 object_${TRICK_HOST_CPU}/VariableServerSessionThread_loop.o: VariableServerSessionThread_loop.cpp \
  ${TRICK_HOME}/include/trick/VariableServer.hh \
  ${TRICK_HOME}/include/trick/tc.h \

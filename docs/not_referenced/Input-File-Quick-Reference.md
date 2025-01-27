@@ -84,8 +84,12 @@ trick.checkpoint_post_init(True|False)
 trick.checkpoint_end(True|False)
 # Save a checkpoint at a time in the future
 trick.checkpoint(<time>)
+# Save a checkpoint at a time in the future to a specified file
+trick.checkpoint(<time>, <file_name>)
 # Save a checkpoint now
 trick.checkpoint()
+# Save a checkpoint now to a specified file
+trick.checkpoint(<file_name>)
 
 # Set the CPU to use for checkpoints
 trick.checkpoint_cpu(<cpu_num>)
