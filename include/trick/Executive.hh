@@ -282,6 +282,15 @@ namespace Trick {
             /** S_run_summary - Trick version.\n */
             std::string current_version;            /**< trick_units(--) */
 
+            /** rt_nap statistics - total number of rt_nap that is longer than 10% of the software frame.\n  */
+            int rt_nap_count;                       /**< trick_units(--) */
+
+            /** rt_nap statistics - the longest rt_nap.\n */
+            double longest_rt_nap;                  /**< trick_units(s) */
+
+            /** rt_nap statistics - the shortest rt_nap.\n */
+            double shortest_rt_nap;                 /**< trick_units(s) */
+
             /**
              @userdesc Command to reset job cycle times after the time_tic_value has changed.
              @return void
@@ -880,6 +889,16 @@ namespace Trick {
              @return 0 if successful
              */
             int set_current_version(std::string version) ;
+
+            /**
+             @userdesc Set stats after each RELEASE() when rt_nap is true. The stats contains the counts of 
+             RELEASE() if the time delta between before and after RELEASE() is greater than 10% of the 
+             software frame time, the longest delta, and the shortest delta of before and after RELEASE().
+             @param clock_time_before_rt_nap - clock time before RELEASE() is called when rt_nap is true.
+             @param clock_time_after_rt_nap  - clock time after RELEASE() is done when rt_nap is true.
+             @reutnr void
+            */
+            void set_rt_nap_stats(long long clock_time_before_rt_nap, long long clock_time_after_rt_nap) ;
 
             // END GET and SET FUNCTIONS
 

@@ -22,10 +22,12 @@
 
 #include "trick/Threads.hh"
 #include "trick/release.h"
+#include "trick/Executive.hh"
 #include "trick/ExecutiveException.hh"
 #include "trick/exec_proto.h"
 #include "trick/TrickConstant.hh"
 #include "trick/message_proto.h"
+#include "trick/clock_proto.h"
 
 
 /**
@@ -41,6 +43,7 @@ static int call_next_job(Trick::JobData * curr_job, Trick::ScheduledJobQueue & j
     Trick::JobData * depend_job ;
     unsigned int ii ;
     int ret = 0 ;
+    long long time_before_rt_nap, time_after_rt_nap ;
 
     //cout << "time = " << curr_time_tics << " " << curr_job->name << " job next = "
     //  << curr_job->next_tics << " id = " << curr_job->id << endl ;
@@ -50,7 +53,10 @@ static int call_next_job(Trick::JobData * curr_job, Trick::ScheduledJobQueue & j
         depend_job = curr_job->depends[ii] ;
         while (! depend_job->complete) {
             if (rt_nap == true) {
+                time_before_rt_nap = clock_wall_time() ;
                 RELEASE();
+                time_after_rt_nap = clock_wall_time() ;
+                the_exec->set_rt_nap_stats(time_before_rt_nap, time_after_rt_nap) ;
             }
         }
     }

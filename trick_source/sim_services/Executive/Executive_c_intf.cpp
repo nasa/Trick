@@ -739,6 +739,17 @@ extern "C" const char * exec_get_current_version() {
 
 /**
  * @relates Trick::Executive
+ * @copydoc Trick::Executive::set_rt_nap_stats
+ * C wrapper for Trick::Executive::set_rt_nap_stats
+ */
+extern "C" void exec_set_rt_nap_stats(long long clock_time_before_rt_nap, long long clock_time_after_rt_nap) {
+    if ( the_exec != NULL ) {
+        the_exec->set_rt_nap_stats(clock_time_before_rt_nap, clock_time_before_rt_nap) ;
+    }
+}
+
+/**
+ * @relates Trick::Executive
  * @userdesc Raise a signal on the main thread to terminate the simuation immediately.
  * This is not typically used by users.  Use exec_terminate instead.
  */

@@ -84,11 +84,15 @@ long long Trick::Clock::clock_time() {
 */
 long long Trick::Clock::clock_spin(long long req_time) {
     long long curr_time ;
+    long long time_before_rt_nap, time_after_rt_nap ;
     curr_time = clock_time() ;
     /* Perform spin loop to allow current time to catch up to requested time */
     while (curr_time < req_time) {
         if ( exec_get_rt_nap() == 1 ) {
+            time_before_rt_nap = wall_clock_time() ;
             RELEASE();
+            time_after_rt_nap = wall_clock_time() ;
+            exec_set_rt_nap_stats(time_before_rt_nap, time_after_rt_nap) ;
         }
         curr_time = clock_time();
     }

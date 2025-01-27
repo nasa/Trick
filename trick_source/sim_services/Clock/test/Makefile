@@ -21,7 +21,7 @@ BASE_OBJECTS = ../object_${TRICK_HOST_CPU}/Clock.o\
                ../object_${TRICK_HOST_CPU}/clock_c_intf.o
 
 
-GETTIMEOFDAY_CLOCK_OBJECTS = ${BASE_OBJECTS} GetTimeOfDayClock_test.o ../object_${TRICK_HOST_CPU}/GetTimeOfDayClock.o exec_get_rt_nap_stub.o
+GETTIMEOFDAY_CLOCK_OBJECTS = ${BASE_OBJECTS} GetTimeOfDayClock_test.o ../object_${TRICK_HOST_CPU}/GetTimeOfDayClock.o exec_get_rt_nap_stub.o exec_set_rt_nap_stats_stub.o
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -44,4 +44,7 @@ GetTimeOfDayClock_test : ${GETTIMEOFDAY_CLOCK_OBJECTS}
 	$(TRICK_CXX) $(TRICK_SYSTEM_LDFLAGS) $(TRICK_CPPFLAGS) -o $@ $^ $(TRICK_LIBS) ${LIBS}
 
 exec_get_rt_nap_stub.o : exec_get_rt_nap_stub.cpp
+	$(TRICK_CXX) $(TRICK_CPPFLAGS) -c $<
+
+exec_set_rt_nap_stats_stub.o : exec_set_rt_nap_stats_stub.cpp
 	$(TRICK_CXX) $(TRICK_CPPFLAGS) -c $<

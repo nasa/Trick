@@ -417,3 +417,19 @@ int Trick::Executive::set_current_version(std::string version) {
 int Trick::Executive::get_except_return() const {
     return except_return;
 }
+
+void Trick::Executive::set_rt_nap_stats(long long clock_time_before_rt_nap, long long clock_time_after_rt_nap) {
+    double rt_nap_elapsed_time = (double)(clock_time_after_rt_nap - clock_time_before_rt_nap) / time_tic_value ;
+    if (rt_nap_elapsed_time / software_frame > 0.1) {
+        rt_nap_count++ ;
+    }
+    if (longest_rt_nap < rt_nap_elapsed_time) {
+        longest_rt_nap = rt_nap_elapsed_time ;
+    }
+
+    if (shortest_rt_nap == 0.0) {
+        shortest_rt_nap = rt_nap_elapsed_time ;
+    } else if (shortest_rt_nap > rt_nap_elapsed_time) {
+        shortest_rt_nap = rt_nap_elapsed_time ;
+    }
+}

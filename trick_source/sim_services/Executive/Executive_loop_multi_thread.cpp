@@ -6,6 +6,8 @@
 #include "trick/Executive.hh"
 #include "trick/exec_proto.h"
 #include "trick/release.h"
+#include "trick/clock_proto.h"
+#include "trick/Executive.hh"
 
 /**
 @details
@@ -40,13 +42,17 @@ int Trick::Executive::loop_multi_thread() {
     unsigned int ii ;
     Trick::ScheduledJobQueue * main_sched_queue ;
     int ret = 0 ;
+    long long time_before_rt_nap, time_after_rt_nap;
 
     /* Wait for all threads to finish initializing and set the child_complete flag. */
     for (ii = 1; ii < threads.size() ; ii++) {
         Threads * curr_thread = threads[ii] ;
         while (curr_thread->child_complete == false ) {
             if (rt_nap == true) {
-                RELEASE();
+                time_before_rt_nap = clock_wall_time() ;
+                RELEASE() ;
+                time_after_rt_nap = clock_wall_time() ;
+                set_rt_nap_stats(time_before_rt_nap, time_after_rt_nap) ;
             }
         }
     }
@@ -146,7 +152,10 @@ int Trick::Executive::loop_multi_thread() {
                 depend_job = curr_job->depends[ii] ;
                 while (! depend_job->complete) {
                     if (rt_nap == true) {
+                        time_before_rt_nap = clock_wall_time() ;
                         RELEASE();
+                        time_after_rt_nap = clock_wall_time() ;
+                        set_rt_nap_stats(time_before_rt_nap, time_after_rt_nap) ;
                     }
                 }
             }

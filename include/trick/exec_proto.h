@@ -74,6 +74,7 @@ extern "C" {
     int exec_set_version_date_tag(const char * tag) ;
     int exec_set_build_date(const char * date) ;
     int exec_set_current_version(const char * version) ;
+    void exec_set_rt_nap_stats(long long clock_time_before_rt_nap, long long clock_time_after_rt_nap) ;
 
     int exec_freeze(void) ;
     int exec_run(void) ;
