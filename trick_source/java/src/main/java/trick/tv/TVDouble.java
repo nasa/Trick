@@ -18,6 +18,8 @@ import trick.common.utils.vs.VSDouble;
 @XmlRootElement
 public class TVDouble extends VSDouble implements TrickViewFluent<TVDouble.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -92,6 +94,16 @@ public class TVDouble extends VSDouble implements TrickViewFluent<TVDouble.Forma
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

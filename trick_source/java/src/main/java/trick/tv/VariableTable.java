@@ -7,6 +7,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -49,6 +51,9 @@ public class VariableTable extends JXTable {
     /** the table model */
     VariableTableModel model;
 
+    /** the precision column visibility state */
+    boolean maxPrecisionVisible;
+
     /** the name change action */
     Action nameChangeAction = new AbstractAction() {
         public void actionPerformed(ActionEvent actionEvent) {}
@@ -77,7 +82,7 @@ public class VariableTable extends JXTable {
         // Enable column controls.
         setColumnControlVisible(true);
 
-        // Hightlight invalid refernces in red.
+        // Highlight invalid references in red.
         setHighlighters(
           HighlighterFactory.createSimpleStriping(),
           new ColorHighlighter(new PatternPredicate("<Invalid Reference>",
@@ -248,6 +253,17 @@ public class VariableTable extends JXTable {
     }
 
     /**
+     * sets the precision column visibility and updates the (Variable Table) model
+     *
+     * @param maxPrecisionVisible
+     */
+    public void setMaxPrecisionVisible(boolean maxPrecisionVisible) {
+        this.maxPrecisionVisible = maxPrecisionVisible;
+        this.model.setPrecisionColumnVisibility(maxPrecisionVisible);
+        this.model.fireTableStructureChanged();
+    }
+
+    /**
      * sets the delete action
      *
      * @param action the action to take on deletion
@@ -384,6 +400,15 @@ public class VariableTable extends JXTable {
             if (row < variables.size()) {
                 Variable<? extends TrickViewFluent> variable = variables.get(row);
                 if (variable.getState() == Variable.State.Valid) {
+                    if (variable.getValue().getPrecision() != null
+                            && !variable.getValue().getPrecision().contains("--")
+                            && isFractional(variable)
+                            && this.maxPrecisionVisible) {
+                        // Sets rounded value of variable by its precision
+                        BigDecimal bd = new BigDecimal(variable.getValue().toString());
+                        bd = bd.setScale(Integer.parseInt(variable.getValue().getPrecision().toString()), RoundingMode.HALF_UP);
+                        variable.setValue(bd.toString());
+                    }
                     return variable.getValue().getCellRenderer();
                 }
             }
@@ -407,9 +432,31 @@ public class VariableTable extends JXTable {
                 return new DefaultCellEditor(new JComboBox(EnumSet.allOf(value.getFormatClass()).toArray()) {{
                     setSelectedItem(value.getFormat());
                 }});
+            case 4:
+                String[] precisionArr;
+                if (isFractional(variable)) {
+                    precisionArr = java.util.stream.IntStream.rangeClosed(1, 15).mapToObj(Integer::toString).toArray(String[]::new);
+                } else {
+                    precisionArr = new String[]{"--"};
+                }
+                return new DefaultCellEditor(new JComboBox(precisionArr) {{
+                    setSelectedItem(variable.getValue().getPrecision());
+                }});
         }
     }
 
+    /**
+     * This function checks if variable has valid precision and it is decimal that type of TVDouble or TVFloat
+     * Since only double and float numbers are roundable
+     *
+     * @param variable
+     * @return
+     */
+    private boolean isFractional(Variable<? extends TrickViewFluent> variable) {
+        return  variable.getValue().getFormat().toString().contains("Decimal")
+                && (variable.getValue().getFormatClass().toString().contains("TVDouble")
+                || variable.getValue().getFormatClass().toString().contains("TVFloat"));
+    }
 
 
     /**
@@ -439,6 +486,7 @@ public class VariableTable extends JXTable {
      * the model for this table
      */
     class VariableTableModel extends AbstractTableModel {
+        private boolean precisionColumnVisibility = false;
 
         @Override
         public int getRowCount() {
@@ -447,7 +495,7 @@ public class VariableTable extends JXTable {
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return getPrecisionColumnVisibility() ? 5 : 4;
         }
 
         @Override
@@ -459,6 +507,8 @@ public class VariableTable extends JXTable {
                     return "Value";
                 case 2:
                     return "Units";
+                case 4:
+                    return "Precision";
                 default:
                     return "Format";
             }
@@ -486,6 +536,8 @@ public class VariableTable extends JXTable {
                     }
                 case 2:
                     return variable.getUnits();
+                case 4:
+                    return variable.getValue().getPrecision();
                 default:
                     return variable.getValue().getFormat();
             }
@@ -510,11 +562,14 @@ public class VariableTable extends JXTable {
                         model.fireTableRowsUpdated(index, index);
                     }
                     break;
+                case 4:
+                    setPrecision(getSelectedVariables(), value);
+                    break;
             }
         }
 
         private void setValues(ArrayList<? extends Variable<? extends VariableServerFluent>> variables,
-          Object value) {
+                               Object value) {
             for (Variable<? extends VariableServerFluent> variable : variables) {
                 setValue(variable, value);
             }
@@ -523,9 +578,8 @@ public class VariableTable extends JXTable {
         @SuppressWarnings("unchecked")
         private <T extends VariableServerFluent> void setValue(Variable<T> variable, Object value) {
             try {
-                variable.sendValueToVariableServer((T)value, variableServerConnection);
-            }
-            catch (IOException ioException) {
+                variable.sendValueToVariableServer((T) value, variableServerConnection);
+            } catch (IOException ioException) {
                 System.err.println("Failed to set variable \"" + variable + "\" to \"" + value + "\"");
                 ioException.printStackTrace(System.err);
             }
@@ -537,13 +591,37 @@ public class VariableTable extends JXTable {
                 TrickViewFluent value = variable.getValue();
                 try {
                     value.setFormat(Enum.valueOf(value.getFormatClass(), format.toString()));
-                }
-                catch (IllegalArgumentException illegalArgumentException) {
+                } catch (IllegalArgumentException illegalArgumentException) {
                     // The format is not applicable to the current value; ignore it.
                 }
             }
         }
 
+        /**
+         * sets visible(shown) precision of the <code>Variable</code>'s value
+         * only on TV Table, does not affect the value in simulation.
+         *
+         * @param variables
+         * @param precision the value after dot(.) to be set
+         */
+        private void setPrecision(ArrayList<Variable<? extends TrickViewFluent>> variables, Object precision) {
+            try {
+                for (Variable<? extends TrickViewFluent> variable : variables) {
+                    variable.getValue().setPrecision(precision.toString());
+                }
+            } catch (NullPointerException nullPointerException) {
+                System.err.println("Failed to set precision value \"" + precision + "\"");
+                nullPointerException.printStackTrace(System.err);
+            }
+        }
+
+        public void setPrecisionColumnVisibility(boolean precisionColumnVisibility) {
+            this.precisionColumnVisibility = precisionColumnVisibility;
+        }
+
+        public boolean getPrecisionColumnVisibility() {
+            return this.precisionColumnVisibility;
+        }
     }
 
 }

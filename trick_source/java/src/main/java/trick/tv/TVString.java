@@ -17,6 +17,8 @@ import trick.common.utils.vs.VSString;
 @XmlRootElement
 public class TVString extends VSString implements TrickViewFluent<TVString.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -78,6 +80,16 @@ public class TVString extends VSString implements TrickViewFluent<TVString.Forma
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

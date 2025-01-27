@@ -17,6 +17,8 @@ import trick.common.utils.vs.VSInteger;
 @XmlRootElement
 public class TVInteger extends VSInteger implements TrickViewFluent<TVInteger.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -181,6 +183,16 @@ public class TVInteger extends VSInteger implements TrickViewFluent<TVInteger.Fo
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

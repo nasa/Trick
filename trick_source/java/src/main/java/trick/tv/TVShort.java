@@ -17,6 +17,8 @@ import trick.common.utils.vs.VSShort;
 @XmlRootElement
 public class TVShort extends VSShort implements TrickViewFluent<TVShort.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -181,6 +183,16 @@ public class TVShort extends VSShort implements TrickViewFluent<TVShort.Format> 
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

@@ -19,6 +19,8 @@ import trick.common.utils.vs.VSByte;
 @XmlRootElement
 public class TVByte extends VSByte implements TrickViewFluent<TVByte.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -154,6 +156,16 @@ public class TVByte extends VSByte implements TrickViewFluent<TVByte.Format> {
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

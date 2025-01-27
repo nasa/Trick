@@ -18,6 +18,8 @@ import trick.common.utils.vs.VSFloat;
 @XmlRootElement
 public class TVFloat extends VSFloat implements TrickViewFluent<TVFloat.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -92,6 +94,16 @@ public class TVFloat extends VSFloat implements TrickViewFluent<TVFloat.Format> 
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

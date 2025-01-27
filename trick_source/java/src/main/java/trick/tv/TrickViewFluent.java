@@ -48,4 +48,18 @@ public interface TrickViewFluent<T extends Enum<T>> extends VariableServerFluent
      */
     public TableCellEditor getCellEditor();
 
+    /**
+     * sets visible(shown) precision of the <code>Variable</code>'s value
+     * only on TV Table, does not affect the value in simulation.
+     *
+     * @param precision the value after dot(.) to be set
+     */
+    public void setPrecision(String precision);
+
+    /**
+     * returns the precision
+     *
+     * @return the precision
+     */
+    public String getPrecision();
 }

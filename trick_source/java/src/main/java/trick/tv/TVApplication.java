@@ -219,6 +219,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
     final String validateAddressesKey = "validateAddresses";
     final String searchPanelVisibleKey = "searchPanelVisible";
     final String variableTreeVisibleKey = "variableTreeVisible";
+    final String maxPrecisionVisibleKey = "maxPrecisionVisible";
 
     /** new action */
     protected AbstractAction newAction = new AbstractAction("New",
@@ -403,7 +404,7 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
             setFileFilter(new FileNameExtensionFilter("Trick View Files", "tv"));
         }};
 
-        // Initialze the variable tree.
+        // Initialize the variable tree.
         variableTree = new TVVariableTree() {{
             setEnabled(false);
 
@@ -1263,9 +1264,10 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
         // TV relies on time_tics being the first tracked variable, so don't let users manipulate it.
         if (!variable.name.equals("trick_sys.sched.time_tics")) {
             try {
-                if (applyDefaults || variable.getValue().getFormat() == null) {
+                if (applyDefaults || (variable.getValue().getFormat() == null || variable.getValue().getPrecision() == null)) {
                     variable.getValue().setFormat(Enum.valueOf(variable.getValue().getFormatClass(),
-                      defaultFormats.get(variable.getValue().getClass()).toString()));
+                            defaultFormats.get(variable.getValue().getClass()).toString()));
+                    variable.getValue().setPrecision("--"); // Default precision value
                 }
                 variableTable.add(variable, position);
                 if (getConnectionState()) {
@@ -1642,6 +1644,26 @@ public class TVApplication extends RunTimeTrickApplication implements VariableLi
                     }
                 });
             }});
+
+            // Max Precision Toggle
+            add(new JCheckBoxMenuItem("Max Precision") {{
+                setToolTipText("Toggle visibility of the Max Precision.");
+                setMnemonic(KeyEvent.VK_M);
+                setSelected(Boolean.parseBoolean(trickProperties.getProperty(
+                        maxPrecisionVisibleKey, Boolean.toString(false))));
+                addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        // by default it is not selected. On selection, it shows Max Precision Column on Variable Table
+                        if(isSelected()) {
+                            variableTable.setMaxPrecisionVisible(true);
+                        } else {
+                            variableTable.setMaxPrecisionVisible(false);
+                        }
+                    }
+                });
+            }});
+
+
         }}, 1);
 
         return menuBar;

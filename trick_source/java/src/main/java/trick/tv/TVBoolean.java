@@ -18,6 +18,8 @@ import trick.common.utils.vs.VSBoolean;
 @XmlRootElement
 public class TVBoolean extends VSBoolean implements TrickViewFluent<TVBoolean.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -85,6 +87,16 @@ public class TVBoolean extends VSBoolean implements TrickViewFluent<TVBoolean.Fo
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     @Override

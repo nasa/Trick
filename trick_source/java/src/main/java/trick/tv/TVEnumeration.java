@@ -20,6 +20,8 @@ import trick.sie.utils.SieEnumeration;
 @XmlRootElement
 public class TVEnumeration extends VSValue<String> implements TrickViewFluent<TVEnumeration.Format> {
 
+    private String precision;
+
     @XmlType(name = "")
     public enum Format {
 
@@ -114,6 +116,16 @@ public class TVEnumeration extends VSValue<String> implements TrickViewFluent<TV
 
     public TableCellEditor getCellEditor() {
         return tableCellEditor;
+    }
+
+    @Override
+    public void setPrecision(String precision) {
+        this.precision = precision;
+    }
+
+    @Override
+    public String getPrecision() {
+        return precision;
     }
 
     public SieEnumeration getEnumeration() {
