@@ -23,7 +23,7 @@ PROGRAMMERS:
 -# Calls the base Clock constructor
 */
 Trick::GetTimeOfDayClock::GetTimeOfDayClock() : Clock(1000000, "GetTimeOfDay - CLOCK_REALTIME")
-#if ( __linux )
+#if ( __linux__ )
  , clk_id(CLOCK_REALTIME)
 #endif
  { }
@@ -49,7 +49,7 @@ int Trick::GetTimeOfDayClock::clock_init() {
 -# Return the current real time as a count of microseconds
 */
 long long Trick::GetTimeOfDayClock::wall_clock_time() {
-#if ( __linux )
+#if ( __linux__ )
     struct timespec tp ;
     clock_gettime( clk_id, &tp ) ;
     return (long long)tp.tv_sec * 1000000LL + (long long)((tp.tv_nsec) / 1000)  ;
@@ -69,7 +69,7 @@ int Trick::GetTimeOfDayClock::clock_stop() {
 }
 
 void Trick::GetTimeOfDayClock::set_clock_ID( int id ) {
-#if ( __linux )
+#if ( __linux__ )
     clk_id = (clockid_t)id ;
     switch ( clk_id ) {
         case CLOCK_REALTIME: name = "GetTimeOfDay - CLOCK_REALTIME" ; break ;
@@ -83,7 +83,7 @@ void Trick::GetTimeOfDayClock::set_clock_ID( int id ) {
 }
 
 int Trick::GetTimeOfDayClock::get_clock_ID() {
-#if ( __linux )
+#if ( __linux__ )
     return clk_id ;
 #else
     message_publish(MSG_ERROR, "get_clock_ID not implemented\n");

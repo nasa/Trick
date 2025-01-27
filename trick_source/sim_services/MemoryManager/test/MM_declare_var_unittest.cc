@@ -130,7 +130,7 @@ TEST_F(MM_declare_var, UINT32_T) {
         validate_alloc_info_local(memmgr, test_var, TRICK_UNSIGNED_INTEGER, NULL, NULL, 1, 0, NULL);
 }
 
-#if __linux
+#if __linux__
 #  include <stdint.h>
 #  include <sys/types.h>
 #  if __WORDSIZE == 64

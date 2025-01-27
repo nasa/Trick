@@ -60,7 +60,7 @@ void Trick::Executive::signal_handler(int sig) {
      * sprintf and system are not async signal safe, but we don't have anything to lose.
      */
     if ( ! debugger_command.empty() ) {
-#if __linux
+#if __linux__
         char command[1024];
         if (attach_debugger == true) {
             snprintf(command, sizeof(command), "%s -silent /proc/%d/exe %d", debugger_command.c_str(), getpid(), getpid());

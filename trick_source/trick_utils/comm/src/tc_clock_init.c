@@ -3,7 +3,7 @@
  *  Get system clock reference time
  */
 
-#if __linux
+#if __linux__
 #include <time.h>
 #else
 #include <sys/time.h>
@@ -17,7 +17,7 @@ double tc_clock_init(void)
 
 #if __WIN32__
     ref_time = GetTickCount();
-#elif __linux
+#elif __linux__
     struct timespec tp;
 
     /* Get absolute time from system */

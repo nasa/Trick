@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
-#if __linux
+#if __linux__
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sched.h>

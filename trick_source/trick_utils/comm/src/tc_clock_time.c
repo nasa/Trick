@@ -3,7 +3,7 @@
  * Get elapsed time since last call to tc_clock_init()
  */
 
-#ifdef __linux
+#ifdef __linux__
 #include <time.h>
 #else
 #include <sys/time.h>
@@ -17,7 +17,7 @@ double tc_clock_time(double ref_time)
 
 #if __WIN32__
     y_secs = GetTickCount();
-#elif __linux
+#elif __linux__
     struct timespec tp;
 
     /* Get absolute time from system */

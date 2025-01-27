@@ -12,7 +12,7 @@ PROGRAMMERS:
 #ifndef GETTIMEOFDAYCLOCK_HH
 #define GETTIMEOFDAYCLOCK_HH
 
-#ifdef __linux
+#ifdef __linux__
 #include <time.h>
 #endif
 
@@ -24,7 +24,7 @@ namespace Trick {
        these values are available in the time module. Delete this
        when everybody is using python 3.
      */
-#ifdef __linux
+#ifdef __linux__
     enum ClockID {
        TRICK_CLOCK_REALTIME = CLOCK_REALTIME ,
        TRICK_CLOCK_MONOTONIC = CLOCK_MONOTONIC ,
@@ -55,7 +55,7 @@ namespace Trick {
             int get_clock_ID() ;
 
         protected:
-#ifdef __linux
+#ifdef __linux__
             clockid_t clk_id ; // trick_io(**)
 #endif
     } ;

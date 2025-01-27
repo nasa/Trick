@@ -48,7 +48,7 @@ const char* trickTypeCharString( TRICK_TYPE type, const char* name);
 #define TRICK_USER_DEFINED_TYPE TRICK_OPAQUE_TYPE
 
 /* Define int_64t and uint_64t depending on compiler options */
-#if __linux
+#if __linux__
 #  include <stdint.h>
 #  include <sys/types.h>
 #  if __WORDSIZE == 64

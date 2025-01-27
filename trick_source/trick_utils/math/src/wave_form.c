@@ -22,7 +22,7 @@
 #include "trick/wave_form.h"
 #include "trick/trick_math.h"
 
-#if ( __sun || __linux || __APPLE__ || __CYGWIN__ || __Lynx__ || __QNX__ || __ghs || __INTERIX )
+#if ( __sun || __linux__ || __APPLE__ || __CYGWIN__ || __Lynx__ || __QNX__ || __ghs || __INTERIX )
 #define gettimeofday(T) gettimeofday(T,NULL)
 #endif
 

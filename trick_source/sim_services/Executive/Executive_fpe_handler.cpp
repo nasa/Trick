@@ -16,7 +16,7 @@
 /*
  * FPE specific headers
  */
-#ifdef __linux
+#ifdef __linux__
 #include <fenv.h>
 #endif
 
@@ -37,7 +37,7 @@
 void Trick::Executive::fpe_handler(siginfo_t * sip __attribute__((unused)) ) {
 
     write( 2 , "\033[31mProcess terminated by signal FPE" , 36 ) ;
-#if __linux
+#if __linux__
     /* Determine what floating point error occurred */
     if (sip != (siginfo_t *) NULL) {
         switch (sip->si_code) {
@@ -73,7 +73,7 @@ void Trick::Executive::fpe_handler(siginfo_t * sip __attribute__((unused)) ) {
      Attempt to attach with debugger or print stack trace.  Not a requirement.
      snprintf and system are not async signal safe, but we don't have anything to lose.
      */
-#if __linux
+#if __linux__
     char command[1024];
     if (attach_debugger == true) {
         snprintf(command, sizeof(command), "%s -silent /proc/%d/exe %d", debugger_command.c_str(), getpid(), getpid());

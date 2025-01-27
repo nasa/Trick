@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <iostream>
 #include <string>
-#if __linux
+#if __linux__
 #include <sys/types.h>
 #endif
 #include <unistd.h>
@@ -70,7 +70,7 @@ namespace Trick {
              */
             int cpu_clr(unsigned int cpu ) ;
 
-#if __linux
+#if __linux__
 #ifndef SWIG
             /**
              * Gets the cpu set for this thread
@@ -184,7 +184,7 @@ namespace Trick {
             bool cancellable;   /**< trick_io(**) */
             pthread_mutex_t shutdown_mutex;     /**< trick_io(**) */
 
-#if __linux
+#if __linux__
 #ifndef SWIG
             /** Set of cpus to use with thread */
             cpu_set_t * cpus ;              /**< trick_io(**) */

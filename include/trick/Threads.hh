@@ -8,7 +8,7 @@
 
 #include <queue>
 #include <pthread.h>
-#if __linux
+#if __linux__
 #include <sys/types.h>
 #endif
 #include <unistd.h>

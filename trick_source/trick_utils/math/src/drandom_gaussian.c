@@ -27,7 +27,7 @@ double drandom_gaussian(        /* Return: Random number consistent with Gaussia
         /* Call rand() 2*range times to get plus/minus range sigma output */
 
         /* Normalize output of rand to the range of [-0.5,0.5] */
-#ifdef __linux
+#ifdef __linux__
         out = (((double) rand()) / RAND_MAX) - 0.5;
 #elif __APPLE__
         out = (((double) rand()) / LONG_MAX) - 0.5;

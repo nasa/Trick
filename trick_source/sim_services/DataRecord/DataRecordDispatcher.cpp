@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #include <signal.h>
-#if __linux
+#if __linux__
 #include <sys/syscall.h>
 #endif
 

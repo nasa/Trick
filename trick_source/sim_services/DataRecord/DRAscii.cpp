@@ -191,7 +191,7 @@ int Trick::DRAscii::copy_data_ascii_item( Trick::DataRecordBuffer * DI, int item
             break;
 
         case TRICK_UNSIGNED_CHARACTER:
-#if ( __linux | __sgi )
+#if ( __linux__ | __sgi )
         case TRICK_BOOLEAN:
 #endif
             snprintf(buf, writer_buf_spare, "%u", *((unsigned char *) address));

@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#if __linux
+#if __linux__
 #include <sys/types.h>
 #endif
 #include <unistd.h>

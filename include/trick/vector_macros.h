@@ -37,7 +37,7 @@ This set of macros operates on vectors. Parameters to the macros are as follows:
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
-#if (__vxworks | __APPLE__ | __linux | __CYGWIN__)
+#if (__vxworks | __APPLE__ | __linux__ | __CYGWIN__)
 #include <float.h>
 #endif
 

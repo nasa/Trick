@@ -16,7 +16,7 @@
 #include <signal.h>
 #include <sys/syscall.h>
 
-#ifdef __linux
+#ifdef __linux__
 #include <cxxabi.h>
 #endif
 
@@ -218,7 +218,7 @@ void * Trick::Threads::thread_body() {
          "  THREAD STOP TIME: %f\n" ,
          thread_id, ex.file.c_str(), ex.message.c_str(), exec_get_sim_time()) ;
         exit(ex.ret_code) ;
-#ifdef __linux
+#ifdef __linux__
     // for post gcc 4.1.2
     } catch (abi::__forced_unwind&) {
         //pthread_exit and pthread_cancel will cause an abi::__forced_unwind to be thrown. Rethrow it.

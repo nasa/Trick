@@ -292,7 +292,7 @@ int var_set_client_tag( std::string text ) {
 
         vst->set_client_tag(text);
         
-#if __linux
+#if __linux__
 #ifdef __GNUC__
 #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
         std::string short_str = std::string("VS_") + text.substr(0,12) ;

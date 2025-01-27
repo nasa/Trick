@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
 #include <avahi-client/client.h>
 #include <avahi-client/publish.h>
 #include <avahi-common/simple-watch.h>
@@ -23,7 +23,7 @@ Trick::Zeroconf::Zeroconf() {
     type = std::string("_trick-vs._tcp") ;
 
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
     simple_poll = NULL ;
     client = NULL ;
     group = NULL ;
@@ -33,7 +33,7 @@ Trick::Zeroconf::Zeroconf() {
 }
 
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
 extern "C" void entry_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata) ;
 
 extern "C" {
@@ -67,7 +67,7 @@ void entry_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *
 int Trick::Zeroconf::init() {
 
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
     int error;
     int ret ;
     char r[128] ;

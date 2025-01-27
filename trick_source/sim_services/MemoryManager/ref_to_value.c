@@ -90,7 +90,7 @@ int ref_to_value(REF2 * R, V_DATA * V)
             break;
 
         case TRICK_UNSIGNED_CHARACTER:
-#if ( __linux | __sgi )
+#if ( __linux__ | __sgi )
         case TRICK_BOOLEAN:
 #endif
             ucp = (unsigned char *) address;

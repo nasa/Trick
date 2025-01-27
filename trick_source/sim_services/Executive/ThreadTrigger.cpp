@@ -47,7 +47,7 @@ void Trick::ThreadTriggerFlag::dump(std::ostream & oss) {
     oss << "    trigger type = flag" << std::endl ;
 }
 
-#if __linux
+#if __linux__
 #include <sys/eventfd.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -128,7 +128,7 @@ void Trick::ThreadTriggerContainer::setThreadTrigger( ThreadTriggerType in_trigg
             ttBase = &ttFlag ;
             break ;
         case TT_EVENTFD :
-#if __linux
+#if __linux__
             ttBase = &ttEventFD ;
 #else
             message_publish(MSG_ERROR, "EventFD thread trigger type not available, using mutex\n") ;
@@ -136,7 +136,7 @@ void Trick::ThreadTriggerContainer::setThreadTrigger( ThreadTriggerType in_trigg
 #endif
             break ;
         case TT_FUTEX :
-#if __linux
+#if __linux__
             ttBase = &ttFutex ;
 #else
             message_publish(MSG_ERROR, "Futex thread trigger type not available, using mutex\n") ;

@@ -3,7 +3,7 @@
 #include <signal.h>
 #include <cstring>
 
-#if __linux
+#if __linux__
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sched.h>
@@ -23,7 +23,7 @@ Trick::ThreadBase::ThreadBase(std::string in_name) :
  cancellable(true)
 {
     pthread_mutex_init(&shutdown_mutex, NULL);
-#if __linux
+#if __linux__
     max_cpu = sysconf( _SC_NPROCESSORS_ONLN ) ;
 #ifdef CPU_ALLOC
     cpus = CPU_ALLOC(max_cpu) ;
@@ -38,7 +38,7 @@ Trick::ThreadBase::ThreadBase(std::string in_name) :
 }
 
 Trick::ThreadBase::~ThreadBase() {
-#if __linux
+#if __linux__
 #ifdef CPU_FREE
     CPU_FREE(cpus) ;
 #endif
@@ -62,7 +62,7 @@ pid_t Trick::ThreadBase::get_pid() {
 }
 
 void Trick::ThreadBase::set_pid() {
-#if __linux
+#if __linux__
     pid = syscall( __NR_gettid ) ;
 #else
     pid = getpid() ;
@@ -71,7 +71,7 @@ void Trick::ThreadBase::set_pid() {
 
 int Trick::ThreadBase::cpu_set(unsigned int cpu __attribute__((unused))) {
     int ret =  0 ;
-#if __linux
+#if __linux__
     if ( cpu < max_cpu ) {
 #ifdef CPU_SET_S
         CPU_SET_S(cpu, CPU_ALLOC_SIZE(max_cpu), cpus) ;
@@ -91,7 +91,7 @@ int Trick::ThreadBase::cpu_set(unsigned int cpu __attribute__((unused))) {
 
 int Trick::ThreadBase::cpu_clr(unsigned int cpu __attribute__((unused))) {
     int ret =  0 ;
-#if __linux
+#if __linux__
     if ( cpu < max_cpu ) {
 #ifdef CPU_CLR_S
         CPU_CLR_S(cpu, CPU_ALLOC_SIZE(max_cpu), cpus) ;
@@ -109,7 +109,7 @@ int Trick::ThreadBase::cpu_clr(unsigned int cpu __attribute__((unused))) {
     return ret ;
 }
 
-#if __linux
+#if __linux__
 cpu_set_t * Trick::ThreadBase::get_cpus() {
     return cpus ;
 }
@@ -133,7 +133,7 @@ void Trick::ThreadBase::copy_cpus(void * in_cpus __attribute__((unused))) {
 #endif
 
 int Trick::ThreadBase::execute_cpu_affinity() {
-#if __linux
+#if __linux__
 #ifdef CPU_ALLOC_SIZE
     sched_setaffinity(pid, CPU_ALLOC_SIZE(max_cpu), cpus) ;
 #else
@@ -148,7 +148,7 @@ int Trick::ThreadBase::set_priority(unsigned int req_priority) {
     return 0 ;
 }
 
-#if __linux
+#if __linux__
 
 #include <sched.h>
 #include <errno.h>
@@ -290,7 +290,7 @@ int Trick::ThreadBase::create_thread() {
     pthread_create(&pthread_id, &attr, Trick::ThreadBase::thread_helper , (void *)this);
     created = true;
 
-#if __linux
+#if __linux__
 #ifdef __GNUC__
 #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
     if ( ! name.empty() ) {
@@ -380,7 +380,7 @@ void Trick::ThreadBase::dump( std::ostream & oss ) {
     oss << "    pthread_id = " << pthread_id << "\n";
     oss << "    process_id = " << pid << "\n";
     oss << "    rt_priority = " << rt_priority << "\n";
-#if __linux
+#if __linux__
     oss << "    cpus = " ;
     bool first_print = true ;
     for ( unsigned int ii = 0 ; ii < max_cpu ; ii++ ) {

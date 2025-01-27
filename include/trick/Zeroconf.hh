@@ -9,7 +9,7 @@
 
 #include <string>
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
 #include <avahi-client/client.h>
 #include <avahi-client/publish.h>
 #include <avahi-common/simple-watch.h>
@@ -38,7 +38,7 @@ namespace Trick {
             std::string name ;
             std::string type ;
 #ifdef HAVE_ZEROCONF
-#if __linux
+#if __linux__
             AvahiSimplePoll *simple_poll ;
             AvahiClient *client ;
             AvahiEntryGroup *group ;

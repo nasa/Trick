@@ -11,7 +11,7 @@
 /*
  * FPE specific headers
  */
-#ifdef __linux
+#ifdef __linux__
 #include <fenv.h>
 #endif
 

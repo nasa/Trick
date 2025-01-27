@@ -93,7 +93,7 @@ extern "C" int real_time_set_rt_clock_ratio(double in_clock_ratio) {
 // not required for syncing.  Therefore keep the routines as stand
 // alone C functions.
 
-#if __linux
+#if __linux__
 #include <sys/mman.h>
 #include <errno.h>
 #endif
@@ -101,7 +101,7 @@ extern "C" int real_time_set_rt_clock_ratio(double in_clock_ratio) {
 extern "C" int real_time_lock_memory(int yes_no) {
     /* lock or unlock memory based on yes_no parameter */
     int ret = 0 ;
-#if __linux
+#if __linux__
     if ( yes_no ) {
         if ((ret = mlockall(MCL_CURRENT | MCL_FUTURE)) != 0 ) {
             perror("Error locking memory.");

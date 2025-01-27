@@ -1,6 +1,6 @@
 
 #include <iostream>
-#ifdef __linux
+#ifdef __linux__
 #include <cxxabi.h>
 #endif
 
@@ -104,7 +104,7 @@ void * Trick::VariableServerSessionThread::thread_body() {
         
         exec_signal_terminate();
 
-#ifdef __linux
+#ifdef __linux__
 #ifdef __GNUC__
 #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 2
     // for post gcc 4.1.2 or whatever glibc version is used in RHEL6 and above.
@@ -115,7 +115,7 @@ void * Trick::VariableServerSessionThread::thread_body() {
 #endif
 #endif
     } catch (...) {
-#ifdef __linux
+#ifdef __linux__
 #ifdef __GNUC__
 #if (__GNUC__ == 4 && __GNUC_MINOR__ == 1) || __GNUC__ == 12
         // for gcc 4.1.2 or whatever glib version in RHEL 5 that does not work with the abi::__forced_unwind

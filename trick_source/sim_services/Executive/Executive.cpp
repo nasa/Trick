@@ -2,7 +2,7 @@
 #include <iostream>
 #include <math.h>
 #include <sys/stat.h>
-#if __linux
+#if __linux__
 #include <sys/prctl.h>
 #endif
 

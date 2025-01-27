@@ -3,7 +3,7 @@
 #include <errno.h>
 
 /* Headers for floating point exceptions */
-#ifdef __linux
+#ifdef __linux__
 #include <fenv.h>
 #endif
 
@@ -60,7 +60,7 @@ int Trick::Executive::set_trap_sigfpe(bool on_off) {
 
     if ( on_off ) {
         /* Assign fpe_sig_handler() as the signal handler for SIGFPE. */
-#ifdef __linux
+#ifdef __linux__
         feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW);
 #endif
 #if (__APPLE__ | __CYGWIN__ | __INTERIX )
@@ -70,7 +70,7 @@ int Trick::Executive::set_trap_sigfpe(bool on_off) {
         sigact.sa_sigaction = (void (*)(int, siginfo_t *, void *)) fpe_sig_handler;
 #endif
     } else {
-#ifdef __linux
+#ifdef __linux__
         fedisableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW);
 #endif
         sigact.sa_handler = SIG_DFL;

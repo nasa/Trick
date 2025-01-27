@@ -1166,7 +1166,7 @@ int main()
         */
         fprintf(stderr, "\n[36mMore tests.[00m\n");
 
-#if ( __linux | __APPLE__ )
+#if ( __linux__ | __APPLE__ )
         // Infinity
         strcpy(equation1,
                "10000000000000000000000000000000000^1000000000000000000000000000000000000");

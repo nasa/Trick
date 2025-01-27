@@ -19,7 +19,7 @@ PROGRAMMERS:
 
 #include "trick/trick_error_hndlr.h"
 
-#if (__linux)
+#if (__linux__)
 #  define TC_NOSIGNAL MSG_NOSIGNAL
 #else
 #  define TC_NOSIGNAL 0

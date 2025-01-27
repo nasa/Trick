@@ -187,7 +187,7 @@ int Trick::CheckPointRestart::do_checkpoint(std::string file_name, bool print_st
     if ( cpu_num != -1 ) {
     // if the user specified a cpu number for the checkpoint, fork a process to write the checkpoint
         if ((pid = fork()) == 0) {
-#if __linux
+#if __linux__
             if ( cpu_num >= 0 ) {
                 unsigned long mask;
                 mask = 1 << cpu_num ;
