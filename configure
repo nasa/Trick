@@ -630,8 +630,8 @@ UDUNITS_EXCLUDE
 UDUNITS_LDFLAGS
 UDUNITS_INCLUDES
 UDUNITS_HOME
-CLANG_VERSION
 ICG_CLANGLIBS
+CLANG_VERSION
 LLVM_HOME
 CLANG
 LLVM_CONFIG
@@ -717,6 +717,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -810,6 +811,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1062,6 +1064,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1199,7 +1210,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1352,6 +1363,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -7337,7 +7349,108 @@ if test "$ac_cv_path_CLANG" = "noclang"; then :
 fi
 
 
-OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangLex -lclangBasic"
+
+  CLANG_VERSION=""
+  ax_cv_clang_version="`$CLANG --version | grep "version" | sed "s/.*version \(0-9*\.0-9*\.0-9*\).*/\1/"`"
+  if test "x$ax_cv_clang_version" = "x"; then :
+
+    ax_cv_clang_version=""
+
+fi
+  CLANG_VERSION=$ax_cv_clang_version
+
+
+if test "x$CLANG_VERSION" = "x"; then :
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking clang version >= 3.4.2" >&5
+$as_echo_n "checking clang version >= 3.4.2... " >&6; }
+
+
+
+  # Used to indicate true or false condition
+  ax_compare_version=false
+
+  # Convert the two version strings to be compared into a format that
+  # allows a simple string comparison.  The end result is that a version
+  # string of the form 1.12.5-r617 will be converted to the form
+  # 0001001200050617.  In other words, each number is zero padded to four
+  # digits, and non digits are removed.
+
+  ax_compare_version_A=`echo "$CLANG_VERSION" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
+                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/[^0-9]//g'`
+
+
+  ax_compare_version_B=`echo "3.4.2" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
+                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/[^0-9]//g'`
+
+
+    ax_compare_version=`echo "x$ax_compare_version_A
+x$ax_compare_version_B" | sed 's/^ *//' | sort -r | sed "s/x${ax_compare_version_A}/true/;s/x${ax_compare_version_B}/false/;1q"`
+
+
+
+    if test "$ax_compare_version" = "true" ; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+    else { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    as_fn_error $? "Trick requires llvm/clang version >= 3.4.2" "$LINENO" 5
+
+  fi
+
+
+fi
+
+if test "x$CLANG_VERSION" = "x"; then :
+
+else
+
+
+
+  # Used to indicate true or false condition
+  ax_compare_version=false
+
+  # Convert the two version strings to be compared into a format that
+  # allows a simple string comparison.  The end result is that a version
+  # string of the form 1.12.5-r617 will be converted to the form
+  # 0001001200050617.  In other words, each number is zero padded to four
+  # digits, and non digits are removed.
+
+  ax_compare_version_A=`echo "$CLANG_VERSION" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
+                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/[^0-9]//g'`
+
+
+  ax_compare_version_B=`echo "18.0.0" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
+                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
+                     -e 's/[^0-9]//g'`
+
+
+    ax_compare_version=`echo "x$ax_compare_version_A
+x$ax_compare_version_B" | sed 's/^ *//' | sort -r | sed "s/x${ax_compare_version_A}/true/;s/x${ax_compare_version_B}/false/;1q"`
+
+
+
+    if test "$ax_compare_version" = "true" ; then
+    OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangASTMatchers -lclangAPINotes -lclangLex -lclangBasic"
+    else OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangLex -lclangBasic"
+
+  fi
+
+
+fi
+
 NEW_CLANG_LIBS="-lclang-cpp"
 as_ac_File=`$as_echo "ac_cv_file_$LLVM_LIB_DIR/libclangFrontend.a" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $LLVM_LIB_DIR/libclangFrontend.a" >&5
@@ -7464,65 +7577,6 @@ fi
 
 
 
-
-
-  CLANG_VERSION=""
-  ax_cv_clang_version="`$CLANG --version | grep "version" | sed "s/.*version \(0-9*\.0-9*\.0-9*\).*/\1/"`"
-  if test "x$ax_cv_clang_version" = "x"; then :
-
-    ax_cv_clang_version=""
-
-fi
-  CLANG_VERSION=$ax_cv_clang_version
-
-
-if test "x$CLANG_VERSION" = "x"; then :
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking clang version >= 3.4.2" >&5
-$as_echo_n "checking clang version >= 3.4.2... " >&6; }
-
-
-
-  # Used to indicate true or false condition
-  ax_compare_version=false
-
-  # Convert the two version strings to be compared into a format that
-  # allows a simple string comparison.  The end result is that a version
-  # string of the form 1.12.5-r617 will be converted to the form
-  # 0001001200050617.  In other words, each number is zero padded to four
-  # digits, and non digits are removed.
-
-  ax_compare_version_A=`echo "$CLANG_VERSION" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
-                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
-                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
-                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
-                     -e 's/[^0-9]//g'`
-
-
-  ax_compare_version_B=`echo "3.4.2" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
-                     -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
-                     -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
-                     -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
-                     -e 's/[^0-9]//g'`
-
-
-    ax_compare_version=`echo "x$ax_compare_version_A
-x$ax_compare_version_B" | sed 's/^ *//' | sort -r | sed "s/x${ax_compare_version_A}/true/;s/x${ax_compare_version_B}/false/;1q"`
-
-
-
-    if test "$ax_compare_version" = "true" ; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-    else { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    as_fn_error $? "Trick requires llvm/clang version >= 3.4.2" "$LINENO" 5
-
-  fi
-
-
-fi
 
 #
 # Handle user hints

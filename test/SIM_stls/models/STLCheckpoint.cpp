@@ -759,5 +759,6 @@ int STLCheckpoint::test() {
         TRICK_EXPECT_EQ(vec_user_simple[i].d->c, "Here is a test string", test_suite, "vec_user_simple");
     }
 
+    return 0;
     
 }

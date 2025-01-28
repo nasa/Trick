@@ -1,8 +1,8 @@
 
-TRICK_CFLAGS += -I./models
+TRICK_CFLAGS += -I./models -DTRICK_UNIT_TEST
 TRICK_CXXFLAGS += -I./models
 
-TRICK_CXXFLAGS += -std=c++11
+TRICK_CXXFLAGS += -std=c++11 -DTRICK_UNIT_TEST
 
 clean: checkpoint_clean
 

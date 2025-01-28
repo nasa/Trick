@@ -209,7 +209,23 @@ AC_PATH_PROG(CLANG, clang, noclang, "$LLVM_BIN_DIR:/bin:/usr/bin:/usr/local/bin:
 AS_IF([test "$ac_cv_path_CLANG" = "noclang"],AC_MSG_ERROR([could not find clang]),[])
 AC_SUBST([LLVM_HOME])
 
-OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangLex -lclangBasic"
+TR_CLANG_VERSION
+dnl if llvm/clang, test for version >= 3.4.2
+AS_IF([test "x$CLANG_VERSION" = "x"],[],
+ [AC_MSG_CHECKING([clang version >= 3.4.2])
+  AX_COMPARE_VERSION([$CLANG_VERSION],[ge],[3.4.2], [AC_MSG_RESULT([yes])],
+   [AC_MSG_RESULT([no])
+    AC_MSG_ERROR([Trick requires llvm/clang version >= 3.4.2])
+   ])
+])
+
+AS_IF([test "x$CLANG_VERSION" = "x"],[],
+  [AX_COMPARE_VERSION([$CLANG_VERSION],[ge],[18.0.0], 
+   [OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangASTMatchers -lclangAPINotes -lclangLex -lclangBasic"],
+   [OLD_CLANG_LIBS="-lclangFrontend -lclangDriver -lclangSerialization -lclangParse -lclangSema -lclangAnalysis -lclangEdit -lclangAST -lclangLex -lclangBasic"]
+   )]
+)
+
 NEW_CLANG_LIBS="-lclang-cpp"
 AC_CHECK_FILE([$LLVM_LIB_DIR/libclangFrontend.a],
   [
@@ -236,16 +252,6 @@ AC_CHECK_FILE([$LLVM_LIB_DIR/libclangFrontend.a],
 AC_CHECK_FILE([$LLVM_LIB_DIR/libclangSupport.a],[ICG_CLANGLIBS="$ICG_CLANGLIBS -lclangSupport"],[])
 
 AC_SUBST([ICG_CLANGLIBS])
-
-TR_CLANG_VERSION
-dnl if llvm/clang, test for version >= 3.4.2
-AS_IF([test "x$CLANG_VERSION" = "x"],[],
- [AC_MSG_CHECKING([clang version >= 3.4.2])
-  AX_COMPARE_VERSION([$CLANG_VERSION],[ge],[3.4.2], [AC_MSG_RESULT([yes])],
-   [AC_MSG_RESULT([no])
-    AC_MSG_ERROR([Trick requires llvm/clang version >= 3.4.2])
-   ])
-])
 
 AX_CHECK_ZLIB([],AC_MSG_ERROR([could not find zlib]))
 
