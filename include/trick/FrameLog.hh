@@ -20,6 +20,8 @@ namespace Trick {
     /** Data to save for each timeline sample.\n */
     struct timeline_t {
         bool trick_job;
+        bool isEndOfFrame;
+        bool isTopOfFrame;
         double id;
         long long start;
         long long stop;

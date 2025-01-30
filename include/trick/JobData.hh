@@ -47,6 +47,12 @@ namespace Trick {
             /** Indicates if a scheduler is handling this job */
             bool handled;                   /**< trick_units(--) */
 
+            /** Indicates whether this is an "top_of_frame" job. */
+            bool isTopOfFrame;              /**< trick_units(--) */
+
+            /** Indicates whether this is an "end_of_frame" job. */
+            bool isEndOfFrame;              /**< trick_units(--) */
+
             /** The cycle time */
             double cycle;                   /**< trick_units(s) */
 
