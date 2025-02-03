@@ -37,16 +37,6 @@ PROGRAMMERS:
 
 namespace Trick {
 
-#ifdef HDF5
-#ifndef TRICK_ICG
-    struct HDF5_INFO {
-        hid_t dataset;
-        Trick::DataRecordBuffer * drb ;
-    };
-#endif
-#endif
-
-
     /**
       The DRHDF5 recording format is an industry conforming HDF5 formatted file.  Files written in this format are named
       log_<group_name>.h5.  The contents of this file type are readable by the Trick Data Products packages from
@@ -56,6 +46,9 @@ namespace Trick {
       @verbatim
 GROUP "/" {
     GROUP "header" {
+        DATASET "byte_order" {
+            "little_endian"
+        }
         DATASET "file_names" {
             "param_1_file_name", "param_2_file_name", etc...
         }
@@ -133,10 +126,29 @@ GROUP "/" {
         protected:
 
 #ifdef HDF5
-            std::vector<HDF5_INFO *> parameters;  // trick_io(**)
-
+            /**
+             The HDF5 file handle.
+             */
             hid_t file;  // trick_io(**)
+            /**
+             Root group and header group in the HDF5 file.
+             */
             hid_t root_group, header_group;  // trick_io(**)
+            
+            /** 
+             Parameter names array to be used in the HDF5 packet table.
+             Each array item  is a string of the parameter name that is
+             the copy of the reference name.
+             This is needed so when the dataset is closed, the reference
+             name in rec_buffer is still valid and won't cause double 
+             deleting when variables are removed from rec_buffer.
+             */ 
+            char** param_names;  // trick_io(**)
+         
+            /**
+             The dataset ids for each parameter.
+             */
+            hid_t* param_dataset_ids; // trick_io(**)
 #endif
 
     } ;
